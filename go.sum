@@ -1,0 +1,4 @@
+github.com/wimspaargaren/yolov3 v0.3.1 h1:6vna2f0+E2PA8CSt26AGCWhADpul0WJVAHNVj5nSCvY=
+github.com/wimspaargaren/yolov3 v0.3.1/go.mod h1:MQ+aZYPx4DF8UVCGlIVdETPxPnl0iPiZ0SIJ6ZdQnc4=
+gocv.io/x/gocv v0.36.1 h1:6XkEaPOk7h/umjy+MXgSEtSeCIgcPJhccUjrJFhjdTY=
+gocv.io/x/gocv v0.36.1/go.mod h1:lmS802zoQmnNvXETpmGriBqWrENPei2GxYx5KUxJsMA=
