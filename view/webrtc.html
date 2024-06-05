@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>webrtc client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="/public/css/webrtc.css">
+
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/public/js/webrtc.js"></script>
+
+</head>
+<body>
+
+    <label for="mid">meeting ID</label>
+    <input type="text" id="mid" name="mid"><br><br>
+    <label for="uid">user ID</label>
+    <input type="text" id="uid" name="uid"><br><br>
+    <label for="pid">peer ID</label>
+    <input type="text" id="pid" name="pid"><br><br>
+    <button onclick="initWebRTC()" class="start-call">
+        Init the call!
+    </button>
+
+
+    <button onclick="startCall()" class="start-call">
+        Start the call!
+    </button>
+
+    <div class="container_row">
+        <video autoplay id="senderVideo" width="500" height="500" controls muted></video>
+        <div class="layer2">
+            <video autoplay id="receiverVideo" width="160" height="120" controls muted></video>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -6,26 +6,28 @@ import (
 	pkgcv "github.com/lineworld-lab/go-tv/pkg/cv"
 )
 
-type CV_CTL struct {
-	OutMode CV_OUT_MODE
+type TV_CTL struct {
+	TVMode TV_MODE
 }
 
-type CV_OUT_MODE struct {
+type TV_MODE struct {
 	RAW_Window    bool
 	YOLO_Window   bool
 	YOLO_Std      bool
 	YOLO_Endpoint bool
+	STREAM_Share  bool
+	STREAM_Peer   bool
 }
 
-func (cvctl *CV_CTL) Start() error {
+func (tvctl *TV_CTL) Start() error {
 
-	if err := cvctl.Verify(); err != nil {
+	if err := tvctl.Verify(); err != nil {
 
 		return fmt.Errorf("start: %s", err.Error())
 
 	}
 
-	if cvctl.OutMode.RAW_Window {
+	if tvctl.TVMode.RAW_Window {
 
 		raww := pkgcv.OpenWindow()
 
@@ -49,7 +51,7 @@ func (cvctl *CV_CTL) Start() error {
 
 		defer pkgcv.ReleaseVideoInput(vi)
 
-	} else if cvctl.OutMode.YOLO_Window {
+	} else if tvctl.TVMode.YOLO_Window {
 
 		raww := pkgcv.OpenWindow()
 
@@ -82,7 +84,7 @@ func (cvctl *CV_CTL) Start() error {
 
 		defer pkgcv.Release(vi)
 
-	} else if cvctl.OutMode.YOLO_Std {
+	} else if tvctl.TVMode.YOLO_Std {
 
 		vi, err := pkgcv.CreateYolo()
 
@@ -111,7 +113,7 @@ func (cvctl *CV_CTL) Start() error {
 
 		defer pkgcv.Release(vi)
 
-	} else if cvctl.OutMode.YOLO_Endpoint {
+	} else if tvctl.TVMode.YOLO_Endpoint {
 
 		vi, err := pkgcv.CreateYolo()
 
@@ -145,29 +147,49 @@ func (cvctl *CV_CTL) Start() error {
 
 		defer pkgcv.Release(vi)
 
+	} else if tvctl.TVMode.STREAM_Peer {
+
+		streamctl := STREAM_CTL{}
+
+		if err := streamctl.Start(); err != nil {
+
+			return fmt.Errorf("start: %s", err.Error())
+
+		}
+
 	}
 
 	return nil
 }
 
-func (cvctl *CV_CTL) Verify() error {
+func (tvctl *TV_CTL) Verify() error {
 
 	bool_count := 0
 
-	if cvctl.OutMode.RAW_Window {
+	if tvctl.TVMode.RAW_Window {
 		bool_count += 1
 	}
 
-	if cvctl.OutMode.YOLO_Window {
+	if tvctl.TVMode.YOLO_Window {
 		bool_count += 1
 	}
 
-	if cvctl.OutMode.YOLO_Std {
+	if tvctl.TVMode.YOLO_Std {
 
 		bool_count += 1
 	}
 
-	if cvctl.OutMode.YOLO_Endpoint {
+	if tvctl.TVMode.YOLO_Endpoint {
+
+		bool_count += 1
+	}
+
+	if tvctl.TVMode.STREAM_Share {
+
+		bool_count += 1
+	}
+
+	if tvctl.TVMode.STREAM_Peer {
 
 		bool_count += 1
 	}

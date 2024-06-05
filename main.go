@@ -8,16 +8,18 @@ import (
 
 func main() {
 
-	cvctl := tvctl.CV_CTL{
-		OutMode: tvctl.CV_OUT_MODE{
+	tvctlrunner := tvctl.TV_CTL{
+		TVMode: tvctl.TV_MODE{
 			RAW_Window:    false,
 			YOLO_Window:   false,
 			YOLO_Std:      false,
-			YOLO_Endpoint: true,
+			YOLO_Endpoint: false,
+			STREAM_Share:  false,
+			STREAM_Peer:   true,
 		},
 	}
 
-	if err := cvctl.Start(); err != nil {
+	if err := tvctlrunner.Start(); err != nil {
 
 		fmt.Println(err.Error())
 
