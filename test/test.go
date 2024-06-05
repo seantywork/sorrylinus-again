@@ -176,12 +176,23 @@ func webcam_yolo() {
 
 }
 
+func print_bits() {
+
+	var bits int64
+
+	bits = 8 << 20
+
+	fmt.Println(bits)
+}
+
 func main() {
 
 	//	turn_on_gui_with_video()
 
 	// in_your_face()
 
-	webcam_yolo()
+	//webcam_yolo()
+
+	print_bits()
 
 }

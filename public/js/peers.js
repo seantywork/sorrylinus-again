@@ -9,7 +9,7 @@ peerId = ""
 // and http://localhost:4200/call;meetingId=07927fc8-af0a-11ea-b338-064f26a5f90a;userId=bob;peerId=alice
 // start the call
 
-function initWebRTC() {
+function initPeers() {
 
 
     meetingID = document.getElementById('mid').value;
@@ -67,7 +67,7 @@ function initWebRTC() {
 
             console.log("sender ice")
 
-            let resp = await axios.post("/webrtc/sdp/m/" + meetingId + "/c/"+ userId + "/p/" + peerId + "/s/" + true,
+            let resp = await axios.post("/peers/sdp/m/" + meetingId + "/c/"+ userId + "/p/" + peerId + "/s/" + true,
             {
                 "sdp" : btoa(JSON.stringify(pcSender.localDescription))
             })

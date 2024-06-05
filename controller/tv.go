@@ -15,7 +15,7 @@ type TV_MODE struct {
 	YOLO_Window   bool
 	YOLO_Std      bool
 	YOLO_Endpoint bool
-	STREAM_Share  bool
+	STREAM_File   bool
 	STREAM_Peer   bool
 }
 
@@ -147,11 +147,21 @@ func (tvctl *TV_CTL) Start() error {
 
 		defer pkgcv.Release(vi)
 
+	} else if tvctl.TVMode.STREAM_File {
+
+		streamctl := STREAM_CTL{}
+
+		if err := streamctl.StartFiles(); err != nil {
+
+			return fmt.Errorf("start: %s", err.Error())
+
+		}
+
 	} else if tvctl.TVMode.STREAM_Peer {
 
 		streamctl := STREAM_CTL{}
 
-		if err := streamctl.Start(); err != nil {
+		if err := streamctl.StartPeers(); err != nil {
 
 			return fmt.Errorf("start: %s", err.Error())
 
@@ -184,7 +194,7 @@ func (tvctl *TV_CTL) Verify() error {
 		bool_count += 1
 	}
 
-	if tvctl.TVMode.STREAM_Share {
+	if tvctl.TVMode.STREAM_File {
 
 		bool_count += 1
 	}
