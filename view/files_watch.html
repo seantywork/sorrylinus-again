@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>webrtc client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="/public/css/files_watch.css">
+
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/public/js/files_watch.js"></script>
+
+</head>
+<body>
+
+    <label for="wid">watch ID</label>
+    <input type="text" id="wid" name="wid"><br><br>
+    <button onclick="playFiles()" class="start-call">
+        Play the video!
+    </button>
+
+
+    <div class="container_row">
+        <video autoplay id="play-files" width="500" height="500" controls muted>    
+        </video>
+    </div>
+</body>
+
+</html>

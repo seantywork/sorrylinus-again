@@ -14,8 +14,8 @@ func main() {
 			YOLO_Window:   false,
 			YOLO_Std:      false,
 			YOLO_Endpoint: false,
-			STREAM_Share:  false,
-			STREAM_Peer:   true,
+			STREAM_File:   true,
+			STREAM_Peer:   false,
 		},
 	}
 
