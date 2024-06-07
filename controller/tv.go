@@ -17,6 +17,7 @@ type TV_MODE struct {
 	YOLO_Endpoint bool
 	STREAM_File   bool
 	STREAM_Peer   bool
+	STREAM_CCTV   bool
 }
 
 func (tvctl *TV_CTL) Start() error {
@@ -167,6 +168,16 @@ func (tvctl *TV_CTL) Start() error {
 
 		}
 
+	} else if tvctl.TVMode.STREAM_CCTV {
+
+		streamctl := STREAM_CTL{}
+
+		if err := streamctl.StartCCTV(); err != nil {
+
+			return fmt.Errorf("start: %s", err.Error())
+
+		}
+
 	}
 
 	return nil
@@ -200,6 +211,11 @@ func (tvctl *TV_CTL) Verify() error {
 	}
 
 	if tvctl.TVMode.STREAM_Peer {
+
+		bool_count += 1
+	}
+
+	if tvctl.TVMode.STREAM_CCTV {
 
 		bool_count += 1
 	}

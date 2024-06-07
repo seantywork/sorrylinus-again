@@ -9,31 +9,43 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/pion/webrtc/v2"
+	"github.com/pion/webrtc/v4"
 )
 
 func CreateStreamServerForPeers() (*gin.Engine, error) {
 
 	router := CreateGenericServer()
 
-	peerConnectionMap := make(map[string]chan *webrtc.Track)
+	peerConnectionMap := make(map[string]chan *webrtc.TrackLocalStaticRTP)
 
-	m := webrtc.MediaEngine{}
+	m := &webrtc.MediaEngine{}
 
-	// Setup the codecs you want to use.
-	// Only support VP8(video compression), this makes our proxying code simpler
-	m.RegisterCodec(webrtc.NewRTPVP8Codec(webrtc.DefaultPayloadTypeVP8, 90000))
+	if err := m.RegisterCodec(webrtc.RTPCodecParameters{
+		RTPCodecCapability: webrtc.RTPCodecCapability{MimeType: "video/VP8", ClockRate: 90000, Channels: 0, SDPFmtpLine: "", RTCPFeedback: nil},
+		PayloadType:        96,
+	}, webrtc.RTPCodecTypeVideo); err != nil {
+
+		return nil, err
+	}
 
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(m))
 
+	/*
+		peerConnectionConfig := webrtc.Configuration{
+			ICEServers: []webrtc.ICEServer{
+				{
+					URLs: []string{"stun:stun.l.google.com:19302"},
+				},
+			},
+		}
+	*/
 	peerConnectionConfig := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:stun.l.google.com:19302"},
+				URLs: []string{"stun:localhost:3478"},
 			},
 		},
 	}
-
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(200, "peers.html", gin.H{

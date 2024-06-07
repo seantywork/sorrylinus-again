@@ -12,15 +12,15 @@ peerId = ""
 function initPeers() {
 
 
-    meetingID = document.getElementById('mid').value;
+    meetingId = document.getElementById('mid').value;
 
 
-    userID = document.getElementById('uid').value;
+    userId = document.getElementById('uid').value;
 
 
-    peerID = document.getElementById('pid').value;
+    peerId = document.getElementById('pid').value;
 
-    if (meetingID == ""){
+    if (meetingId == ""){
 
         alert("feed meeting ID!")
 
@@ -28,7 +28,7 @@ function initPeers() {
 
     }
 
-    if (userID == ""){
+    if (userId == ""){
 
         alert("feed user ID!")
 
@@ -36,7 +36,7 @@ function initPeers() {
 
     }
 
-    if (peerID == ""){
+    if (peerId == ""){
 
         alert("feed peer ID!")
 
@@ -44,7 +44,7 @@ function initPeers() {
 
     }
 
-
+/*
     pcSender = new RTCPeerConnection({
     iceServers: [
         {
@@ -59,6 +59,24 @@ function initPeers() {
         }
     ]
     })
+*/
+
+
+    pcSender = new RTCPeerConnection({
+        iceServers: [
+            {
+            urls: 'stun:localhost:3478'
+            }
+        ]
+        })
+        pcReciever = new RTCPeerConnection({
+        iceServers: [
+            {
+            urls: 'stun:localhost:3478'
+            }
+        ]
+        })
+
 
 
 
@@ -83,7 +101,7 @@ function initPeers() {
 
             console.log("receiver ice")
 
-            let resp = await axios.post("/webrtc/sdp/m/" + meetingId + "/c/"+ userId + "/p/" + peerId + "/s/" + false, 
+            let resp = await axios.post("/peers/sdp/m/" + meetingId + "/c/"+ userId + "/p/" + peerId + "/s/" + false, 
             {
                 "sdp" : btoa(JSON.stringify(pcReciever.localDescription))
             })

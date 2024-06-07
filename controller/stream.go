@@ -46,3 +46,23 @@ func (streamctl *STREAM_CTL) StartFiles() error {
 
 	return nil
 }
+
+func (streamctl *STREAM_CTL) StartCCTV() error {
+
+	srv, err := pkgstream.CreateStreamServerForCCTV()
+
+	if err != nil {
+
+		return fmt.Errorf("start: %s", err.Error())
+
+	}
+
+	if err := srv.Run(":8080"); err != nil {
+
+		return fmt.Errorf("start: %s", err.Error())
+
+	}
+
+	return nil
+
+}
