@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>webrtc client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="/public/css/cctv.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="/public/js/cctv.js"></script>
+
+</head>
+<body>
+    Browser base64 Session Description<br />
+    <textarea id="localSessionDescription" readonly="true"></textarea> <br />
+
+    <button onclick="startCCTVOffer()"> Start offer </button><br />
+    
+    Golang base64 Session Description<br />
+    <textarea id="remoteSessionDescription"> </textarea> <br/>
+    <button onclick="window.startSession()"> Start Session </button><br />
+    
+    <br />
+    
+    Video<br />
+    <div id="remoteVideos"></div> <br />
+    
+    Logs<br />
+    <div id="div"></div>
+    
+</body>
+
+</html>
