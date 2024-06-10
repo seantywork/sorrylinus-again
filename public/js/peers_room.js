@@ -9,6 +9,11 @@ userId = ""
 // and http://localhost:4200/call;meetingId=07927fc8-af0a-11ea-b338-064f26a5f90a;userId=bob;peerId=alice
 // start the call
 
+TURN_SERVER_ADDRESS = ""
+
+CLIENT_REQ = {
+    "data":""
+}
 
 
 function initPeers() {
@@ -38,28 +43,12 @@ function initPeers() {
     }
 
 
-/*
-    pcSender = new RTCPeerConnection({
-    iceServers: [
-        {
-        urls: 'stun:stun.l.google.com:19302'
-        }
-    ]
-    })
-    pcReciever = new RTCPeerConnection({
-    iceServers: [
-        {
-        urls: 'stun:stun.l.google.com:19302'
-        }
-    ]
-    })
-*/
 
 
     pcSender = new RTCPeerConnection({
         iceServers: [
             {
-            urls: 'stun:localhost:3478'
+            urls: TURN_SERVER_ADDRESS
             }
         ]
     })
@@ -70,12 +59,13 @@ function initPeers() {
 
             console.log("sender ice")
 
-            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ userId + "/s/" + true,
-            {
-                "sdp" : btoa(JSON.stringify(pcSender.localDescription))
-            })
+            let sdpjson = JSON.parse(JSON.stringify(CLIENT_REQ))
 
-            pcSender.setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.Sdp))))
+            sdpjson.data  = btoa(JSON.stringify(pcSender.localDescription))
+
+            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ userId + "/s/" + true, sdpjson)
+
+            pcSender.setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.reply))))
             
 
             initSignalUser(userId)
@@ -141,10 +131,10 @@ function startCall() {
   // sender part of the call
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
         .then(function(stream){
-            var senderVideo  = document.getElementById('senderVideo');
+            let senderVideo  = document.getElementById('senderVideo');
             senderVideo.srcObject = stream;
-            var tracks = stream.getTracks();
-            for (var i = 0; i < tracks.length; i++) {
+            let tracks = stream.getTracks();
+            for (let i = 0; i < tracks.length; i++) {
                 pcSender.addTrack(stream.getTracks()[i]);
             }
             pcSender.createOffer().then(function(d){pcSender.setLocalDescription(d)})
@@ -169,7 +159,7 @@ function addReceiver(addUserId){
     pcRecievers[addUserId] = new RTCPeerConnection({
         iceServers: [
             {
-            urls: 'stun:localhost:3478'
+            urls: TURN_SERVER_ADDRESS
             }
         ]
     })
@@ -181,12 +171,13 @@ function addReceiver(addUserId){
 
             console.log("receiver ice")
 
-            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ addUserId + "/s/" + false, 
-            {
-                "sdp" : btoa(JSON.stringify(pcRecievers[addUserId].localDescription))
-            })
+            let sdpjson = JSON.parse(JSON.stringify(CLIENT_REQ))
+
+            sdpjson.data = btoa(JSON.stringify(pcRecievers[addUserId].localDescription))
+
+            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ addUserId + "/s/" + false, sdpjson)
             
-            pcRecievers[addUserId].setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.Sdp))))
+            pcRecievers[addUserId].setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.reply))))
 
         }
     }
@@ -211,9 +202,9 @@ function addReceiver(addUserId){
 
     pcRecievers[addUserId].ontrack = function (event) {
 
-        var receiver_id = "receiverVideo-" + addUserId
+        let receiver_id = "receiverVideo-" + addUserId
 
-        var receivers = document.getElementById('peer-receive')
+        let receivers = document.getElementById('peer-receive')
 
         receivers.innerHTML += `
         
@@ -223,7 +214,7 @@ function addReceiver(addUserId){
 
         `
 
-        var receiverVideo = document.getElementById(receiver_id)
+        let receiverVideo = document.getElementById(receiver_id)
         receiverVideo.srcObject = event.streams[0]
         receiverVideo.autoplay = true
         receiverVideo.controls = true
@@ -231,3 +222,24 @@ function addReceiver(addUserId){
 
 
 }
+
+async function getTurnServerAddress(){
+
+    let result = await axios.get("/peers/room/turn")
+
+    if(result.data.status != "success"){
+
+        alert("failed to get turn server address")
+
+        return
+    }
+
+
+    TURN_SERVER_ADDRESS = result.data.reply 
+
+    console.log("turnServerAddr: " + TURN_SERVER_ADDRESS)
+
+}
+
+
+getTurnServerAddress()

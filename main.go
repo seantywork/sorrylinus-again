@@ -8,6 +8,15 @@ import (
 
 func main() {
 
+	err := tvctl.LoadConfig()
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+
+		return
+	}
+
 	tvctlrunner := tvctl.TV_CTL{
 		TVMode: tvctl.TV_MODE{
 			RAW_Window:    false,

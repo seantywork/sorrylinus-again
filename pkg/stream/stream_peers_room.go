@@ -32,19 +32,10 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(m))
 
-	/*
-		peerConnectionConfig := webrtc.Configuration{
-			ICEServers: []webrtc.ICEServer{
-				{
-					URLs: []string{"stun:stun.l.google.com:19302"},
-				},
-			},
-		}
-	*/
 	peerConnectionConfig := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:localhost:3478"},
+				URLs: []string{TurnServerAddr},
 			},
 		},
 	}
@@ -53,6 +44,12 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 		c.HTML(200, "peers_room.html", gin.H{
 			"title": "Peers Room",
 		})
+
+	})
+
+	router.GET("/peers/room/turn", func(c *gin.Context) {
+
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TurnServerAddr})
 
 	})
 
@@ -71,14 +68,14 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 
 		userID := c.Param("userID")
 
-		var session Sdp
+		var session CLIENT_REQ
 		if err := c.ShouldBindJSON(&session); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid request"})
 			return
 		}
 
 		offer := webrtc.SessionDescription{}
-		Decode(session.Sdp, &offer)
+		Decode(session.Data, &offer)
 
 		// Create a new RTCPeerConnection
 		// this is the gist of webrtc, generates and process SDP
@@ -87,7 +84,7 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 
 			fmt.Println(err.Error())
 
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, SERVER_RE{Status: "error", Reply: "failed to process"})
 
 			return
 
@@ -105,7 +102,7 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 
 			fmt.Println(err.Error())
 
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, SERVER_RE{Status: "error", Reply: "failed to process"})
 
 			return
 		}
@@ -114,7 +111,7 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		c.JSON(http.StatusOK, Sdp{Sdp: Encode(answer)})
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: Encode(answer)})
 	})
 
 	return router, nil

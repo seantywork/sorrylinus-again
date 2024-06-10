@@ -1,24 +1,10 @@
 package stream
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
-
-var USER_SIGNAL = make(map[string]*websocket.Conn)
-
-var ADDR = flag.String("addr", "0.0.0.0:8082", "service address")
-
-var UPGRADER = websocket.Upgrader{}
-
-type SIGNAL_INFO struct {
-	Command string `json:"command"`
-	UserID  string `json:"user_id"`
-}
 
 func createSignalHandlerForWS() {
 
