@@ -1,15 +1,18 @@
-
+pcSignal = {}
 pcSender = {}
-pcReciever = {}
+pcRecievers = {}
 meetingId = "" 
 userId = ""
-peerId = ""
+
 
 // use http://localhost:4200/call;meetingId=07927fc8-af0a-11ea-b338-064f26a5f90a;userId=alice;peerId=bob
 // and http://localhost:4200/call;meetingId=07927fc8-af0a-11ea-b338-064f26a5f90a;userId=bob;peerId=alice
 // start the call
 
+
+
 function initPeers() {
+
 
 
     meetingId = document.getElementById('mid').value;
@@ -17,8 +20,6 @@ function initPeers() {
 
     userId = document.getElementById('uid').value;
 
-
-    peerId = document.getElementById('pid').value;
 
     if (meetingId == ""){
 
@@ -36,13 +37,6 @@ function initPeers() {
 
     }
 
-    if (peerId == ""){
-
-        alert("feed peer ID!")
-
-        return
-
-    }
 
 /*
     pcSender = new RTCPeerConnection({
@@ -68,16 +62,7 @@ function initPeers() {
             urls: 'stun:localhost:3478'
             }
         ]
-        })
-        pcReciever = new RTCPeerConnection({
-        iceServers: [
-            {
-            urls: 'stun:localhost:3478'
-            }
-        ]
-        })
-
-
+    })
 
 
     pcSender.onicecandidate = async function(event) {
@@ -85,7 +70,7 @@ function initPeers() {
 
             console.log("sender ice")
 
-            let resp = await axios.post("/peers/sdp/m/" + meetingId + "/c/"+ userId + "/p/" + peerId + "/s/" + true,
+            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ userId + "/s/" + true,
             {
                 "sdp" : btoa(JSON.stringify(pcSender.localDescription))
             })
@@ -93,23 +78,59 @@ function initPeers() {
             pcSender.setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.Sdp))))
             
 
-        }
-    }
-
-    pcReciever.onicecandidate = async function(event) {
-        if (event.candidate === null) {
-
-            console.log("receiver ice")
-
-            let resp = await axios.post("/peers/sdp/m/" + meetingId + "/c/"+ userId + "/p/" + peerId + "/s/" + false, 
-            {
-                "sdp" : btoa(JSON.stringify(pcReciever.localDescription))
-            })
-            
-            pcReciever.setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.Sdp))))
+            initSignalUser(userId)
 
         }
     }
+
+
+
+}
+
+
+function initSignalUser(userId){
+
+
+
+    let uinfo = {
+        "command": "ADD",
+        "user_id": userId
+    }
+
+    pcSignal = new WebSocket("ws://localhost:8082/signal")
+
+
+    pcSignal.onopen = function (event) {
+
+
+        pcSignal.send(JSON.stringify(uinfo))
+
+    }
+
+
+    pcSignal.onmessage = function (event) {
+
+
+        let data = event.data 
+
+        console.log("received: ")
+        console.log(data)
+
+        let signal_data = JSON.parse(data)
+
+
+        if(signal_data.command == "ADDUSER") {
+
+
+            addReceiver(signal_data.user_id)
+
+        }
+
+
+
+
+    }
+
 
 
 }
@@ -137,20 +158,76 @@ function startCall() {
     })
 
 
-    pcReciever.addTransceiver("video", 
+
+}
+
+
+function addReceiver(addUserId){
+
+
+
+    pcRecievers[addUserId] = new RTCPeerConnection({
+        iceServers: [
+            {
+            urls: 'stun:localhost:3478'
+            }
+        ]
+    })
+
+    
+
+    pcRecievers[addUserId].onicecandidate = async function(event) {
+        if (event.candidate === null) {
+
+            console.log("receiver ice")
+
+            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ addUserId + "/s/" + false, 
+            {
+                "sdp" : btoa(JSON.stringify(pcRecievers[addUserId].localDescription))
+            })
+            
+            pcRecievers[addUserId].setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.Sdp))))
+
+        }
+    }
+
+
+
+
+    pcRecievers[addUserId].addTransceiver("video", 
         {"direction": "recvonly"}
     )
 
-    pcReciever.createOffer()
+
+
+    pcRecievers[addUserId].createOffer()
         .then(function(d) {
-            pcReciever.setLocalDescription(d)
+            pcRecievers[addUserId].setLocalDescription(d)
         })
 
-    pcReciever.ontrack = function (event) {
-        var receiverVideo = document.getElementById('receiverVideo')
+
+
+
+
+    pcRecievers[addUserId].ontrack = function (event) {
+
+        var receiver_id = "receiverVideo-" + addUserId
+
+        var receivers = document.getElementById('peer-receive')
+
+        receivers.innerHTML += `
+        
+        <div class="layer2">
+            <video autoplay id="${receiver_id}" width="160" height="120" controls muted></video>
+        </div>
+
+        `
+
+        var receiverVideo = document.getElementById(receiver_id)
         receiverVideo.srcObject = event.streams[0]
         receiverVideo.autoplay = true
         receiverVideo.controls = true
     }
+
 
 }

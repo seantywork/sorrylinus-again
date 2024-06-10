@@ -12,7 +12,9 @@ import (
 	"github.com/pion/webrtc/v4"
 )
 
-func CreateStreamServerForPeers() (*gin.Engine, error) {
+func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
+
+	go createSignalHandlerForWS()
 
 	router := CreateGenericServer()
 
@@ -48,15 +50,15 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 	}
 	router.GET("/", func(c *gin.Context) {
 
-		c.HTML(200, "peers.html", gin.H{
-			"title": "Peers",
+		c.HTML(200, "peers_room.html", gin.H{
+			"title": "Peers Room",
 		})
 
 	})
 
-	router.POST("/peers/sdp/m/:meetingId/c/:userID/p/:peerId/s/:isSender", func(c *gin.Context) {
+	router.POST("/peers/room/sdp/m/:meetingId/c/:userID/s/:isSender", func(c *gin.Context) {
 
-		fmt.Println("webrtc post access")
+		fmt.Println("webrtc room post access")
 
 		isSender, _ := strconv.ParseBool(c.Param("isSender"))
 
@@ -68,7 +70,6 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 		}
 
 		userID := c.Param("userID")
-		peerID := c.Param("peerId")
 
 		var session Sdp
 		if err := c.ShouldBindJSON(&session); err != nil {
@@ -92,7 +93,7 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 
 		}
 		if !isSender {
-			recieveTrack(peerConnection, peerConnectionMap, peerID)
+			recieveTrack(peerConnection, peerConnectionMap, userID)
 		} else {
 			createTrack(peerConnection, peerConnectionMap, userID)
 		}

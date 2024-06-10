@@ -11,7 +11,7 @@ type STREAM_CTL struct {
 
 func (streamctl *STREAM_CTL) StartPeers() error {
 
-	srv, err := pkgstream.CreateStreamServerForPeers()
+	srv, err := pkgstream.CreateStreamServerForPeersRoom()
 
 	if err != nil {
 

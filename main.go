@@ -15,8 +15,8 @@ func main() {
 			YOLO_Std:      false,
 			YOLO_Endpoint: false,
 			STREAM_File:   false,
-			STREAM_Peer:   false,
-			STREAM_CCTV:   true,
+			STREAM_Peer:   true,
+			STREAM_CCTV:   false,
 		},
 	}
 
