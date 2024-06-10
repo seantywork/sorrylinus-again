@@ -12,7 +12,9 @@ import (
 	"github.com/pion/webrtc/v4"
 )
 
-func CreateStreamServerForPeers() (*gin.Engine, error) {
+func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
+
+	go createSignalHandlerForWS()
 
 	router := CreateGenericServer()
 
@@ -30,33 +32,30 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(m))
 
-	/*
-		peerConnectionConfig := webrtc.Configuration{
-			ICEServers: []webrtc.ICEServer{
-				{
-					URLs: []string{"stun:stun.l.google.com:19302"},
-				},
-			},
-		}
-	*/
 	peerConnectionConfig := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:localhost:3478"},
+				URLs: []string{TurnServerAddr},
 			},
 		},
 	}
 	router.GET("/", func(c *gin.Context) {
 
-		c.HTML(200, "peers.html", gin.H{
-			"title": "Peers",
+		c.HTML(200, "peers_room.html", gin.H{
+			"title": "Peers Room",
 		})
 
 	})
 
-	router.POST("/peers/sdp/m/:meetingId/c/:userID/p/:peerId/s/:isSender", func(c *gin.Context) {
+	router.GET("/peers/room/turn", func(c *gin.Context) {
 
-		fmt.Println("webrtc post access")
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TurnServerAddr})
+
+	})
+
+	router.POST("/peers/room/sdp/m/:meetingId/c/:userID/s/:isSender", func(c *gin.Context) {
+
+		fmt.Println("webrtc room post access")
 
 		isSender, _ := strconv.ParseBool(c.Param("isSender"))
 
@@ -68,16 +67,15 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 		}
 
 		userID := c.Param("userID")
-		peerID := c.Param("peerId")
 
-		var session Sdp
+		var session CLIENT_REQ
 		if err := c.ShouldBindJSON(&session); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid request"})
 			return
 		}
 
 		offer := webrtc.SessionDescription{}
-		Decode(session.Sdp, &offer)
+		Decode(session.Data, &offer)
 
 		// Create a new RTCPeerConnection
 		// this is the gist of webrtc, generates and process SDP
@@ -86,13 +84,13 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 
 			fmt.Println(err.Error())
 
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, SERVER_RE{Status: "error", Reply: "failed to process"})
 
 			return
 
 		}
 		if !isSender {
-			recieveTrack(peerConnection, peerConnectionMap, peerID)
+			recieveTrack(peerConnection, peerConnectionMap, userID)
 		} else {
 			createTrack(peerConnection, peerConnectionMap, userID)
 		}
@@ -104,7 +102,7 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 
 			fmt.Println(err.Error())
 
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, SERVER_RE{Status: "error", Reply: "failed to process"})
 
 			return
 		}
@@ -113,7 +111,7 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		c.JSON(http.StatusOK, Sdp{Sdp: Encode(answer)})
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: Encode(answer)})
 	})
 
 	return router, nil

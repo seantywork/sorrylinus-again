@@ -7,11 +7,14 @@ import (
 )
 
 type STREAM_CTL struct {
+	TurnServerAddr string
 }
 
 func (streamctl *STREAM_CTL) StartPeers() error {
 
-	srv, err := pkgstream.CreateStreamServerForPeers()
+	pkgstream.TurnServerAddr = streamctl.TurnServerAddr
+
+	srv, err := pkgstream.CreateStreamServerForPeersRoom()
 
 	if err != nil {
 
@@ -48,6 +51,8 @@ func (streamctl *STREAM_CTL) StartFiles() error {
 }
 
 func (streamctl *STREAM_CTL) StartCCTV() error {
+
+	pkgstream.TurnServerAddr = streamctl.TurnServerAddr
 
 	srv, err := pkgstream.CreateStreamServerForCCTV()
 

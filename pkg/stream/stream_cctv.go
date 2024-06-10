@@ -1,8 +1,6 @@
 package stream
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -14,10 +12,6 @@ import (
 )
 
 var RECV_STARTED int = 0
-
-type START_OFFER struct {
-	Offer string `json:"offer"`
-}
 
 func CreateStreamServerForCCTV() (*gin.Engine, error) {
 
@@ -31,24 +25,30 @@ func CreateStreamServerForCCTV() (*gin.Engine, error) {
 
 	})
 
+	router.GET("/peers/room/turn", func(c *gin.Context) {
+
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TurnServerAddr})
+
+	})
+
 	router.POST("/cctv/offer", func(c *gin.Context) {
 
 		if RECV_STARTED == 1 {
 
 			fmt.Println("recv already started")
 
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid request"})
 
 			return
 		}
 
-		var offerjson START_OFFER
+		var offerjson CLIENT_REQ
 
 		if err := c.BindJSON(&offerjson); err != nil {
 
 			fmt.Println("failed to get request body")
 
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid format"})
 
 			return
 
@@ -56,11 +56,11 @@ func CreateStreamServerForCCTV() (*gin.Engine, error) {
 
 		offer_out := make(chan string)
 
-		go startCCTVReceiver(offerjson.Offer, offer_out)
+		go startCCTVReceiver(offerjson.Data, offer_out)
 
 		offer_out_str := <-offer_out
 
-		c.JSON(http.StatusOK, gin.H{"status": "success", "offer": offer_out_str})
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: offer_out_str})
 
 	})
 
@@ -70,20 +70,10 @@ func CreateStreamServerForCCTV() (*gin.Engine, error) {
 
 func startCCTVReceiver(offer_in string, offer_out chan string) {
 
-	/*
-		peerConnection, err := webrtcv4.NewPeerConnection(webrtcv4.Configuration{
-			ICEServers: []webrtcv4.ICEServer{
-				{
-					URLs: []string{"stun:stun.l.google.com:19302"},
-				},
-			},
-		})
-
-	*/
 	peerConnection, err := webrtcv4.NewPeerConnection(webrtcv4.Configuration{
 		ICEServers: []webrtcv4.ICEServer{
 			{
-				URLs: []string{"stun:localhost:3478"},
+				URLs: []string{TurnServerAddr},
 			},
 		},
 	})
@@ -147,7 +137,7 @@ func startCCTVReceiver(offer_in string, offer_out chan string) {
 
 	// Wait for the offer to be pasted
 	offer := webrtcv4.SessionDescription{}
-	decode(offer_in, &offer)
+	Decode(offer_in, &offer)
 
 	// Set the remote SessionDescription
 	if err = peerConnection.SetRemoteDescription(offer); err != nil {
@@ -175,7 +165,7 @@ func startCCTVReceiver(offer_in string, offer_out chan string) {
 
 	// Output the answer in base64 so we can paste it in browser
 
-	localdesc := encode(peerConnection.LocalDescription())
+	localdesc := Encode(peerConnection.LocalDescription())
 
 	offer_out <- localdesc
 
@@ -205,27 +195,5 @@ func startCCTVReceiver(offer_in string, offer_out chan string) {
 
 			panic(err)
 		}
-	}
-}
-
-// JSON encode + base64 a SessionDescription
-func encode(obj *webrtcv4.SessionDescription) string {
-	b, err := json.Marshal(obj)
-	if err != nil {
-		panic(err)
-	}
-
-	return base64.StdEncoding.EncodeToString(b)
-}
-
-// Decode a base64 and unmarshal JSON into a SessionDescription
-func decode(in string, obj *webrtcv4.SessionDescription) {
-	b, err := base64.StdEncoding.DecodeString(in)
-	if err != nil {
-		panic(err)
-	}
-
-	if err = json.Unmarshal(b, obj); err != nil {
-		panic(err)
 	}
 }

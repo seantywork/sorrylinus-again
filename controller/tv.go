@@ -160,7 +160,9 @@ func (tvctl *TV_CTL) Start() error {
 
 	} else if tvctl.TVMode.STREAM_Peer {
 
-		streamctl := STREAM_CTL{}
+		streamctl := STREAM_CTL{
+			TurnServerAddr: TVCONFIG.TurnServerAddr,
+		}
 
 		if err := streamctl.StartPeers(); err != nil {
 
@@ -170,7 +172,9 @@ func (tvctl *TV_CTL) Start() error {
 
 	} else if tvctl.TVMode.STREAM_CCTV {
 
-		streamctl := STREAM_CTL{}
+		streamctl := STREAM_CTL{
+			TurnServerAddr: TVCONFIG.TurnServerAddr,
+		}
 
 		if err := streamctl.StartCCTV(); err != nil {
 

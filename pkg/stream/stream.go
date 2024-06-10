@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"time"
@@ -8,14 +9,20 @@ import (
 	"github.com/pion/webrtc/v4"
 )
 
+type CLIENT_REQ struct {
+	Data string `json:"data"`
+}
+
+type SERVER_RE struct {
+	Status string `json:"status"`
+	Reply  string `json:"reply"`
+}
+
 const (
 	rtcpPLIInterval = time.Second * 3
 )
 
-// Sdp represent session description protocol describe media communication sessions
-type Sdp struct {
-	Sdp string
-}
+var TurnServerAddr string = ""
 
 func recieveTrack(peerConnection *webrtc.PeerConnection,
 	peerConnectionMap map[string]chan *webrtc.TrackLocalStaticRTP,
@@ -25,6 +32,8 @@ func recieveTrack(peerConnection *webrtc.PeerConnection,
 	}
 	localTrack := <-peerConnectionMap[peerID]
 	peerConnection.AddTrack(localTrack)
+
+	fmt.Printf("connection map: %s\n", len(peerConnectionMap))
 
 }
 

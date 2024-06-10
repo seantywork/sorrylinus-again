@@ -8,6 +8,15 @@ import (
 
 func main() {
 
+	err := tvctl.LoadConfig()
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+
+		return
+	}
+
 	tvctlrunner := tvctl.TV_CTL{
 		TVMode: tvctl.TV_MODE{
 			RAW_Window:    false,
@@ -15,8 +24,8 @@ func main() {
 			YOLO_Std:      false,
 			YOLO_Endpoint: false,
 			STREAM_File:   false,
-			STREAM_Peer:   false,
-			STREAM_CCTV:   true,
+			STREAM_Peer:   true,
+			STREAM_CCTV:   false,
 		},
 	}
 

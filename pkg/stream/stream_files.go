@@ -55,7 +55,7 @@ func CreateStreamServerForFiles() (*gin.Engine, error) {
 
 			fmt.Println("no extension specified")
 
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid format"})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid format"})
 
 			return
 		}
@@ -66,7 +66,7 @@ func CreateStreamServerForFiles() (*gin.Engine, error) {
 
 			fmt.Println("extension not allowed")
 
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid format"})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid format"})
 
 			return
 
@@ -80,7 +80,7 @@ func CreateStreamServerForFiles() (*gin.Engine, error) {
 
 		c.SaveUploadedFile(file, upload_path)
 
-		c.JSON(http.StatusOK, gin.H{"status": "success"})
+		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: "uploaded"})
 
 	})
 
@@ -96,7 +96,7 @@ func CreateStreamServerForFiles() (*gin.Engine, error) {
 
 			fmt.Println("path doesn't exist")
 
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+			c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid format"})
 
 			return
 
