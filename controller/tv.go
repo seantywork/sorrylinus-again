@@ -16,8 +16,9 @@ type TV_MODE struct {
 	YOLO_Std      bool
 	YOLO_Endpoint bool
 	STREAM_File   bool
-	STREAM_Peer   bool
 	STREAM_CCTV   bool
+	STREAM_Peer   bool
+	STREAM_Room   bool
 }
 
 func (tvctl *TV_CTL) Start() error {
@@ -170,6 +171,18 @@ func (tvctl *TV_CTL) Start() error {
 
 		}
 
+	} else if tvctl.TVMode.STREAM_Room {
+
+		streamctl := STREAM_CTL{
+			TurnServerAddr: TVCONFIG.TurnServerAddr,
+		}
+
+		if err := streamctl.StartRoom(); err != nil {
+
+			return fmt.Errorf("start: %s", err.Error())
+
+		}
+
 	} else if tvctl.TVMode.STREAM_CCTV {
 
 		streamctl := STREAM_CTL{
@@ -215,6 +228,11 @@ func (tvctl *TV_CTL) Verify() error {
 	}
 
 	if tvctl.TVMode.STREAM_Peer {
+
+		bool_count += 1
+	}
+
+	if tvctl.TVMode.STREAM_Room {
 
 		bool_count += 1
 	}

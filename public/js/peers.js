@@ -140,7 +140,6 @@ function startCall() {
             pcSender.createOffer().then(function(d){pcSender.setLocalDescription(d)})
         })
 
-  // you can use event listner so that you inform he is connected!
     pcSender.addEventListener('connectionstatechange', function (event) {
         if (pcSender.connectionState === 'connected') {
             console.log("pc sender connected")
@@ -208,16 +207,19 @@ function addReceiver(addUserId){
 
         receivers.innerHTML += `
         
-        <div class="layer2">
-            <video autoplay id="${receiver_id}" width="160" height="120" controls muted></video>
-        </div>
+        <video autoplay id="${receiver_id}" width="160" height="120" controls muted preload="none"></video>
+
 
         `
 
         let receiverVideo = document.getElementById(receiver_id)
+
+
         receiverVideo.srcObject = event.streams[0]
         receiverVideo.autoplay = true
         receiverVideo.controls = true
+
+
     }
 
 

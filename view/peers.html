@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-    <link rel="stylesheet" href="/public/css/peers_room.css">
+    <link rel="stylesheet" href="/public/css/peers.css">
 
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -27,15 +27,15 @@
         Start the call!
     </button>
 
-    <div class="container_row">
-        <video autoplay id="senderVideo" width="500" height="500" controls muted></video>
+    <div id="peer-receive"></div>
+
+    <div id="peer-send">
+        <video autoplay id="senderVideo" width="500" height="500" controls muted preload="none"></video>
     </div>
 
-    <div id="peer-receive" class="container_row">
 
-    </div>
 </body>
 
-<script src="/public/js/peers_room.js"></script>
+<script src="/public/js/peers.js"></script>
 
 </html>
