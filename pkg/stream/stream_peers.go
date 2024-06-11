@@ -3,7 +3,6 @@ package stream
 import (
 	"fmt"
 
-	"log"
 	"net/http"
 	"strconv"
 
@@ -12,13 +11,13 @@ import (
 	"github.com/pion/webrtc/v4"
 )
 
-func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
+func CreateStreamServerForPeers() (*gin.Engine, error) {
 
-	go createSignalHandlerForWS()
+	go createPeersSignalHandlerForWS()
 
 	router := CreateGenericServer()
 
-	peerConnectionMap := make(map[string]chan *webrtc.TrackLocalStaticRTP)
+	peerConnectionMap := make(map[string]*webrtc.TrackLocalStaticRTP)
 
 	m := &webrtc.MediaEngine{}
 
@@ -41,8 +40,8 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 	}
 	router.GET("/", func(c *gin.Context) {
 
-		c.HTML(200, "peers_room.html", gin.H{
-			"title": "Peers Room",
+		c.HTML(200, "peers.html", gin.H{
+			"title": "Peers",
 		})
 
 	})
@@ -89,6 +88,7 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 			return
 
 		}
+
 		if !isSender {
 			recieveTrack(peerConnection, peerConnectionMap, userID)
 		} else {
@@ -109,8 +109,15 @@ func CreateStreamServerForPeersRoom() (*gin.Engine, error) {
 
 		err = peerConnection.SetLocalDescription(answer)
 		if err != nil {
-			log.Fatal(err)
+
+			fmt.Println(err.Error())
+
+			c.JSON(http.StatusInternalServerError, SERVER_RE{Status: "error", Reply: "failed to process description"})
+
+			return
+
 		}
+
 		c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: Encode(answer)})
 	})
 
