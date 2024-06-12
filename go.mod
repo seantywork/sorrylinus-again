@@ -1,4 +1,4 @@
-module github.com/lineworld-lab/go-tv
+module github.com/lineworld-lab/go-boomerland
 
 go 1.21.5
 

@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 
-	pkgcv "github.com/lineworld-lab/go-tv/pkg/cv"
+	pkgcv "github.com/lineworld-lab/go-boomerland/pkg/cv"
 )
 
 type TV_CTL struct {

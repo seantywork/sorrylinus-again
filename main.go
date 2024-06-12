@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	tvctl "github.com/lineworld-lab/go-tv/controller"
+	tvctl "github.com/lineworld-lab/go-boomerland/controller"
 )
 
 func main() {

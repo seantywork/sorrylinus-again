@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 
-	pkgstream "github.com/lineworld-lab/go-tv/pkg/stream"
+	pkgstream "github.com/lineworld-lab/go-boomerland/pkg/stream"
 )
 
 type STREAM_CTL struct {
