@@ -1,3 +1,3 @@
-# go-tv
+# gogen-community
 
-(allegedly) portable golang multimedia utility
+go get your own community website that supports video streaming and meetings
