@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	pkgutils "github.com/lineworld-lab/go-tv/pkg/utils"
+	pkgutils "github.com/lineworld-lab/go-boomerland/pkg/utils"
 )
 
 var MAX_FILE_SIZE int64 = 838860800 // 800Mib

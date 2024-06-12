@@ -1,3 +1,3 @@
-# gogen-community
+# go-boomerland
 
-go get your own community website that supports video streaming and meetings
+let's stay simple, old, therefore beautiful while supporting video streaming and chat
