@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"image/color"
 
@@ -9,6 +10,8 @@ import (
 	"log"
 
 	"github.com/wimspaargaren/yolov3"
+
+	"github.com/gorilla/websocket"
 )
 
 func turn_on_gui_with_video() {
@@ -185,6 +188,74 @@ func print_bits() {
 	fmt.Println(bits)
 }
 
+type RT_REQ_DATA struct {
+	Command string `json:"command"`
+	Data    string `json:"data"`
+}
+
+type RT_RESP_DATA struct {
+	Status string `json:"status"`
+	Data   string `json:"data"`
+}
+
+func sorrylinus_roundtrip() {
+
+	// this is localhost actually
+
+	u := "ws://feebdaed.xyz:3000"
+
+	c, _, err := websocket.DefaultDialer.Dial(u, nil)
+
+	if err != nil {
+		log.Fatal("dial:", err)
+	}
+
+	defer c.Close()
+
+	go func() {
+		for {
+
+			resp_data := RT_RESP_DATA{}
+			err := c.ReadJSON(&resp_data)
+			if err != nil {
+				log.Println("read:", err)
+				return
+			}
+
+			data_b, _ := json.Marshal(resp_data)
+
+			log.Printf("recv: %s", string(data_b))
+		}
+	}()
+
+	auth_data := RT_REQ_DATA{
+		Command: "none",
+		Data:    "seantywork@gmail.com:letsshareitwiththewholeuniverse",
+	}
+
+	c.WriteJSON(auth_data)
+
+	var cmdin string
+
+	for {
+
+		cmdin = ""
+
+		req_data := RT_REQ_DATA{}
+
+		fmt.Printf("$ data: ")
+
+		fmt.Scanln(&cmdin)
+
+		req_data.Command = "ROUNDTRIP"
+		req_data.Data = cmdin
+
+		c.WriteJSON(req_data)
+
+	}
+
+}
+
 func main() {
 
 	//	turn_on_gui_with_video()
@@ -193,6 +264,8 @@ func main() {
 
 	//webcam_yolo()
 
-	print_bits()
+	// print_bits()
+
+	sorrylinus_roundtrip()
 
 }
