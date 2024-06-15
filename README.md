@@ -1,3 +1,3 @@
-# go-boomerland
+# sorrylinus-again
 
-let's stay simple, old, therefore beautiful while supporting video streaming and chat dashboard
+I'm sorry Linus, again, for abandoning C to create reliable and maintainable dashboard that supports video streaming and chat
