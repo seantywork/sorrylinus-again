@@ -6,20 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-    <link rel="stylesheet" href="/public/css/files.css">
-
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 </head>
 <body>
 
-    <form action="/files/upload" method="post" enctype="multipart/form-data">
+    <form action="/video/upload" method="post" enctype="multipart/form-data">
         <label for="file">File</label>
         <input id="file" name="file" type="file" />
         <button>Upload</button>
     </form>
 
 </body>
-<script src="/public/js/files.js"></script>
+<script src="/public/js/video.js"></script>
 </html>

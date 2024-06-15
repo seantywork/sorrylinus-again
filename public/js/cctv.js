@@ -65,7 +65,7 @@ function startSession() {
 
 async function getTurnServerAddressAndInit(){
 
-    let result = await axios.get("/peers/room/turn")
+    let result = await axios.get("/cctv/turn/address")
 
     if(result.data.status != "success"){
 
@@ -107,7 +107,6 @@ async function getTurnServerAddressAndInit(){
     
     // Offer to receive 1 audio, and 2 video tracks
     pc.addTransceiver('audio', {'direction': 'recvonly'})
-    pc.addTransceiver('video', {'direction': 'recvonly'})
     pc.addTransceiver('video', {'direction': 'recvonly'})
     pc.createOffer().then(function(d){ pc.setLocalDescription(d)}).catch(log)
 

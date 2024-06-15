@@ -1,247 +1,123 @@
-pcSignal = {}
-pcSender = {}
-pcRecievers = {}
-meetingId = "" 
-userId = ""
 
 
-// use http://localhost:4200/call;meetingId=07927fc8-af0a-11ea-b338-064f26a5f90a;userId=alice;peerId=bob
-// and http://localhost:4200/call;meetingId=07927fc8-af0a-11ea-b338-064f26a5f90a;userId=bob;peerId=alice
-// start the call
+pc = {}
+ws = {}
 
-TURN_SERVER_ADDRESS = ""
+PEERS_SIGNAL_ADDRESS = ""
 
-CLIENT_REQ = {
-    "data":""
-}
+function initSignal(){
 
 
-function initPeers() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(function(stream) {
+            pc = new RTCPeerConnection()
+            pc.ontrack = function (event) {
+                if (event.track.kind === 'audio') {
+                    return
+                }
 
+                let el = document.createElement(event.track.kind)
+                el.srcObject = event.streams[0]
+                el.autoplay = true
+                el.controls = true
+                document.getElementById('remoteVideos').appendChild(el)
 
+                event.track.onmute = function(event) {
+                    el.play()
+                }
 
-    meetingId = document.getElementById('mid').value;
-
-
-    userId = document.getElementById('uid').value;
-
-
-    if (meetingId == ""){
-
-        alert("feed meeting ID!")
-
-        return
-
-    }
-
-    if (userId == ""){
-
-        alert("feed user ID!")
-
-        return
-
-    }
-
-
-
-
-    pcSender = new RTCPeerConnection({
-        iceServers: [
-            {
-            urls: TURN_SERVER_ADDRESS
+                event.streams[0].onremovetrack = function({track}) {
+                    if (el.parentNode) {
+                        el.parentNode.removeChild(el)
+                    }
+                }
             }
-        ]
-    })
+
+            document.getElementById('localVideo').srcObject = stream
+            stream.getTracks().forEach(function(track) {pc.addTrack(track, stream)})
+
+            if (location.protocol !== 'https:') {
+
+                ws = new WebSocket("ws://" + PEERS_SIGNAL_ADDRESS)
+
+            } else {
+
+                ws = new WebSocket("wss://" + PEERS_SIGNAL_ADDRESS)
 
 
-    pcSender.onicecandidate = async function(event) {
-        if (event.candidate === null) {
-
-            console.log("sender ice")
-
-            let sdpjson = JSON.parse(JSON.stringify(CLIENT_REQ))
-
-            sdpjson.data  = btoa(JSON.stringify(pcSender.localDescription))
-
-            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ userId + "/s/" + true, sdpjson)
-
-            pcSender.setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.reply))))
-            
-
-            initSignalUser(userId)
-
-        }
-    }
-
-
-
-}
-
-
-function initSignalUser(userId){
-
-
-
-    let uinfo = {
-        "command": "ADD",
-        "user_id": userId
-    }
-
-    pcSignal = new WebSocket("ws://localhost:8082/signal")
-
-
-    pcSignal.onopen = function (event) {
-
-
-        pcSignal.send(JSON.stringify(uinfo))
-
-    }
-
-
-    pcSignal.onmessage = function (event) {
-
-
-        let data = event.data 
-
-        console.log("received: ")
-        console.log(data)
-
-        let signal_data = JSON.parse(data)
-
-
-        if(signal_data.command == "ADDUSER") {
-
-
-            addReceiver(signal_data.user_id)
-
-        }
-
-
-
-
-    }
-
-
-
-}
-
-function startCall() {
-
-
-  // sender part of the call
-    navigator.mediaDevices.getUserMedia({video: true, audio: true})
-        .then(function(stream){
-            let senderVideo  = document.getElementById('senderVideo');
-            senderVideo.srcObject = stream;
-            let tracks = stream.getTracks();
-            for (let i = 0; i < tracks.length; i++) {
-                pcSender.addTrack(stream.getTracks()[i]);
             }
-            pcSender.createOffer().then(function(d){pcSender.setLocalDescription(d)})
-        })
 
-    pcSender.addEventListener('connectionstatechange', function (event) {
-        if (pcSender.connectionState === 'connected') {
-            console.log("pc sender connected")
-        }
-    })
+            pc.onicecandidate = function(e){
+                
+                if (!e.candidate) {
+                    return
+                }
 
-
-
-}
-
-
-function addReceiver(addUserId){
-
-
-
-    pcRecievers[addUserId] = new RTCPeerConnection({
-        iceServers: [
-            {
-            urls: TURN_SERVER_ADDRESS
+                ws.send(JSON.stringify({command: 'candidate', data: btoa(JSON.stringify(e.candidate))}))
             }
-        ]
-    })
 
-    
+            ws.onclose = function(evt) {
+                window.alert("Websocket has closed")
+            }
 
-    pcRecievers[addUserId].onicecandidate = async function(event) {
-        if (event.candidate === null) {
+            ws.onmessage = function(evt) {
+                let msg = JSON.parse(evt.data)
 
-            console.log("receiver ice")
-
-            let sdpjson = JSON.parse(JSON.stringify(CLIENT_REQ))
-
-            sdpjson.data = btoa(JSON.stringify(pcRecievers[addUserId].localDescription))
-
-            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ addUserId + "/s/" + false, sdpjson)
-            
-            pcRecievers[addUserId].setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.reply))))
-
-        }
-    }
+                if (!msg) {
+                    return console.log('failed to parse msg')
+                }
 
 
+                switch (msg.command) {
+                    case 'offer':
+                    let offer = JSON.parse(atob(msg.data))
+                    if (!offer) {
+                        return console.log('failed to parse answer')
+                    }
+                    pc.setRemoteDescription(offer)
+                    pc.createAnswer().then(function(answer) {
+                        pc.setLocalDescription(answer)
+                        ws.send(JSON.stringify({command: 'answer', data: btoa(JSON.stringify(answer))}))
+                    })
+                    return
 
+                    case 'candidate':
+                    let candidate = JSON.parse(atob(msg.data))
+                    if (!candidate) {
+                        return console.log('failed to parse candidate')
+                    }
 
-    pcRecievers[addUserId].addTransceiver("video", 
-        {"direction": "recvonly"}
-    )
+                    pc.addIceCandidate(candidate)
+                }
+            }
 
+            ws.onerror = function(evt) {
+                console.log("ERROR: " + evt.data)
+            }
 
-
-    pcRecievers[addUserId].createOffer()
-        .then(function(d) {
-            pcRecievers[addUserId].setLocalDescription(d)
-        })
-
-
-
-
-
-    pcRecievers[addUserId].ontrack = function (event) {
-
-        let receiver_id = "receiverVideo-" + addUserId
-
-        let receivers = document.getElementById('peer-receive')
-
-        receivers.innerHTML += `
-        
-        <video autoplay id="${receiver_id}" width="160" height="120" controls muted preload="none"></video>
-
-
-        `
-
-        let receiverVideo = document.getElementById(receiver_id)
-
-
-        receiverVideo.srcObject = event.streams[0]
-        receiverVideo.autoplay = true
-        receiverVideo.controls = true
-
-
-    }
-
+    }).catch(window.alert)
 
 }
 
-async function getTurnServerAddress(){
+async function getSignalAddr(){
 
-    let result = await axios.get("/peers/room/turn")
+
+    let result = await axios.get("/peers/signal/address")
 
     if(result.data.status != "success"){
 
-        alert("failed to get turn server address")
+        alert("failed to get peers signal address")
 
         return
     }
 
 
-    TURN_SERVER_ADDRESS = result.data.reply 
+    PEERS_SIGNAL_ADDRESS = result.data.reply 
 
-    console.log("turnServerAddr: " + TURN_SERVER_ADDRESS)
+    console.log("peersSignalAddr: " + PEERS_SIGNAL_ADDRESS)
+    
 
 }
 
 
-getTurnServerAddress()
+getSignalAddr()

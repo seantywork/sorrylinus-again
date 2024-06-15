@@ -1,16 +1,34 @@
 package stream
 
 import (
-	"fmt"
-
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/pion/webrtc/v4"
 )
 
+func GetPeersIndex(c *gin.Context) {
+
+	c.HTML(200, "peers.html", gin.H{
+		"title": "Peers",
+	})
+
+}
+
+func GetPeersSignalAddress(c *gin.Context) {
+
+	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT + "/peers/signal"
+
+	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: s_addr})
+
+}
+
+func InitPeersSignalOn(peerSignalPath string) {
+
+	runPeersSignalHandlerForWS(peerSignalPath)
+
+}
+
+/*
 func CreateStreamServerForPeers() (*gin.Engine, error) {
 
 	go createPeersSignalHandlerForWS()
@@ -124,3 +142,5 @@ func CreateStreamServerForPeers() (*gin.Engine, error) {
 	return router, nil
 
 }
+
+*/

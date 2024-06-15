@@ -1,4 +1,4 @@
-module github.com/lineworld-lab/go-boomerland
+module github.com/seantywork/sorrylinus-again
 
 go 1.21.5
 

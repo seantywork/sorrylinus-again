@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 
-	tvctl "github.com/lineworld-lab/go-boomerland/controller"
+	solictl "github.com/seantywork/sorrylinus-again/ctl"
 )
 
 func main() {
 
-	err := tvctl.LoadConfig()
+	err := solictl.LoadConfig()
 
 	if err != nil {
 
@@ -17,23 +17,8 @@ func main() {
 		return
 	}
 
-	tvctlrunner := tvctl.TV_CTL{
-		TVMode: tvctl.TV_MODE{
-			RAW_Window:    false,
-			YOLO_Window:   false,
-			YOLO_Std:      false,
-			YOLO_Endpoint: false,
-			STREAM_File:   false,
-			STREAM_Peer:   false,
-			STREAM_CCTV:   false,
-			STREAM_Room:   true,
-		},
-	}
+	server := solictl.CreateServer()
 
-	if err := tvctlrunner.Start(); err != nil {
-
-		fmt.Println(err.Error())
-
-	}
+	server.Run()
 
 }

@@ -19,11 +19,11 @@ type SERVER_RE struct {
 	Reply  string `json:"reply"`
 }
 
-const (
-	rtcpPLIInterval = time.Second * 3
-)
+var EXTERNAL_URL string
 
-var TurnServerAddr string = ""
+var RTCP_PLI_INTERVAL time.Duration
+
+var TURN_SERVER_ADDR string
 
 func recieveTrack(peerConnection *webrtc.PeerConnection,
 	peerConnectionMap map[string]*webrtc.TrackLocalStaticRTP,
@@ -62,7 +62,7 @@ func createTrack(peerConnection *webrtc.PeerConnection,
 		// This can be less wasteful by processing incoming RTCP events, then we would emit a NACK/PLI when a viewer requests it
 
 		go func() {
-			ticker := time.NewTicker(rtcpPLIInterval)
+			ticker := time.NewTicker(RTCP_PLI_INTERVAL)
 			for range ticker.C {
 				if rtcpSendErr := peerConnection.WriteRTCP([]rtcp.Packet{&rtcp.PictureLossIndication{MediaSSRC: uint32(remoteTrack.RtxSSRC())}}); rtcpSendErr != nil {
 					fmt.Println(rtcpSendErr)
