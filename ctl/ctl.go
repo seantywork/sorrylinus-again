@@ -43,9 +43,15 @@ func CreateServer() *gin.Engine {
 
 	genserver.GET("/cctv", pkgstream.GetCCTVIndex)
 
-	genserver.GET("/cctv/turn/address", pkgstream.GetCCTVTurnServeAddr)
+	genserver.POST("/cctv/create", pkgstream.PostCCTVCreate)
 
-	genserver.POST("/cctv/offer", pkgstream.PostCCTVOffer)
+	// cctv local
+
+	genserver.GET("/cctv/local", pkgstream.GetCCTVLocalIndex)
+
+	genserver.GET("/cctv/local/turn/address", pkgstream.GetCCTVLocalTurnServeAddr)
+
+	genserver.POST("/cctv/local/offer", pkgstream.PostCCTVLocalOffer)
 
 	// video
 

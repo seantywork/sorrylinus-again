@@ -1,35 +1,41 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>webrtc client</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+<html>
+  <head>
+    <title> RTMP to WebRTC </title>
+  </head>
 
-    <link rel="stylesheet" href="/public/css/cctv.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <body>
+    <h1> RTMP to WebRTC </h1>
+    <div id="rtmpFeed"></div>
+  </body>
 
-    <script src="/public/js/cctv.js"></script>
+  <script>
+    let pc = new RTCPeerConnection()
+    pc.ontrack = function (event) {
+      var el = document.createElement(event.track.kind)
+      el.srcObject = event.streams[0]
+      el.autoplay = true
+      el.controls = true
 
-</head>
-<body>
-    Browser base64 Session Description<br />
-    <textarea id="localSessionDescription" readonly="true"></textarea> <br />
+      document.getElementById('rtmpFeed').appendChild(el)
+    }
 
-    <button onclick="startCCTVOffer()"> Start offer </button><br />
-    
-    Golang base64 Session Description<br />
-    <textarea id="remoteSessionDescription"> </textarea> <br/>
-    <button onclick="startSession()"> Start Session </button><br />
-    
-    <br />
-    
-    Video<br />
-    <div id="remoteVideos"></div> <br />
-    
-    Logs<br />
-    <div id="div"></div>
-    
-</body>
-
+    pc.addTransceiver('video')
+    pc.addTransceiver('audio')
+    pc.createOffer()
+      .then(offer => {
+        pc.setLocalDescription(offer)
+        console.log(offer)
+        return fetch(`/cctv/create`, {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(offer)
+        })
+      })
+      .then(res => res.json())
+      .then(res => pc.setRemoteDescription(res))
+      .catch(alert)
+  </script>
 </html>

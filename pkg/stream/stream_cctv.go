@@ -1,199 +1,190 @@
 package stream
 
 import (
-	"errors"
-	"fmt"
+	"bytes"
+	"encoding/binary"
+	"encoding/json"
 	"io"
+	"log"
 	"net"
-	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	webrtcv4 "github.com/pion/webrtc/v4"
-	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
+	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v4/pkg/media"
+	"github.com/pkg/errors"
+	flvtag "github.com/yutopp/go-flv/tag"
+	"github.com/yutopp/go-rtmp"
+	rtmpmsg "github.com/yutopp/go-rtmp/message"
 )
-
-var UDP_BUFFER_BYTE_SIZE int
-
-var RTP_RECEIVE_ADDR string
-
-var RTP_RECEIVE_PORT string
-
-var RECV_STARTED int = 0
 
 func GetCCTVIndex(c *gin.Context) {
 
 	c.HTML(200, "cctv.html", gin.H{
 		"title": "CCTV",
 	})
-}
-
-func GetCCTVTurnServeAddr(c *gin.Context) {
-
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TURN_SERVER_ADDR})
 
 }
 
-func PostCCTVOffer(c *gin.Context) {
+func PostCCTVCreate(c *gin.Context) {
+	log.Println("Incoming HTTP Request")
 
-	if RECV_STARTED == 1 {
-
-		fmt.Println("recv already started")
-
-		c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid request"})
-
-		return
-	}
-
-	var offerjson CLIENT_REQ
-
-	if err := c.BindJSON(&offerjson); err != nil {
-
-		fmt.Println("failed to get request body")
-
-		c.JSON(http.StatusBadRequest, SERVER_RE{Status: "error", Reply: "invalid format"})
-
-		return
-
-	}
-
-	offer_out := make(chan string)
-
-	go startCCTVReceiver(offerjson.Data, offer_out)
-
-	offer_out_str := <-offer_out
-
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: offer_out_str})
-
-}
-func startCCTVReceiver(offer_in string, offer_out chan string) {
-
-	peerConnection, err := webrtcv4.NewPeerConnection(webrtcv4.Configuration{
-		ICEServers: []webrtcv4.ICEServer{
-			{
-				URLs: []string{TURN_SERVER_ADDR},
-			},
-		},
-	})
+	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{})
 	if err != nil {
 		panic(err)
 	}
 
-	var udp_port int
-
-	fmt.Sscanf(RTP_RECEIVE_PORT, "%d", &udp_port)
-
-	listener, err := net.ListenUDP("udp", &net.UDPAddr{IP: net.ParseIP(RTP_RECEIVE_ADDR), Port: udp_port})
+	videoTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeH264}, "video", "pion")
 	if err != nil {
 		panic(err)
 	}
+	if _, err = peerConnection.AddTrack(videoTrack); err != nil {
+		panic(err)
+	}
 
-	// Increase the UDP receive buffer size
-	// Default UDP buffer sizes vary on different operating systems
-	bufferSize := UDP_BUFFER_BYTE_SIZE // 300KB
-	err = listener.SetReadBuffer(bufferSize)
+	audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMA}, "audio", "pion")
 	if err != nil {
 		panic(err)
 	}
-
-	defer func() {
-		if err = listener.Close(); err != nil {
-			panic(err)
-		}
-	}()
-
-	// Create a video track
-	videoTrack, err := webrtcv4.NewTrackLocalStaticRTP(webrtcv4.RTPCodecCapability{MimeType: webrtcv4.MimeTypeVP8}, "video", "pion")
-	if err != nil {
-		panic(err)
-	}
-	rtpSender, err := peerConnection.AddTrack(videoTrack)
-	if err != nil {
+	if _, err = peerConnection.AddTrack(audioTrack); err != nil {
 		panic(err)
 	}
 
-	// Read incoming RTCP packets
-	// Before these packets are returned they are processed by interceptors. For things
-	// like NACK this needs to be called.
-	go func() {
-		rtcpBuf := make([]byte, 1500)
-		for {
-			if _, _, rtcpErr := rtpSender.Read(rtcpBuf); rtcpErr != nil {
-				return
-			}
-		}
-	}()
-
-	// Set the handler for ICE connection state
-	// This will notify you when the peer has connected/disconnected
-	peerConnection.OnICEConnectionStateChange(func(connectionState webrtcv4.ICEConnectionState) {
-		fmt.Printf("Connection State has changed %s \n", connectionState.String())
-
-		if connectionState == webrtcv4.ICEConnectionStateFailed {
-			if closeErr := peerConnection.Close(); closeErr != nil {
-				panic(closeErr)
-			}
-		}
-	})
-
-	// Wait for the offer to be pasted
-	offer := webrtcv4.SessionDescription{}
-	pkgutils.Decode(offer_in, &offer)
-
-	// Set the remote SessionDescription
-	if err = peerConnection.SetRemoteDescription(offer); err != nil {
+	var offer webrtc.SessionDescription
+	if err := json.NewDecoder(c.Request.Body).Decode(&offer); err != nil {
 		panic(err)
 	}
 
-	// Create answer
+	if err := peerConnection.SetRemoteDescription(offer); err != nil {
+		panic(err)
+	}
+
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 	answer, err := peerConnection.CreateAnswer(nil)
 	if err != nil {
 		panic(err)
-	}
-
-	// Create channel that is blocked until ICE Gathering is complete
-	gatherComplete := webrtcv4.GatheringCompletePromise(peerConnection)
-
-	// Sets the LocalDescription, and starts our UDP listeners
-	if err = peerConnection.SetLocalDescription(answer); err != nil {
+	} else if err = peerConnection.SetLocalDescription(answer); err != nil {
 		panic(err)
 	}
-
-	// Block until ICE Gathering is complete, disabling trickle ICE
-	// we do this because we only can exchange one signaling message
-	// in a production application you should exchange ICE Candidates via OnICECandidate
 	<-gatherComplete
 
-	// Output the answer in base64 so we can paste it in browser
+	c.JSON(200, peerConnection.LocalDescription())
 
-	localdesc := pkgutils.Encode(peerConnection.LocalDescription())
+	go startRTMPServer(peerConnection, videoTrack, audioTrack)
+}
 
-	offer_out <- localdesc
+func startRTMPServer(peerConnection *webrtc.PeerConnection, videoTrack, audioTrack *webrtc.TrackLocalStaticSample) {
+	log.Println("Starting RTMP Server")
 
-	// Read RTP packets forever and send them to the WebRTC Client
-	inboundRTPPacket := make([]byte, 1600) // UDP MTU
-
-	RECV_STARTED = 1
-
-	for {
-		n, _, err := listener.ReadFrom(inboundRTPPacket)
-		if err != nil {
-
-			RECV_STARTED = 0
-
-			panic(fmt.Sprintf("error during read: %s", err))
-		}
-
-		if _, err = videoTrack.Write(inboundRTPPacket[:n]); err != nil {
-			if errors.Is(err, io.ErrClosedPipe) {
-				// The peerConnection has been closed.
-
-				RECV_STARTED = 0
-				return
-			}
-
-			RECV_STARTED = 0
-
-			panic(err)
-		}
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":8084")
+	if err != nil {
+		log.Panicf("Failed: %+v", err)
 	}
+
+	listener, err := net.ListenTCP("tcp", tcpAddr)
+	if err != nil {
+		log.Panicf("Failed: %+v", err)
+	}
+
+	srv := rtmp.NewServer(&rtmp.ServerConfig{
+		OnConnect: func(conn net.Conn) (io.ReadWriteCloser, *rtmp.ConnConfig) {
+			return conn, &rtmp.ConnConfig{
+				Handler: &Handler{
+					peerConnection: peerConnection,
+					videoTrack:     videoTrack,
+					audioTrack:     audioTrack,
+				},
+
+				ControlState: rtmp.StreamControlStateConfig{
+					DefaultBandwidthWindowSize: 6 * 1024 * 1024 / 8,
+				},
+			}
+		},
+	})
+	if err := srv.Serve(listener); err != nil {
+		log.Panicf("Failed: %+v", err)
+	}
+}
+
+type Handler struct {
+	rtmp.DefaultHandler
+	peerConnection         *webrtc.PeerConnection
+	videoTrack, audioTrack *webrtc.TrackLocalStaticSample
+}
+
+func (h *Handler) OnServe(conn *rtmp.Conn) {
+}
+
+func (h *Handler) OnConnect(timestamp uint32, cmd *rtmpmsg.NetConnectionConnect) error {
+	log.Printf("OnConnect: %#v", cmd)
+	return nil
+}
+
+func (h *Handler) OnCreateStream(timestamp uint32, cmd *rtmpmsg.NetConnectionCreateStream) error {
+	log.Printf("OnCreateStream: %#v", cmd)
+	return nil
+}
+
+func (h *Handler) OnPublish(ctx *rtmp.StreamContext, timestamp uint32, cmd *rtmpmsg.NetStreamPublish) error {
+	log.Printf("OnPublish: %#v", cmd)
+
+	if cmd.PublishingName == "" {
+		return errors.New("PublishingName is empty")
+	}
+	return nil
+}
+
+func (h *Handler) OnAudio(timestamp uint32, payload io.Reader) error {
+	var audio flvtag.AudioData
+	if err := flvtag.DecodeAudioData(payload, &audio); err != nil {
+		return err
+	}
+
+	data := new(bytes.Buffer)
+	if _, err := io.Copy(data, audio.Data); err != nil {
+		return err
+	}
+
+	return h.audioTrack.WriteSample(media.Sample{
+		Data:     data.Bytes(),
+		Duration: 128 * time.Millisecond,
+	})
+}
+
+const headerLengthField = 4
+
+func (h *Handler) OnVideo(timestamp uint32, payload io.Reader) error {
+	var video flvtag.VideoData
+	if err := flvtag.DecodeVideoData(payload, &video); err != nil {
+		return err
+	}
+
+	data := new(bytes.Buffer)
+	if _, err := io.Copy(data, video.Data); err != nil {
+		return err
+	}
+
+	outBuf := []byte{}
+	videoBuffer := data.Bytes()
+	for offset := 0; offset < len(videoBuffer); {
+		bufferLength := int(binary.BigEndian.Uint32(videoBuffer[offset : offset+headerLengthField]))
+		if offset+bufferLength >= len(videoBuffer) {
+			break
+		}
+
+		offset += headerLengthField
+		outBuf = append(outBuf, []byte{0x00, 0x00, 0x00, 0x01}...)
+		outBuf = append(outBuf, videoBuffer[offset:offset+bufferLength]...)
+
+		offset += int(bufferLength)
+	}
+
+	return h.videoTrack.WriteSample(media.Sample{
+		Data:     outBuf,
+		Duration: time.Second / 30,
+	})
+}
+
+func (h *Handler) OnClose() {
+	log.Printf("OnClose")
 }
