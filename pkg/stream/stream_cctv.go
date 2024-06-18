@@ -12,6 +12,8 @@ import (
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
 
+var UDP_BUFFER_BYTE_SIZE int
+
 var RTP_RECEIVE_ADDR string
 
 var RTP_RECEIVE_PORT string
@@ -76,8 +78,6 @@ func startCCTVReceiver(offer_in string, offer_out chan string) {
 		panic(err)
 	}
 
-	// Open a UDP Listener for RTP Packets on port 5004
-
 	var udp_port int
 
 	fmt.Sscanf(RTP_RECEIVE_PORT, "%d", &udp_port)
@@ -89,7 +89,7 @@ func startCCTVReceiver(offer_in string, offer_out chan string) {
 
 	// Increase the UDP receive buffer size
 	// Default UDP buffer sizes vary on different operating systems
-	bufferSize := 300000 // 300KB
+	bufferSize := UDP_BUFFER_BYTE_SIZE // 300KB
 	err = listener.SetReadBuffer(bufferSize)
 	if err != nil {
 		panic(err)

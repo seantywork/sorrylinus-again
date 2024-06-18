@@ -53,7 +53,7 @@ $(VENDOR_FFMPEG):
 
 build:
 
-	go build -o tv.out .
+	go build -o soliagain.out .
 
 
 .PHONY: test

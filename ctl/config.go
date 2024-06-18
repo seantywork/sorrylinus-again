@@ -2,7 +2,6 @@ package controller
 
 import (
 	"os"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,12 +12,13 @@ type SOLIAGAIN_CONFIG struct {
 	ServePort   string `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
 	Stream      struct {
-		TurnServerAddr  string        `yaml:"turnServerAddr"`
-		RtcpPLIInterval time.Duration `yaml:"rtcpPLIInterval"`
-		UploadDest      string        `yaml:"uploadDest"`
-		ExtAllowList    []string      `yaml:"extAllowList"`
-		SignalPort      string        `yaml:"signalPort"`
-		RtpReceivePort  string        `yaml:"rtpReceivePort"`
+		TurnServerAddr    string   `yaml:"turnServerAddr"`
+		RtcpPLIInterval   int      `yaml:"rtcpPLIInterval"`
+		UploadDest        string   `yaml:"uploadDest"`
+		ExtAllowList      []string `yaml:"extAllowList"`
+		UdpBufferByteSize int      `yaml:"udpBufferByteSize"`
+		SignalPort        string   `yaml:"signalPort"`
+		RtpReceivePort    string   `yaml:"rtpReceivePort"`
 	} `yaml:"stream"`
 	Utils struct {
 		UseCompress bool `yaml:"useCompress"`

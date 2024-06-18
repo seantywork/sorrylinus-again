@@ -17,9 +17,11 @@ func CreateServer() *gin.Engine {
 	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
 
 	pkgstream.TURN_SERVER_ADDR = CONF.Stream.TurnServerAddr
-	pkgstream.RTCP_PLI_INTERVAL = time.Second * CONF.Stream.RtcpPLIInterval
+	pkgstream.RTCP_PLI_INTERVAL = time.Second * time.Duration(CONF.Stream.RtcpPLIInterval)
 	pkgstream.UPLOAD_DEST = CONF.Stream.UploadDest
 	pkgstream.EXTENSION_ALLOWLIST = CONF.Stream.ExtAllowList
+
+	pkgstream.UDP_BUFFER_BYTE_SIZE = CONF.Stream.UdpBufferByteSize
 
 	pkgstream.SIGNAL_ADDR = CONF.ServeAddr
 	pkgstream.SIGNAL_PORT = CONF.Stream.SignalPort
