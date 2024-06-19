@@ -14,10 +14,6 @@ import (
 
 var UDP_BUFFER_BYTE_SIZE int
 
-var RTP_RECEIVE_ADDR string
-
-var RTP_RECEIVE_PORT string
-
 var RECV_STARTED int = 0
 
 func GetCCTVLocalIndex(c *gin.Context) {

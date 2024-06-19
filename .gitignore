@@ -3,3 +3,4 @@ vendor/gocv
 vendor/yolo
 *.out
 *.mp4
+oauth.json

@@ -23,13 +23,13 @@ var UPGRADER = websocket.Upgrader{}
 
 type SIGNAL_INFO struct {
 	Command string `json:"command"`
-	UserID  string `json:"user_id"`
+	Status  string `json:"status"`
 	Data    string `json:"data"`
 }
 
 var listLock sync.RWMutex
-var peerConnections []peerConnectionState
-var trackLocals map[string]*webrtc.TrackLocalStaticRTP
+var peerConnections = make([]peerConnectionState, 0)
+var trackLocals = make(map[string]*webrtc.TrackLocalStaticRTP)
 
 type peerConnectionState struct {
 	peerConnection *webrtc.PeerConnection
@@ -199,7 +199,7 @@ func peerSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	uid := sinfo.UserID
+	uid := sinfo.Data
 
 	old_c, okay := USER_SIGNAL[uid]
 
@@ -217,7 +217,7 @@ func peerSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 		new_uinfo := SIGNAL_INFO{
 			Command: "ADDUSER",
-			UserID:  uid,
+			Data:    uid,
 		}
 
 		v.WriteJSON(&new_uinfo)
@@ -225,7 +225,7 @@ func peerSignalHandler(w http.ResponseWriter, r *http.Request) {
 		old_uinfo := SIGNAL_INFO{
 
 			Command: "ADDUSER",
-			UserID:  k,
+			Data:    k,
 		}
 
 		c.WriteJSON(&old_uinfo)

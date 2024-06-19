@@ -63,7 +63,7 @@ function initPeers() {
 
             sdpjson.data  = btoa(JSON.stringify(pcSender.localDescription))
 
-            let resp = await axios.post("/peers/room/sdp/m/" + meetingId + "/c/"+ userId + "/s/" + true, sdpjson)
+            let resp = await axios.post("/api/peers/room/sdp/m/" + meetingId + "/c/"+ userId + "/s/" + true, sdpjson)
 
             pcSender.setRemoteDescription(new RTCSessionDescription(JSON.parse(atob(resp.data.reply))))
             

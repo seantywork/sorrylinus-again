@@ -74,6 +74,7 @@ function initSignal(){
                     if (!offer) {
                         return console.log('failed to parse answer')
                     }
+
                     pc.setRemoteDescription(offer)
                     pc.createAnswer().then(function(answer) {
                         pc.setLocalDescription(answer)

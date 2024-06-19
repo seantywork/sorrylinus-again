@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var PEERS_SIGNAL_PATH string
+
 func GetPeersIndex(c *gin.Context) {
 
 	c.HTML(200, "peers.html", gin.H{
@@ -16,13 +18,15 @@ func GetPeersIndex(c *gin.Context) {
 
 func GetPeersSignalAddress(c *gin.Context) {
 
-	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT + "/peers/signal"
+	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT + PEERS_SIGNAL_PATH
 
 	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: s_addr})
 
 }
 
 func InitPeersSignalOn(peerSignalPath string) {
+
+	PEERS_SIGNAL_PATH = peerSignalPath
 
 	runPeersSignalHandlerForWS(peerSignalPath)
 

@@ -19,6 +19,6 @@ func main() {
 
 	server := solictl.CreateServer()
 
-	server.Run()
+	server.Run(solictl.CONF.ServeAddr + ":" + solictl.CONF.ServePort)
 
 }

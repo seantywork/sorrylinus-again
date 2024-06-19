@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -18,6 +19,27 @@ import (
 	rtmpmsg "github.com/yutopp/go-rtmp/message"
 )
 
+var RTP_RECEIVE_ADDR string
+
+var RTP_RECEIVE_PORT string
+
+var RTP_CONSUMERS = make(map[string]RTMPWebRTCPeer)
+
+const RTP_HEADER_LENGTH_FIELD = 4
+
+var TEST_KEY string = "foobar"
+
+type RTMPHandler struct {
+	rtmp.DefaultHandler
+	PublisherKey string
+}
+
+type RTMPWebRTCPeer struct {
+	peerConnection *webrtc.PeerConnection
+	videoTrack     *webrtc.TrackLocalStaticSample
+	audioTrack     *webrtc.TrackLocalStaticSample
+}
+
 func GetCCTVIndex(c *gin.Context) {
 
 	c.HTML(200, "cctv.html", gin.H{
@@ -27,6 +49,7 @@ func GetCCTVIndex(c *gin.Context) {
 }
 
 func PostCCTVCreate(c *gin.Context) {
+
 	log.Println("Incoming HTTP Request")
 
 	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{})
@@ -50,8 +73,20 @@ func PostCCTVCreate(c *gin.Context) {
 		panic(err)
 	}
 
+	var req CLIENT_REQ
+
 	var offer webrtc.SessionDescription
-	if err := json.NewDecoder(c.Request.Body).Decode(&offer); err != nil {
+
+	if err := c.BindJSON(&req); err != nil {
+
+		panic(err)
+
+	}
+
+	err = json.Unmarshal([]byte(req.Data), &offer)
+
+	if err != nil {
+
 		panic(err)
 	}
 
@@ -68,15 +103,43 @@ func PostCCTVCreate(c *gin.Context) {
 	}
 	<-gatherComplete
 
+	/*
+
+		TODO:
+			remove test key
+
+	*/
+	RTP_CONSUMERS[TEST_KEY] = RTMPWebRTCPeer{
+		peerConnection: peerConnection,
+		videoTrack:     videoTrack,
+		audioTrack:     audioTrack,
+	}
+
 	c.JSON(200, peerConnection.LocalDescription())
 
-	go startRTMPServer(peerConnection, videoTrack, audioTrack)
 }
 
-func startRTMPServer(peerConnection *webrtc.PeerConnection, videoTrack, audioTrack *webrtc.TrackLocalStaticSample) {
+func PostCCTVDelete(c *gin.Context) {
+
+	/*
+
+		TODO:
+			sorrylinus exchange
+
+	*/
+
+	var resp SERVER_RE
+
+	resp.Status = "success"
+	resp.Reply = ""
+
+	c.JSON(200, resp)
+}
+
+func InitRTMPServer() {
 	log.Println("Starting RTMP Server")
 
-	tcpAddr, err := net.ResolveTCPAddr("tcp", ":8084")
+	tcpAddr, err := net.ResolveTCPAddr("tcp", RTP_RECEIVE_ADDR+":"+RTP_RECEIVE_PORT)
 	if err != nil {
 		log.Panicf("Failed: %+v", err)
 	}
@@ -89,11 +152,7 @@ func startRTMPServer(peerConnection *webrtc.PeerConnection, videoTrack, audioTra
 	srv := rtmp.NewServer(&rtmp.ServerConfig{
 		OnConnect: func(conn net.Conn) (io.ReadWriteCloser, *rtmp.ConnConfig) {
 			return conn, &rtmp.ConnConfig{
-				Handler: &Handler{
-					peerConnection: peerConnection,
-					videoTrack:     videoTrack,
-					audioTrack:     audioTrack,
-				},
+				Handler: &RTMPHandler{},
 
 				ControlState: rtmp.StreamControlStateConfig{
 					DefaultBandwidthWindowSize: 6 * 1024 * 1024 / 8,
@@ -106,36 +165,54 @@ func startRTMPServer(peerConnection *webrtc.PeerConnection, videoTrack, audioTra
 	}
 }
 
-type Handler struct {
-	rtmp.DefaultHandler
-	peerConnection         *webrtc.PeerConnection
-	videoTrack, audioTrack *webrtc.TrackLocalStaticSample
+func (h *RTMPHandler) OnServe(conn *rtmp.Conn) {
 }
 
-func (h *Handler) OnServe(conn *rtmp.Conn) {
-}
-
-func (h *Handler) OnConnect(timestamp uint32, cmd *rtmpmsg.NetConnectionConnect) error {
+func (h *RTMPHandler) OnConnect(timestamp uint32, cmd *rtmpmsg.NetConnectionConnect) error {
 	log.Printf("OnConnect: %#v", cmd)
 	return nil
 }
 
-func (h *Handler) OnCreateStream(timestamp uint32, cmd *rtmpmsg.NetConnectionCreateStream) error {
+func (h *RTMPHandler) OnCreateStream(timestamp uint32, cmd *rtmpmsg.NetConnectionCreateStream) error {
 	log.Printf("OnCreateStream: %#v", cmd)
 	return nil
 }
 
-func (h *Handler) OnPublish(ctx *rtmp.StreamContext, timestamp uint32, cmd *rtmpmsg.NetStreamPublish) error {
+func (h *RTMPHandler) OnPublish(ctx *rtmp.StreamContext, timestamp uint32, cmd *rtmpmsg.NetStreamPublish) error {
 	log.Printf("OnPublish: %#v", cmd)
 
 	if cmd.PublishingName == "" {
-		return errors.New("PublishingName is empty")
+
+		log.Printf("publishing name is empty")
+
+		return errors.New("publishing name is empty")
 	}
+
+	/*
+
+		TODO:
+			key validation
+
+	*/
+
+	h.PublisherKey = cmd.PublishingName
+
 	return nil
 }
 
-func (h *Handler) OnAudio(timestamp uint32, payload io.Reader) error {
+func (h *RTMPHandler) OnAudio(timestamp uint32, payload io.Reader) error {
 	var audio flvtag.AudioData
+
+	consumer, okay := RTP_CONSUMERS[h.PublisherKey]
+
+	if !okay {
+
+		return fmt.Errorf("invalid publisher")
+
+	}
+
+	consumerAudioTrack := consumer.audioTrack
+
 	if err := flvtag.DecodeAudioData(payload, &audio); err != nil {
 		return err
 	}
@@ -145,16 +222,25 @@ func (h *Handler) OnAudio(timestamp uint32, payload io.Reader) error {
 		return err
 	}
 
-	return h.audioTrack.WriteSample(media.Sample{
+	return consumerAudioTrack.WriteSample(media.Sample{
 		Data:     data.Bytes(),
 		Duration: 128 * time.Millisecond,
 	})
 }
 
-const headerLengthField = 4
-
-func (h *Handler) OnVideo(timestamp uint32, payload io.Reader) error {
+func (h *RTMPHandler) OnVideo(timestamp uint32, payload io.Reader) error {
 	var video flvtag.VideoData
+
+	consumer, okay := RTP_CONSUMERS[h.PublisherKey]
+
+	if !okay {
+
+		return fmt.Errorf("invalid publisher")
+
+	}
+
+	consumerVideoTrack := consumer.videoTrack
+
 	if err := flvtag.DecodeVideoData(payload, &video); err != nil {
 		return err
 	}
@@ -167,24 +253,24 @@ func (h *Handler) OnVideo(timestamp uint32, payload io.Reader) error {
 	outBuf := []byte{}
 	videoBuffer := data.Bytes()
 	for offset := 0; offset < len(videoBuffer); {
-		bufferLength := int(binary.BigEndian.Uint32(videoBuffer[offset : offset+headerLengthField]))
+		bufferLength := int(binary.BigEndian.Uint32(videoBuffer[offset : offset+RTP_HEADER_LENGTH_FIELD]))
 		if offset+bufferLength >= len(videoBuffer) {
 			break
 		}
 
-		offset += headerLengthField
+		offset += RTP_HEADER_LENGTH_FIELD
 		outBuf = append(outBuf, []byte{0x00, 0x00, 0x00, 0x01}...)
 		outBuf = append(outBuf, videoBuffer[offset:offset+bufferLength]...)
 
 		offset += int(bufferLength)
 	}
 
-	return h.videoTrack.WriteSample(media.Sample{
+	return consumerVideoTrack.WriteSample(media.Sample{
 		Data:     outBuf,
 		Duration: time.Second / 30,
 	})
 }
 
-func (h *Handler) OnClose() {
+func (h *RTMPHandler) OnClose() {
 	log.Printf("OnClose")
 }

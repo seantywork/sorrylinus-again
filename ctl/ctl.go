@@ -3,7 +3,9 @@ package controller
 import (
 	"time"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
 	pkgstream "github.com/seantywork/sorrylinus-again/pkg/stream"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
@@ -12,7 +14,23 @@ func CreateServer() *gin.Engine {
 
 	genserver := gin.Default()
 
-	genserver.MaxMultipartMemory = CONF.MaxFileSize
+	store := sessions.NewCookieStore([]byte("SOLIAGAIN"))
+
+	genserver.Use(sessions.Sessions("SOLIAGAIN", store))
+
+	ConfigureRuntime(genserver)
+
+	RegisterRoutes(genserver)
+
+	return genserver
+
+}
+
+func ConfigureRuntime(e *gin.Engine) {
+
+	e.MaxMultipartMemory = CONF.MaxFileSize
+
+	pkgauth.DEBUG = CONF.Debug
 
 	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
 
@@ -31,48 +49,54 @@ func CreateServer() *gin.Engine {
 
 	pkgutils.USE_COMPRESS = CONF.Utils.UseCompress
 
+}
+
+func RegisterRoutes(e *gin.Engine) {
+
 	// base
 
-	genserver.LoadHTMLGlob("view/*")
+	e.LoadHTMLGlob("view/*")
 
-	genserver.Static("/public", "./public")
+	e.Static("/public", "./public")
+
+	e.GET("/", GetIndex)
+
+	e.GET("/signin", GetSigninIndex)
+
+	e.GET("/api/oauth2/google/signin", pkgauth.OauthGoogleLogin)
+
+	e.GET("/oauth2/google/callback", pkgauth.OauthGoogleCallback)
+
+	pkgauth.InitAuth()
 
 	// stream
 
 	// cctv
 
-	genserver.GET("/cctv", pkgstream.GetCCTVIndex)
+	e.GET("/cctv", pkgstream.GetCCTVIndex)
 
-	genserver.POST("/cctv/create", pkgstream.PostCCTVCreate)
+	e.POST("/api/cctv/create", pkgstream.PostCCTVCreate)
 
-	// cctv local
+	e.POST("/api/cctv/delete", pkgstream.PostCCTVDelete)
 
-	genserver.GET("/cctv/local", pkgstream.GetCCTVLocalIndex)
-
-	genserver.GET("/cctv/local/turn/address", pkgstream.GetCCTVLocalTurnServeAddr)
-
-	genserver.POST("/cctv/local/offer", pkgstream.PostCCTVLocalOffer)
+	go pkgstream.InitRTMPServer()
 
 	// video
 
-	genserver.GET("/video", pkgstream.GetVideoIndex)
+	e.GET("/video", pkgstream.GetVideoIndex)
 
-	genserver.GET("/video/watch", pkgstream.GetVideoWatchPage)
+	e.GET("/api/video/watch", pkgstream.GetVideoWatchPage)
 
-	genserver.POST("/video/upload", pkgstream.PostVideoUpload)
+	e.POST("/api/video/upload", pkgstream.PostVideoUpload)
 
-	genserver.GET("/video/watch/c/:contentId", pkgstream.GetVideoWatchContentByID)
+	e.GET("/api/video/watch/c/:contentId", pkgstream.GetVideoWatchContentByID)
 
 	// peers
 
-	genserver.GET("/peers", pkgstream.GetPeersIndex)
+	e.GET("/peers", pkgstream.GetPeersIndex)
 
-	genserver.GET("/peers/signal/address", pkgstream.GetPeersSignalAddress)
+	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
 
-	go pkgstream.InitPeersSignalOn("/peers/signal")
-
-	// utils
-
-	return genserver
+	go pkgstream.InitPeersSignalOn("/ch/peers/signal")
 
 }

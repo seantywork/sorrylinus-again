@@ -34,7 +34,7 @@ async function startCCTVOffer(){
 
     offerjson.data = offer_val
 
-    let result = await axios.post("/cctv/offer", offerjson)
+    let result = await axios.post("/api/cctv/offer", offerjson)
 
     if (result.data.status != "success") {
 
@@ -65,7 +65,7 @@ function startSession() {
 
 async function getTurnServerAddressAndInit(){
 
-    let result = await axios.get("/cctv/turn/address")
+    let result = await axios.get("/api/cctv/turn/address")
 
     if(result.data.status != "success"){
 

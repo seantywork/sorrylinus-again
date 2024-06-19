@@ -7,6 +7,7 @@ import (
 )
 
 type SOLIAGAIN_CONFIG struct {
+	Debug       bool   `yaml:"debug"`
 	ExternalUrl string `yaml:"externalUrl"`
 	ServeAddr   string `yaml:"serveAddr"`
 	ServePort   string `yaml:"servePort"`

@@ -1,6 +1,7 @@
+debug: true
 externalUrl: "localhost"
 serveAddr: "0.0.0.0"
-servePort: "8080"
+servePort: "8000"
 maxFileSize: 838860800
 stream:
   turnServerAddr: "stun:stun.l.google.com:19302"
@@ -9,7 +10,7 @@ stream:
   extAllowList:
     - "mp4"
   udpBufferByteSize: 300000 
-  signalPort: "8082"
-  rtpReceivePort: "8084"
+  signalPort: "8002"
+  rtpReceivePort: "8004"
 utils:
   useCompress: false
