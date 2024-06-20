@@ -388,7 +388,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			log.Printf("ignore client ice candidiate")
+			log.Printf("added client ice candidiate")
 
 		case "answer":
 			answer := webrtc.SessionDescription{}

@@ -7,6 +7,7 @@ PEERS_SIGNAL_ADDRESS = ""
 
 TURN_SERVER_ADDRESS= {}
 
+ICE_SENT = 0
 
 function initPeers(){
 
@@ -121,10 +122,15 @@ function initPeers(){
                     return
                 }
         
-        
-                ws.send(JSON.stringify({command: 'candidate', data: btoa(JSON.stringify(e.candidate))}))
-        
-                console.log("sent ice candidate")
+                if(ICE_SENT == 0){
+                    ws.send(JSON.stringify({command: 'candidate', data: btoa(JSON.stringify(e.candidate))}))
+                    console.log("sent ice candidate")
+                    ICE_SENT = 1
+                } else {
+                    
+                    console.log("already sent ice candidate")
+                }
+
             }
                 
         
