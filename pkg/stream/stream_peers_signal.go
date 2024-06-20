@@ -264,14 +264,15 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create new PeerConnection
 	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
-		//		ICEServers: []webrtc.ICEServer{
-		//			{
-		//				URLs:       []string{TURN_SERVER_ADDR[0].Addr},
-		//				Username:   TURN_SERVER_ADDR[0].Id,
-		//				Credential: TURN_SERVER_ADDR[0].Pw,
-		//			},
-		//		},
+		ICEServers: []webrtc.ICEServer{
+			{
+				URLs:       []string{TURN_SERVER_ADDR[0].Addr},
+				Username:   TURN_SERVER_ADDR[0].Id,
+				Credential: TURN_SERVER_ADDR[0].Pw,
+			},
+		},
 	})
+
 	if err != nil {
 		log.Print(err)
 		return
