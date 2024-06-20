@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/pion/ice/v3"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
@@ -29,6 +30,8 @@ type SIGNAL_INFO struct {
 	Data    string `json:"data"`
 }
 
+var api *webrtc.API
+
 var listLock sync.RWMutex
 var peerConnections = make([]peerConnectionState, 0)
 var trackLocals = make(map[string]*webrtc.TrackLocalStaticRTP)
@@ -41,6 +44,21 @@ type peerConnectionState struct {
 type threadSafeWriter struct {
 	*websocket.Conn
 	sync.Mutex
+}
+
+func initWebRTCApi() {
+
+	settingEngine := webrtc.SettingEngine{}
+
+	mux, err := ice.NewMultiUDPMuxFromPort(8006)
+
+	settingEngine.SetICEUDPMux(mux)
+	if err != nil {
+		panic(err)
+	}
+
+	api = webrtc.NewAPI(webrtc.WithSettingEngine(settingEngine))
+
 }
 
 func (t *threadSafeWriter) WriteJSON(v interface{}) error {
@@ -263,7 +281,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 	defer c.Close() //nolint
 
 	// Create new PeerConnection
-	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
+	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
 				URLs:       []string{TURN_SERVER_ADDR[0].Addr},

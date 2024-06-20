@@ -86,7 +86,7 @@ func RegisterRoutes(e *gin.Engine) {
 
 	pkgauth.InitAuth()
 
-	e.GET("/api/turn/address", pkgstream.GetTurnServeAddr)
+	// e.GET("/api/turn/address", pkgstream.GetTurnServeAddr)
 
 	// stream
 

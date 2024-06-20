@@ -165,21 +165,6 @@ async function init(){
 
     console.log("opened channel for peer signal")
 
-    result = await axios.get("/api/turn/address")
-
-    if(result.data.status != "success"){
-
-        alert("failed to get turn server address")
-
-        return
-    }
-
-
-    let addrs = JSON.parse(result.data.reply) 
-
-    TURN_SERVER_ADDRESS = addrs[0]
-
-    console.log("turnServerAddr: " + TURN_SERVER_ADDRESS.addr)
 }
 
 init()

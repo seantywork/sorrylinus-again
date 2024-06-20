@@ -11,20 +11,6 @@ CLIENT_REQ = {
 
 async function initCCTV(){
 
-    let result = await axios.get("/api/turn/address")
-
-    if(result.data.status != "success"){
-
-        alert("failed to get turn server address")
-
-        return
-    }
-
-    let addrs = JSON.parse(result.data.reply) 
-
-    TURN_SERVER_ADDRESS = addrs[0]
-
-    console.log("turnServerAddr: " + TURN_SERVER_ADDRESS.addr)
 
     pc = new RTCPeerConnection({
 //        iceServers: [
@@ -49,13 +35,12 @@ async function initCCTV(){
 
             let resp = await axios.post("/api/cctv/create", req)
 
-            if (result.data.status != "success") {
+            if (resp.data.status != "success") {
 
                 alert("failed to start cctv offer")
             }
             try {
-                console.log(resp.data)
-                pc.setRemoteDescription(new RTCSessionDescription(resp.data))
+                pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(resp.data.reply)))
             } catch (e){
                 alert(e)
             }

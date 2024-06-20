@@ -54,7 +54,7 @@ func PostCCTVCreate(c *gin.Context) {
 
 	log.Println("Incoming HTTP Request")
 
-	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
+	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
 				URLs:       []string{TURN_SERVER_ADDR[0].Addr},
@@ -135,7 +135,18 @@ func PostCCTVCreate(c *gin.Context) {
 		audioTrack:     audioTrack,
 	}
 
-	c.JSON(200, peerConnection.LocalDescription())
+	desc_b, err := json.Marshal(peerConnection.LocalDescription())
+
+	if err != nil {
+		panic(err)
+	}
+
+	var resp SERVER_RE
+
+	resp.Status = "success"
+	resp.Reply = string(desc_b)
+
+	c.JSON(200, resp)
 
 }
 
