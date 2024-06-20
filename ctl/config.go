@@ -13,7 +13,11 @@ type SOLIAGAIN_CONFIG struct {
 	ServePort   int    `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
 	Stream      struct {
-		TurnServerAddr         string   `yaml:"turnServerAddr"`
+		TurnServerAddr []struct {
+			Addr string `yaml:"addr"`
+			Id   string `yaml:"id"`
+			Pw   string `yaml:"pw"`
+		} `yaml:"turnServerAddr"`
 		RtcpPLIInterval        int      `yaml:"rtcpPLIInterval"`
 		UploadDest             string   `yaml:"uploadDest"`
 		ExtAllowList           []string `yaml:"extAllowList"`

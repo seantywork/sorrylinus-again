@@ -60,7 +60,7 @@ func startCCTVReceiver(offer_in string, offer_out chan string) {
 	peerConnection, err := webrtcv4.NewPeerConnection(webrtcv4.Configuration{
 		ICEServers: []webrtcv4.ICEServer{
 			{
-				URLs: []string{TURN_SERVER_ADDR},
+				URLs: []string{TURN_SERVER_ADDR[0].Addr},
 			},
 		},
 	})

@@ -53,7 +53,14 @@ func GetCCTVIndex(c *gin.Context) {
 
 func GetCCTVTurnServeAddr(c *gin.Context) {
 
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TURN_SERVER_ADDR})
+	data_b, err := json.Marshal(TURN_SERVER_ADDR)
+
+	if err != nil {
+
+		c.JSON(http.StatusOK, SERVER_RE{Status: "failed", Reply: "error"})
+	}
+
+	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: string(data_b)})
 
 }
 

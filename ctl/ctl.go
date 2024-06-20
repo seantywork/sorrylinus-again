@@ -35,7 +35,21 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
 
-	pkgstream.TURN_SERVER_ADDR = CONF.Stream.TurnServerAddr
+	for i := 0; i < len(CONF.Stream.TurnServerAddr); i++ {
+
+		tmp := struct {
+			Addr string `json:"addr"`
+			Id   string `json:"id"`
+			Pw   string `json:"pw"`
+		}{
+			Addr: CONF.Stream.TurnServerAddr[i].Addr,
+			Id:   CONF.Stream.TurnServerAddr[i].Id,
+			Pw:   CONF.Stream.TurnServerAddr[i].Pw,
+		}
+
+		pkgstream.TURN_SERVER_ADDR = append(pkgstream.TURN_SERVER_ADDR, tmp)
+	}
+
 	pkgstream.RTCP_PLI_INTERVAL = time.Second * time.Duration(CONF.Stream.RtcpPLIInterval)
 	pkgstream.UPLOAD_DEST = CONF.Stream.UploadDest
 	pkgstream.EXTENSION_ALLOWLIST = CONF.Stream.ExtAllowList

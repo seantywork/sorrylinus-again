@@ -23,7 +23,11 @@ var EXTERNAL_URL string
 
 var RTCP_PLI_INTERVAL time.Duration
 
-var TURN_SERVER_ADDR string
+var TURN_SERVER_ADDR []struct {
+	Addr string `json:"addr"`
+	Id   string `json:"id"`
+	Pw   string `json:"pw"`
+}
 
 func recieveTrack(peerConnection *webrtc.PeerConnection,
 	peerConnectionMap map[string]*webrtc.TrackLocalStaticRTP,

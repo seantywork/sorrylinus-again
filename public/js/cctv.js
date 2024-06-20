@@ -20,12 +20,16 @@ async function initCCTV(){
         return
     }
 
-    TURN_SERVER_ADDRESS = result.data.reply
+    let addrs = JSON.parse(result.data.reply) 
+
+    TURN_SERVER_ADDRESS = addrs[0].addr
 
     pc = new RTCPeerConnection({
         iceServers: [
             {
-                urls: TURN_SERVER_ADDRESS
+                urls: TURN_SERVER_ADDRESS,
+                username: addrs[0].id,
+                credential: addrs[0].pw
             }
         ]
     })
