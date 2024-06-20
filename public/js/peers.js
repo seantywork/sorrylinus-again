@@ -15,13 +15,13 @@ function initPeers(){
         .then(function(stream){
 
             pc = new RTCPeerConnection({
-                //        iceServers: [
-                //            {
-                //                urls: TURN_SERVER_ADDRESS.addr,
-                //                username: TURN_SERVER_ADDRESS.id,
-                //                credential: TURN_SERVER_ADDRESS.pw
-                //            }
-                //        ]
+                        iceServers: [
+                            {
+                                urls: TURN_SERVER_ADDRESS.addr,
+                                username: TURN_SERVER_ADDRESS.id,
+                                credential: TURN_SERVER_ADDRESS.pw
+                            }
+                        ]
                     })
                 
             document.getElementById('localVideo').srcObject = stream
