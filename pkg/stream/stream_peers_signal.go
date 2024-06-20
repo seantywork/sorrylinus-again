@@ -263,11 +263,21 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 	defer c.Close() //nolint
 
 	// Create new PeerConnection
-	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{})
+	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
+		ICEServers: []webrtc.ICEServer{
+			{
+				URLs:       []string{TURN_SERVER_ADDR[0].Addr},
+				Username:   TURN_SERVER_ADDR[0].Id,
+				Credential: TURN_SERVER_ADDR[0].Pw,
+			},
+		},
+	})
 	if err != nil {
 		log.Print(err)
 		return
 	}
+
+	log.Print("new peerconnection added")
 
 	// When this frame returns close the PeerConnection
 	defer peerConnection.Close() //nolint
@@ -289,6 +299,9 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Trickle ICE. Emit server candidate to client
 	peerConnection.OnICECandidate(func(i *webrtc.ICECandidate) {
+
+		log.Printf("got candidate\n")
+
 		if i == nil {
 			return
 		}
@@ -301,6 +314,8 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 		}); writeErr != nil {
 			log.Println(writeErr)
 		}
+
+		log.Printf("sent candidate\n")
 	})
 
 	// If PeerConnection is closed remove it from global list
@@ -313,6 +328,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 		case webrtc.PeerConnectionStateClosed:
 			signalPeerConnections()
 		default:
+			log.Printf("on connection state change: %s \n", p.String())
 		}
 	})
 
@@ -348,7 +364,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(message.Command)
+		log.Printf("got message: %s\n", message.Command)
 
 		switch message.Command {
 		case "candidate":

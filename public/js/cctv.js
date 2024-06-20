@@ -1,6 +1,6 @@
 pc = {}
 
-TURN_SERVER_ADDRESS = ""
+TURN_SERVER_ADDRESS = {}
 
 
 CLIENT_REQ = {
@@ -11,7 +11,7 @@ CLIENT_REQ = {
 
 async function initCCTV(){
 
-    let result = await axios.get("/api/cctv/turn/address")
+    let result = await axios.get("/api/turn/address")
 
     if(result.data.status != "success"){
 
@@ -22,14 +22,16 @@ async function initCCTV(){
 
     let addrs = JSON.parse(result.data.reply) 
 
-    TURN_SERVER_ADDRESS = addrs[0].addr
+    TURN_SERVER_ADDRESS = addrs[0]
+
+    console.log("turnServerAddr: " + TURN_SERVER_ADDRESS.addr)
 
     pc = new RTCPeerConnection({
         iceServers: [
             {
-                urls: TURN_SERVER_ADDRESS,
-                username: addrs[0].id,
-                credential: addrs[0].pw
+                urls: TURN_SERVER_ADDRESS.addr,
+                username: TURN_SERVER_ADDRESS.id,
+                credential: TURN_SERVER_ADDRESS.pw
             }
         ]
     })

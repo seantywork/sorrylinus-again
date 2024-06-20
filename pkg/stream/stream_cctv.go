@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -48,19 +47,6 @@ func GetCCTVIndex(c *gin.Context) {
 	c.HTML(200, "cctv.html", gin.H{
 		"title": "CCTV",
 	})
-
-}
-
-func GetCCTVTurnServeAddr(c *gin.Context) {
-
-	data_b, err := json.Marshal(TURN_SERVER_ADDR)
-
-	if err != nil {
-
-		c.JSON(http.StatusOK, SERVER_RE{Status: "failed", Reply: "error"})
-	}
-
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: string(data_b)})
 
 }
 

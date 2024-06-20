@@ -86,13 +86,13 @@ func RegisterRoutes(e *gin.Engine) {
 
 	pkgauth.InitAuth()
 
+	e.GET("/api/turn/address", pkgstream.GetTurnServeAddr)
+
 	// stream
 
 	// cctv
 
 	e.GET("/cctv", pkgstream.GetCCTVIndex)
-
-	e.GET("/api/cctv/turn/address", pkgstream.GetCCTVTurnServeAddr)
 
 	e.POST("/api/cctv/create", pkgstream.PostCCTVCreate)
 

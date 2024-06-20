@@ -1,11 +1,14 @@
 package stream
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
 )
@@ -27,6 +30,19 @@ var TURN_SERVER_ADDR []struct {
 	Addr string `json:"addr"`
 	Id   string `json:"id"`
 	Pw   string `json:"pw"`
+}
+
+func GetTurnServeAddr(c *gin.Context) {
+
+	data_b, err := json.Marshal(TURN_SERVER_ADDR)
+
+	if err != nil {
+
+		c.JSON(http.StatusOK, SERVER_RE{Status: "failed", Reply: "error"})
+	}
+
+	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: string(data_b)})
+
 }
 
 func recieveTrack(peerConnection *webrtc.PeerConnection,
