@@ -27,13 +27,13 @@ async function initCCTV(){
     console.log("turnServerAddr: " + TURN_SERVER_ADDRESS.addr)
 
     pc = new RTCPeerConnection({
-        iceServers: [
-            {
-                urls: TURN_SERVER_ADDRESS.addr,
-                username: TURN_SERVER_ADDRESS.id,
-                credential: TURN_SERVER_ADDRESS.pw
-            }
-        ]
+//        iceServers: [
+//            {
+//                urls: TURN_SERVER_ADDRESS.addr,
+//                username: TURN_SERVER_ADDRESS.id,
+//                credential: TURN_SERVER_ADDRESS.pw
+//            }
+//        ]
     })
 
     pc.oniceconnectionstatechange = function(e) {console.log(pc.iceConnectionState)}

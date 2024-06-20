@@ -55,11 +55,13 @@ func PostCCTVCreate(c *gin.Context) {
 	log.Println("Incoming HTTP Request")
 
 	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
-		//		ICEServers: []webrtc.ICEServer{
-		//			{
-		//				URLs: []string{TURN_SERVER_ADDR},
-		//			},
-		//		},
+		ICEServers: []webrtc.ICEServer{
+			{
+				URLs:       []string{TURN_SERVER_ADDR[0].Addr},
+				Username:   TURN_SERVER_ADDR[0].Id,
+				Credential: TURN_SERVER_ADDR[0].Pw,
+			},
+		},
 	})
 	if err != nil {
 		panic(err)
