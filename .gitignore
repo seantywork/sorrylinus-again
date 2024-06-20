@@ -4,3 +4,6 @@ vendor/yolo
 *.out
 *.mp4
 oauth.json
+config.yaml
+config.yaml.run
+config.yaml.debug

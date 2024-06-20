@@ -4,7 +4,7 @@ serveAddr: "0.0.0.0"
 servePort: 8000
 maxFileSize: 838860800
 stream:
-  turnServerAddr: "stun:stun.l.google.com:19302"
+  turnServerAddr: "turn:webrtc.feebdaed.xyz:3478"
   rtcpPLIInterval: 3
   uploadDest: "./upload/"
   extAllowList:
