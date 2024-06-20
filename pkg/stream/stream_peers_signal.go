@@ -17,6 +17,8 @@ var SIGNAL_ADDR string
 
 var SIGNAL_PORT string
 
+var SIGNAL_PORT_EXTERNAL string
+
 var USER_SIGNAL = make(map[string]*websocket.Conn)
 
 var UPGRADER = websocket.Upgrader{}

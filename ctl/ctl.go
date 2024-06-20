@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/contrib/sessions"
@@ -42,10 +43,12 @@ func ConfigureRuntime(e *gin.Engine) {
 	pkgstream.UDP_BUFFER_BYTE_SIZE = CONF.Stream.UdpBufferByteSize
 
 	pkgstream.SIGNAL_ADDR = CONF.ServeAddr
-	pkgstream.SIGNAL_PORT = CONF.Stream.SignalPort
+	pkgstream.SIGNAL_PORT = fmt.Sprintf("%d", CONF.Stream.SignalPort)
+	pkgstream.SIGNAL_PORT_EXTERNAL = fmt.Sprintf("%d", CONF.Stream.SignalPortExternal)
 
 	pkgstream.RTP_RECEIVE_ADDR = CONF.ServeAddr
-	pkgstream.RTP_RECEIVE_PORT = CONF.Stream.RtpReceivePort
+	pkgstream.RTP_RECEIVE_PORT = fmt.Sprintf("%d", CONF.Stream.RtpReceivePort)
+	pkgstream.RTP_RECEIVE_PORT_EXTERNAL = fmt.Sprintf("%d", CONF.Stream.RtpReceivePortExternal)
 
 	pkgutils.USE_COMPRESS = CONF.Utils.UseCompress
 
@@ -74,6 +77,8 @@ func RegisterRoutes(e *gin.Engine) {
 	// cctv
 
 	e.GET("/cctv", pkgstream.GetCCTVIndex)
+
+	e.GET("/api/cctv/turn/address", pkgstream.GetCCTVTurnServeAddr)
 
 	e.POST("/api/cctv/create", pkgstream.PostCCTVCreate)
 

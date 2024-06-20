@@ -10,16 +10,18 @@ type SOLIAGAIN_CONFIG struct {
 	Debug       bool   `yaml:"debug"`
 	ExternalUrl string `yaml:"externalUrl"`
 	ServeAddr   string `yaml:"serveAddr"`
-	ServePort   string `yaml:"servePort"`
+	ServePort   int    `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
 	Stream      struct {
-		TurnServerAddr    string   `yaml:"turnServerAddr"`
-		RtcpPLIInterval   int      `yaml:"rtcpPLIInterval"`
-		UploadDest        string   `yaml:"uploadDest"`
-		ExtAllowList      []string `yaml:"extAllowList"`
-		UdpBufferByteSize int      `yaml:"udpBufferByteSize"`
-		SignalPort        string   `yaml:"signalPort"`
-		RtpReceivePort    string   `yaml:"rtpReceivePort"`
+		TurnServerAddr         string   `yaml:"turnServerAddr"`
+		RtcpPLIInterval        int      `yaml:"rtcpPLIInterval"`
+		UploadDest             string   `yaml:"uploadDest"`
+		ExtAllowList           []string `yaml:"extAllowList"`
+		UdpBufferByteSize      int      `yaml:"udpBufferByteSize"`
+		SignalPort             int      `yaml:"signalPort"`
+		SignalPortExternal     int      `yaml:"signalPortExternal"`
+		RtpReceivePort         int      `yaml:"rtpReceivePort"`
+		RtpReceivePortExternal int      `yaml:"rtpReceivePortExternal"`
 	} `yaml:"stream"`
 	Utils struct {
 		UseCompress bool `yaml:"useCompress"`

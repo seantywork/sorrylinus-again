@@ -1,5 +1,5 @@
-debug: true
-externalUrl: "localhost"
+debug: false
+externalUrl: "webrtc.feebdaed.xyz"
 serveAddr: "0.0.0.0"
 servePort: 8000
 maxFileSize: 838860800
@@ -11,8 +11,8 @@ stream:
     - "mp4"
   udpBufferByteSize: 300000 
   signalPort: 8002
-  signalPortExternal: 8002
+  signalPortExternal: 8022
   rtpReceivePort: 8004
-  rtpReceivePortExternal: 8004
+  rtpReceivePortExternal: 8024
 utils:
   useCompress: false

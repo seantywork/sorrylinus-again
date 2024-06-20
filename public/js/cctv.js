@@ -1,11 +1,66 @@
 pc = {}
 
+TURN_SERVER_ADDRESS = ""
+
+
+CLIENT_REQ = {
+    "data":""
+}
+
 
 
 async function initCCTV(){
 
-    pc = new RTCPeerConnection()
+    let result = await axios.get("/api/cctv/turn/address")
+
+    if(result.data.status != "success"){
+
+        alert("failed to get turn server address")
+
+        return
+    }
+
+    TURN_SERVER_ADDRESS = result.data.reply
+
+    pc = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: TURN_SERVER_ADDRESS
+            }
+        ]
+    })
+
+    pc.oniceconnectionstatechange = function(e) {console.log(pc.iceConnectionState)}
+
+    pc.onicecandidate = async function(event){
+
+        if (event.candidate === null){
+
+
+            let req = {
+                data: JSON.stringify(pc.localDescription)
+            }
+
+            let resp = await axios.post("/api/cctv/create", req)
+
+            if (result.data.status != "success") {
+
+                alert("failed to start cctv offer")
+            }
+            try {
+                console.log(resp.data)
+                pc.setRemoteDescription(new RTCSessionDescription(resp.data))
+            } catch (e){
+                alert(e)
+            }
+
+        }
+
+
+    }
+
     pc.ontrack = function (event) {
+
         var el = document.createElement(event.track.kind)
         el.srcObject = event.streams[0]
         el.autoplay = true
@@ -21,16 +76,6 @@ async function initCCTV(){
 
     pc.setLocalDescription(offer)
 
-    console.log(offer)
-
-    let req = {
-        data: JSON.stringify(offer)
-    }
-
-    let resp = await axios.post("/api/cctv/create", req)
-
-    pc.setRemoteDescription(resp.data)
-
     console.log("init success")
 
 }
@@ -41,3 +86,5 @@ function closeCCTV(){
 
 
 }
+
+

@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,8 @@ import (
 var RTP_RECEIVE_ADDR string
 
 var RTP_RECEIVE_PORT string
+
+var RTP_RECEIVE_PORT_EXTERNAL string
 
 var RTP_CONSUMERS = make(map[string]RTMPWebRTCPeer)
 
@@ -48,15 +51,37 @@ func GetCCTVIndex(c *gin.Context) {
 
 }
 
+func GetCCTVTurnServeAddr(c *gin.Context) {
+
+	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TURN_SERVER_ADDR})
+
+}
+
 func PostCCTVCreate(c *gin.Context) {
 
 	log.Println("Incoming HTTP Request")
 
-	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{})
+	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
+		//		ICEServers: []webrtc.ICEServer{
+		//			{
+		//				URLs: []string{TURN_SERVER_ADDR},
+		//			},
+		//		},
+	})
 	if err != nil {
 		panic(err)
 	}
+	/*
+		peerConnection.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
+			fmt.Printf("Connection State has changed %s \n", connectionState.String())
 
+			if connectionState == webrtc.ICEConnectionStateFailed {
+				if closeErr := peerConnection.Close(); closeErr != nil {
+					panic(closeErr)
+				}
+			}
+		})
+	*/
 	videoTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeH264}, "video", "pion")
 	if err != nil {
 		panic(err)

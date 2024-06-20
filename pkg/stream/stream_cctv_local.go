@@ -23,12 +23,6 @@ func GetCCTVLocalIndex(c *gin.Context) {
 	})
 }
 
-func GetCCTVLocalTurnServeAddr(c *gin.Context) {
-
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: TURN_SERVER_ADDR})
-
-}
-
 func PostCCTVLocalOffer(c *gin.Context) {
 
 	if RECV_STARTED == 1 {

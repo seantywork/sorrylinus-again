@@ -18,7 +18,7 @@ func GetPeersIndex(c *gin.Context) {
 
 func GetPeersSignalAddress(c *gin.Context) {
 
-	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT + PEERS_SIGNAL_PATH
+	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT_EXTERNAL + PEERS_SIGNAL_PATH
 
 	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: s_addr})
 
