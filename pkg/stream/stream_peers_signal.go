@@ -301,7 +301,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 	// Trickle ICE. Emit server candidate to client
 	peerConnection.OnICECandidate(func(i *webrtc.ICECandidate) {
 
-		log.Printf("got candidate\n")
+		log.Printf("got ice candidate\n")
 
 		if i == nil {
 			return
@@ -316,7 +316,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(writeErr)
 		}
 
-		log.Printf("sent candidate\n")
+		log.Printf("sent ice candidate\n")
 	})
 
 	// If PeerConnection is closed remove it from global list
@@ -370,6 +370,8 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 		switch message.Command {
 		case "candidate":
 
+			log.Printf("got client ice candidate")
+
 			candidate := webrtc.ICECandidateInit{}
 
 			pkgutils.Decode(message.Data, &candidate)
@@ -379,12 +381,15 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println(err)
 					return
 				}
-			*/
 
+			*/
 			if err := peerConnection.AddICECandidate(candidate); err != nil {
 				log.Println(err)
 				return
 			}
+
+			log.Printf("ignore client ice candidiate")
+
 		case "answer":
 			answer := webrtc.SessionDescription{}
 

@@ -56,21 +56,32 @@ function initPeers(){
                     if (!offer) {
                         return console.log('failed to parse answer')
                     }
-        
+                    
+                    console.log("got offer")
+
                     pc.setRemoteDescription(offer)
                     pc.createAnswer().then(function(answer) {
                         pc.setLocalDescription(answer)
                         ws.send(JSON.stringify({command: 'answer', data: btoa(JSON.stringify(answer))}))
                     })
+
+                    console.log("sent answer")
+
                     return
         
                     case 'candidate':
+                    
+                    console.log("got candidate")
+
                     let candidate = JSON.parse(atob(msg.data))
                     if (!candidate) {
                         return console.log('failed to parse candidate')
                     }
-        
+
                     pc.addIceCandidate(candidate)
+
+                    console.log("added candidate")
+
                 }
             }
 
@@ -110,9 +121,10 @@ function initPeers(){
                     return
                 }
         
-                console.log("sending candidate info to server")
         
                 ws.send(JSON.stringify({command: 'candidate', data: btoa(JSON.stringify(e.candidate))}))
+        
+                console.log("sent ice candidate")
             }
                 
         
