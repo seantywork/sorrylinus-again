@@ -369,6 +369,7 @@ func roomSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 		switch message.Command {
 		case "candidate":
+
 			candidate := webrtc.ICECandidateInit{}
 
 			pkgutils.Decode(message.Data, &candidate)
