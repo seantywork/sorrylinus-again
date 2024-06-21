@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+
+        sorrylinus-again:
+                build: .
+                container_name: sorrylinus-again
+                ports:  
+                        - "8000:8000/tcp"
+                        - "8002:8002/tcp"
+                        - "8004:8004/tcp"
+                        - "5353:5353/udp"
+                        - "8006:8006/udp"
+                        - "50000-50100:50000-50100/udp"
+                tty: true
+                restart: always

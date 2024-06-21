@@ -3,6 +3,7 @@ vendor/gocv
 vendor/yolo
 *.out
 *.mp4
+go.sum
 oauth.json
 config.yaml
 config.yaml.run
