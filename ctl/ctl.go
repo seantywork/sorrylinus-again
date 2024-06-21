@@ -35,6 +35,8 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
 
+	pkgstream.INTERNAL_URL = CONF.InternalUrl
+
 	for i := 0; i < len(CONF.Stream.TurnServerAddr); i++ {
 
 		tmp := struct {

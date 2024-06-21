@@ -25,6 +25,8 @@ type SERVER_RE struct {
 
 var EXTERNAL_URL string
 
+var INTERNAL_URL string
+
 var RTCP_PLI_INTERVAL time.Duration
 
 var UDP_MUX_PORT int
