@@ -57,7 +57,7 @@ func initWebRTCApi() {
 		panic(err)
 	}
 
-	settingEngine.SetEphemeralUDPPortRange(50000, 50100)
+	settingEngine.SetEphemeralUDPPortRange(31000, 31100)
 
 	api = webrtc.NewAPI(webrtc.WithSettingEngine(settingEngine))
 
