@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/pion/ice/v3"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
@@ -44,23 +43,6 @@ type peerConnectionState struct {
 type threadSafeWriter struct {
 	*websocket.Conn
 	sync.Mutex
-}
-
-func initWebRTCApi() {
-
-	settingEngine := webrtc.SettingEngine{}
-
-	mux, err := ice.NewMultiUDPMuxFromPort(8006)
-
-	settingEngine.SetICEUDPMux(mux)
-	if err != nil {
-		panic(err)
-	}
-
-	settingEngine.SetEphemeralUDPPortRange(31000, 31100)
-
-	api = webrtc.NewAPI(webrtc.WithSettingEngine(settingEngine))
-
 }
 
 func (t *threadSafeWriter) WriteJSON(v interface{}) error {

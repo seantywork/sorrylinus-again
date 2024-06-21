@@ -28,8 +28,6 @@ func InitPeersSignalOn(peerSignalPath string) {
 
 	PEERS_SIGNAL_PATH = peerSignalPath
 
-	initWebRTCApi()
-
 	runPeersSignalHandlerForWS(peerSignalPath)
 
 }

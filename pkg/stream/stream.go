@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pion/ice/v3"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
 )
@@ -26,6 +27,12 @@ var EXTERNAL_URL string
 
 var RTCP_PLI_INTERVAL time.Duration
 
+var UDP_MUX_PORT int
+
+var UDP_EPHEMERAL_PORT_MIN int
+
+var UDP_EPHEMERAL_PORT_MAX int
+
 var TURN_SERVER_ADDR []struct {
 	Addr string `json:"addr"`
 	Id   string `json:"id"`
@@ -42,6 +49,23 @@ func GetTurnServeAddr(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: string(data_b)})
+
+}
+
+func InitWebRTCApi() {
+
+	settingEngine := webrtc.SettingEngine{}
+
+	mux, err := ice.NewMultiUDPMuxFromPort(UDP_MUX_PORT)
+
+	settingEngine.SetICEUDPMux(mux)
+	if err != nil {
+		panic(err)
+	}
+
+	settingEngine.SetEphemeralUDPPortRange(uint16(UDP_EPHEMERAL_PORT_MIN), uint16(UDP_EPHEMERAL_PORT_MAX))
+
+	api = webrtc.NewAPI(webrtc.WithSettingEngine(settingEngine))
 
 }
 

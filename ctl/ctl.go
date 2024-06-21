@@ -55,6 +55,9 @@ func ConfigureRuntime(e *gin.Engine) {
 	pkgstream.EXTENSION_ALLOWLIST = CONF.Stream.ExtAllowList
 
 	pkgstream.UDP_BUFFER_BYTE_SIZE = CONF.Stream.UdpBufferByteSize
+	pkgstream.UDP_MUX_PORT = CONF.Stream.UdpMuxPort
+	pkgstream.UDP_EPHEMERAL_PORT_MIN = CONF.Stream.UdpEphemeralPortMin
+	pkgstream.UDP_EPHEMERAL_PORT_MAX = CONF.Stream.UdpEphemeralPortMax
 
 	pkgstream.SIGNAL_ADDR = CONF.ServeAddr
 	pkgstream.SIGNAL_PORT = fmt.Sprintf("%d", CONF.Stream.SignalPort)
@@ -85,6 +88,8 @@ func RegisterRoutes(e *gin.Engine) {
 	e.GET("/oauth2/google/callback", pkgauth.OauthGoogleCallback)
 
 	pkgauth.InitAuth()
+
+	pkgstream.InitWebRTCApi()
 
 	// e.GET("/api/turn/address", pkgstream.GetTurnServeAddr)
 

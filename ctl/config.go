@@ -9,6 +9,7 @@ import (
 type SOLIAGAIN_CONFIG struct {
 	Debug       bool   `yaml:"debug"`
 	ExternalUrl string `yaml:"externalUrl"`
+	InternalUrl string `yaml:"internalUrl"`
 	ServeAddr   string `yaml:"serveAddr"`
 	ServePort   int    `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
@@ -22,6 +23,9 @@ type SOLIAGAIN_CONFIG struct {
 		UploadDest             string   `yaml:"uploadDest"`
 		ExtAllowList           []string `yaml:"extAllowList"`
 		UdpBufferByteSize      int      `yaml:"udpBufferByteSize"`
+		UdpMuxPort             int      `yaml:"udpMuxPort"`
+		UdpEphemeralPortMin    int      `yaml:"udpEphemeralPortMin"`
+		UdpEphemeralPortMax    int      `yaml:"udpEphemeralPortMax"`
 		SignalPort             int      `yaml:"signalPort"`
 		SignalPortExternal     int      `yaml:"signalPortExternal"`
 		RtpReceivePort         int      `yaml:"rtpReceivePort"`
