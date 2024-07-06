@@ -19,8 +19,8 @@ type SOLIAGAIN_CONFIG struct {
 			Id   string `yaml:"id"`
 			Pw   string `yaml:"pw"`
 		} `yaml:"turnServerAddr"`
+		PeerSignalAddr         string   `yaml:"peerSignalAddr"`
 		RtcpPLIInterval        int      `yaml:"rtcpPLIInterval"`
-		UploadDest             string   `yaml:"uploadDest"`
 		ExtAllowList           []string `yaml:"extAllowList"`
 		UdpBufferByteSize      int      `yaml:"udpBufferByteSize"`
 		UdpMuxPort             int      `yaml:"udpMuxPort"`

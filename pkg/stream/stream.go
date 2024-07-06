@@ -41,6 +41,8 @@ var TURN_SERVER_ADDR []struct {
 	Pw   string `json:"pw"`
 }
 
+var api *webrtc.API
+
 func GetTurnServeAddr(c *gin.Context) {
 
 	data_b, err := json.Marshal(TURN_SERVER_ADDR)

@@ -30,17 +30,27 @@ async function initCCTV(){
 
 
             let req = {
-                data: JSON.stringify(pc.localDescription)
+                data: pc.localDescription
             }
 
-            let resp = await axios.post("/api/cctv/create", req)
+            let options = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json" 
+                },
+                body: JSON.stringify(req) 
+            }
 
-            if (resp.data.status != "success") {
+            let resp = await fetch("/api/cctv/create", options)
+
+            let data = await resp.json()
+
+            if (data.status != "success") {
 
                 alert("failed to start cctv offer")
             }
             try {
-                pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(resp.data.reply)))
+                pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(data.reply)))
             } catch (e){
                 alert(e)
             }

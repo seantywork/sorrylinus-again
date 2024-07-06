@@ -10,6 +10,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/pion/webrtc/v4"
 	"github.com/pion/webrtc/v4/pkg/media"
@@ -30,6 +31,10 @@ var RTP_CONSUMERS = make(map[string]RTMPWebRTCPeer)
 const RTP_HEADER_LENGTH_FIELD = 4
 
 var TEST_KEY string = "foobar"
+
+var UDP_BUFFER_BYTE_SIZE int
+
+var RECV_STARTED int = 0
 
 type RTMPHandler struct {
 	rtmp.DefaultHandler
@@ -123,17 +128,27 @@ func PostCCTVCreate(c *gin.Context) {
 	}
 	<-gatherComplete
 
-	/*
+	streamingKey, err := utils.RandomHex(16)
 
-		TODO:
-			remove test key
+	if err != nil {
 
-	*/
-	RTP_CONSUMERS[TEST_KEY] = RTMPWebRTCPeer{
+		panic(err)
+	}
+
+	log.Printf("rtmp key: %s\n", streamingKey)
+
+	RTP_CONSUMERS[streamingKey] = RTMPWebRTCPeer{
 		peerConnection: peerConnection,
 		videoTrack:     videoTrack,
 		audioTrack:     audioTrack,
 	}
+
+	/*
+
+		TODO:
+			send to sorrylinus
+
+	*/
 
 	desc_b, err := json.Marshal(peerConnection.LocalDescription())
 

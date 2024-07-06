@@ -1,4 +1,6 @@
 
+
+
 function handleSubmit(event) {
     const form = event.currentTarget;
     const url = new URL(form.action);
@@ -22,6 +24,30 @@ function handleSubmit(event) {
     fetch(url, fetchOptions);
   
     event.preventDefault();
+}
+
+function playFiles(){
+
+  videoEl = document.getElementById('play-files')
+
+  watchID = document.getElementById('wid').value;
+
+
+  if (watchID == ""){
+
+      alert("feed watch ID!")
+
+      return
+
+  }
+
+  let addHtml = `
+      <source src="/video/watch/c/${watchID}" type="video/mp4">
+  `
+
+  videoEl.innerHTML = addHtml
+
+
 }
 
 const form = document.querySelector('form');

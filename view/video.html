@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>-->
+    <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
 
 </head>
 <body>
@@ -17,6 +17,18 @@
         <input id="file" name="file" type="file" />
         <button>Upload</button>
     </form>
+
+    <label for="wid">watch ID</label>
+    <input type="text" id="wid" name="wid"><br><br>
+    <button onclick="playFiles()" class="start-call">
+        Play the video!
+    </button>
+
+
+    <div class="container_row">
+        <video autoplay id="play-files" width="500" height="500" controls muted>    
+        </video>
+    </div>
 
 </body>
 <script src="/public/js/video.js"></script>

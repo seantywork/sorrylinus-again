@@ -148,9 +148,15 @@ function initPeers(){
 }
 
 async function init(){
-    let result = await axios.get("/api/peers/signal/address")
 
-    if(result.data.status != "success"){
+    let options = {
+        method: "GET"
+    }
+    let result = await fetch("/api/peers/signal/address", options)
+
+    let data = await result.json()
+
+    if(data.status != "success"){
 
         alert("failed to get peers signal address")
 
@@ -158,7 +164,7 @@ async function init(){
     }
 
 
-    PEERS_SIGNAL_ADDRESS = result.data.reply 
+    PEERS_SIGNAL_ADDRESS = data.reply 
 
     console.log("peersSignalAddr: " + PEERS_SIGNAL_ADDRESS)
 

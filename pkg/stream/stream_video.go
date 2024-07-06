@@ -3,19 +3,14 @@ package stream
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"path"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	pkgdbq "github.com/seantywork/sorrylinus-again/pkg/dbquery"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
 
-var UPLOAD_DEST string = "./upload/"
-
-var EXTENSION_ALLOWLIST []string = []string{
-	"mp4",
-}
+var EXTENSION_ALLOWLIST []string
 
 func GetVideoIndex(c *gin.Context) {
 
@@ -68,9 +63,17 @@ func PostVideoUpload(c *gin.Context) {
 
 	file_name, _ := pkgutils.GetRandomHex(32)
 
-	upload_path := path.Join(UPLOAD_DEST, file_name+"."+extension)
+	err := pkgdbq.UploadVideo(c, file, f_name, file_name+"."+extension)
 
-	c.SaveUploadedFile(file, upload_path)
+	if err != nil {
+
+		fmt.Println(err.Error())
+
+		c.JSON(http.StatusInternalServerError, SERVER_RE{Status: "error", Reply: "failed to save"})
+
+		return
+
+	}
 
 	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: "uploaded"})
 
@@ -80,11 +83,9 @@ func GetVideoWatchContentByID(c *gin.Context) {
 
 	watchId := c.Param("contentId")
 
-	extension := "mp4"
+	err := pkgdbq.DownloadVideo(c, watchId)
 
-	upload_path := path.Join(UPLOAD_DEST, watchId+"."+extension)
-
-	if _, err := os.Stat(upload_path); err != nil {
+	if err != nil {
 
 		fmt.Println("path doesn't exist")
 
@@ -94,8 +95,6 @@ func GetVideoWatchContentByID(c *gin.Context) {
 
 	}
 
-	c.Header("Content-Type", "video/mp4")
-
-	c.File(upload_path)
+	fmt.Println("download success")
 
 }

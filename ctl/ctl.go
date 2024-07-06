@@ -52,8 +52,9 @@ func ConfigureRuntime(e *gin.Engine) {
 		pkgstream.TURN_SERVER_ADDR = append(pkgstream.TURN_SERVER_ADDR, tmp)
 	}
 
+	pkgstream.PEERS_SIGNAL_PATH = CONF.Stream.PeerSignalAddr
+
 	pkgstream.RTCP_PLI_INTERVAL = time.Second * time.Duration(CONF.Stream.RtcpPLIInterval)
-	pkgstream.UPLOAD_DEST = CONF.Stream.UploadDest
 	pkgstream.EXTENSION_ALLOWLIST = CONF.Stream.ExtAllowList
 
 	pkgstream.UDP_BUFFER_BYTE_SIZE = CONF.Stream.UdpBufferByteSize
@@ -123,6 +124,9 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
 
-	go pkgstream.InitPeersSignalOn("/ch/peers/signal")
+	// signal
 
+	pkgstream.AddSignalHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
+
+	go pkgstream.StartSignalHandler()
 }
