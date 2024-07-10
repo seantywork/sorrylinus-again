@@ -12,22 +12,6 @@ import (
 
 var EXTENSION_ALLOWLIST []string
 
-func GetVideoIndex(c *gin.Context) {
-
-	c.HTML(200, "video.html", gin.H{
-		"title": "Video",
-	})
-
-}
-
-func GetVideoWatchPage(c *gin.Context) {
-
-	c.HTML(200, "video_watch.html", gin.H{
-		"title": "Video Watch",
-	})
-
-}
-
 func PostVideoUpload(c *gin.Context) {
 
 	file, _ := c.FormFile("file")
@@ -79,7 +63,7 @@ func PostVideoUpload(c *gin.Context) {
 
 }
 
-func GetVideoWatchContentByID(c *gin.Context) {
+func GetVideoContentByID(c *gin.Context) {
 
 	watchId := c.Param("contentId")
 

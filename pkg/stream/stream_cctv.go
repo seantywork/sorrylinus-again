@@ -47,14 +47,6 @@ type RTMPWebRTCPeer struct {
 	audioTrack     *webrtc.TrackLocalStaticSample
 }
 
-func GetCCTVIndex(c *gin.Context) {
-
-	c.HTML(200, "cctv.html", gin.H{
-		"title": "CCTV",
-	})
-
-}
-
 func PostCCTVCreate(c *gin.Context) {
 
 	log.Println("Incoming HTTP Request")

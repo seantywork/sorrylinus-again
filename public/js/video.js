@@ -42,7 +42,7 @@ function playFiles(){
   }
 
   let addHtml = `
-      <source src="/video/watch/c/${watchID}" type="video/mp4">
+      <source src="/api/video/c/${watchID}" type="video/mp4">
   `
 
   videoEl.innerHTML = addHtml

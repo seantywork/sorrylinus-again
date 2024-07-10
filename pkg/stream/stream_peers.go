@@ -15,14 +15,6 @@ import (
 
 var PEERS_SIGNAL_PATH string
 
-func GetPeersIndex(c *gin.Context) {
-
-	c.HTML(200, "peers.html", gin.H{
-		"title": "Peers",
-	})
-
-}
-
 func GetPeersSignalAddress(c *gin.Context) {
 
 	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT_EXTERNAL + PEERS_SIGNAL_PATH

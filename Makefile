@@ -15,6 +15,10 @@ test:
 
 	go run test/test.go
 
+clean-data:
+
+	rm -f data/media/*.json
+	rm -f data/meda_video
 
 clean:
 

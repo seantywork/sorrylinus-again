@@ -84,23 +84,43 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/", GetIndex)
 
-	e.GET("/signin", GetSigninIndex)
+	e.GET("/signin", GetViewSignin)
+
+	e.GET("/mypage", GetViewMypage)
+
+	e.GET("/content/article/:articleId", GetViewContentArticle)
+
+	e.GET("/content/peers/:peersId", GetViewContentPeers)
+
+	e.GET("/content/video/:videoId", GetViewContentVideo)
+
+	// auth
 
 	e.GET("/api/oauth2/google/signin", pkgauth.OauthGoogleLogin)
 
 	e.GET("/oauth2/google/callback", pkgauth.OauthGoogleCallback)
 
+	// e.POST("/api/auth/user/add", pkgauth.UserAdd)
+
+	// e.GET("/api/auth/signin", pkgauth.Login)
+
+	// e.GET("/api/auth/signout", pkgauth.Logout)
+
 	pkgauth.InitAuth()
 
-	pkgstream.InitWebRTCApi()
+	// edition
 
-	// e.GET("/api/turn/address", pkgstream.GetTurnServeAddr)
+	// e.POST("/api/article/upload", pkgedition.PostArticleUpload)
+
+	// e.GET("/api/article/c/:contentId", pkgeditioni.GetArticleContentById)
+
+	// e.POST("/api/image/upload", pkgedition.PostImageUpload)
+
+	// e.GET("/api/image/c/:contentId", pkgedition.GetImageContentById)
 
 	// stream
 
-	// cctv
-
-	e.GET("/cctv", pkgstream.GetCCTVIndex)
+	pkgstream.InitWebRTCApi()
 
 	e.POST("/api/cctv/create", pkgstream.PostCCTVCreate)
 
@@ -108,23 +128,11 @@ func RegisterRoutes(e *gin.Engine) {
 
 	go pkgstream.InitRTMPServer()
 
-	// video
-
-	e.GET("/video", pkgstream.GetVideoIndex)
-
-	e.GET("/api/video/watch", pkgstream.GetVideoWatchPage)
-
 	e.POST("/api/video/upload", pkgstream.PostVideoUpload)
 
-	e.GET("/api/video/watch/c/:contentId", pkgstream.GetVideoWatchContentByID)
-
-	// peers
-
-	e.GET("/peers", pkgstream.GetPeersIndex)
+	e.GET("/api/video/c/:contentId", pkgstream.GetVideoContentByID)
 
 	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
-
-	// signal
 
 	pkgstream.AddSignalHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
 
