@@ -1,24 +1,12 @@
 package stream
 
 import (
-	"log"
-	"net/http"
-	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/pion/webrtc/v4"
+	ch "github.com/seantywork/sorrylinus-again/pkg/com"
 )
-
-var SIGNAL_ADDR string
-
-var SIGNAL_PORT string
-
-var SIGNAL_PORT_EXTERNAL string
-
-var USER_SIGNAL = make(map[string]*websocket.Conn)
-
-var UPGRADER = websocket.Upgrader{}
 
 type SIGNAL_INFO struct {
 	Command string `json:"command"`
@@ -26,45 +14,19 @@ type SIGNAL_INFO struct {
 	Data    string `json:"data"`
 }
 
-var listLock sync.RWMutex
+var UPGRADER = websocket.Upgrader{}
+
 var peerConnections = make([]peerConnectionState, 0)
 var trackLocals = make(map[string]*webrtc.TrackLocalStaticRTP)
 
 type peerConnectionState struct {
 	peerConnection *webrtc.PeerConnection
-	websocket      *threadSafeWriter
+	websocket      *ch.ThreadSafeWriter
 }
 
-type threadSafeWriter struct {
-	*websocket.Conn
-	sync.Mutex
-}
+func SignalDispatcher() {
 
-func (t *threadSafeWriter) WriteJSON(v interface{}) error {
-	t.Lock()
-	defer t.Unlock()
-
-	return t.Conn.WriteJSON(v)
-}
-
-func AddSignalHandler(signalPath string, signalHandler func(w http.ResponseWriter, r *http.Request)) {
-
-	http.HandleFunc(signalPath, signalHandler)
-
-}
-
-func StartSignalHandler() {
-
-	go func() {
-
-		for range time.NewTicker(time.Second * 3).C {
-			dispatchKeyFrame()
-		}
-
-	}()
-
-	signal_addr := SIGNAL_ADDR + ":" + SIGNAL_PORT
-
-	log.Fatal(http.ListenAndServe(signal_addr, nil))
-
+	for range time.NewTicker(time.Second * 3).C {
+		dispatchKeyFrame()
+	}
 }

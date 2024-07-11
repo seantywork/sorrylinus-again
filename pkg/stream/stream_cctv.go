@@ -10,11 +10,12 @@ import (
 	"net"
 	"time"
 
-	"github.com/OKESTRO-AIDevOps/nkia/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/pion/webrtc/v4"
 	"github.com/pion/webrtc/v4/pkg/media"
 	"github.com/pkg/errors"
+	"github.com/seantywork/sorrylinus-again/pkg/com"
+	"github.com/seantywork/sorrylinus-again/pkg/utils"
 	flvtag "github.com/yutopp/go-flv/tag"
 	"github.com/yutopp/go-rtmp"
 	rtmpmsg "github.com/yutopp/go-rtmp/message"
@@ -90,7 +91,7 @@ func PostCCTVCreate(c *gin.Context) {
 		panic(err)
 	}
 
-	var req CLIENT_REQ
+	var req com.CLIENT_REQ
 
 	var offer webrtc.SessionDescription
 
@@ -120,7 +121,7 @@ func PostCCTVCreate(c *gin.Context) {
 	}
 	<-gatherComplete
 
-	streamingKey, err := utils.RandomHex(16)
+	streamingKey, err := utils.GetRandomHex(16)
 
 	if err != nil {
 
@@ -148,7 +149,7 @@ func PostCCTVCreate(c *gin.Context) {
 		panic(err)
 	}
 
-	var resp SERVER_RE
+	var resp com.SERVER_RE
 
 	resp.Status = "success"
 	resp.Reply = string(desc_b)
@@ -166,7 +167,7 @@ func PostCCTVDelete(c *gin.Context) {
 
 	*/
 
-	var resp SERVER_RE
+	var resp com.SERVER_RE
 
 	resp.Status = "success"
 	resp.Reply = ""

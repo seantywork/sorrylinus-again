@@ -12,16 +12,8 @@ import (
 	"github.com/pion/ice/v3"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
+	"github.com/seantywork/sorrylinus-again/pkg/com"
 )
-
-type CLIENT_REQ struct {
-	Data string `json:"data"`
-}
-
-type SERVER_RE struct {
-	Status string `json:"status"`
-	Reply  string `json:"reply"`
-}
 
 var EXTERNAL_URL string
 
@@ -49,10 +41,10 @@ func GetTurnServeAddr(c *gin.Context) {
 
 	if err != nil {
 
-		c.JSON(http.StatusOK, SERVER_RE{Status: "failed", Reply: "error"})
+		c.JSON(http.StatusOK, com.SERVER_RE{Status: "failed", Reply: "error"})
 	}
 
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: string(data_b)})
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: string(data_b)})
 
 }
 
@@ -153,9 +145,9 @@ func createTrack(peerConnection *webrtc.PeerConnection,
 }
 
 func addTrack(t *webrtc.TrackRemote) *webrtc.TrackLocalStaticRTP {
-	listLock.Lock()
+	com.ListLock.Lock()
 	defer func() {
-		listLock.Unlock()
+		com.ListLock.Unlock()
 		signalPeerConnections()
 	}()
 
@@ -169,9 +161,9 @@ func addTrack(t *webrtc.TrackRemote) *webrtc.TrackLocalStaticRTP {
 }
 
 func removeTrack(t *webrtc.TrackLocalStaticRTP) {
-	listLock.Lock()
+	com.ListLock.Lock()
 	defer func() {
-		listLock.Unlock()
+		com.ListLock.Unlock()
 		signalPeerConnections()
 	}()
 

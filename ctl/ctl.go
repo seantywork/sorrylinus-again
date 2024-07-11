@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
+	pkgcom "github.com/seantywork/sorrylinus-again/pkg/com"
+	pkgedition "github.com/seantywork/sorrylinus-again/pkg/edition"
 	pkgstream "github.com/seantywork/sorrylinus-again/pkg/stream"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
@@ -37,6 +39,12 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgstream.INTERNAL_URL = CONF.InternalUrl
 
+	pkgcom.CHANNEL_ADDR = CONF.ServeAddr
+	pkgcom.CHANNEL_PORT = fmt.Sprintf("%d", CONF.Com.ChannelPort)
+	pkgcom.CHANNEL_PORT_EXTERNAL = fmt.Sprintf("%d", CONF.Com.ChannelPortExternal)
+
+	pkgedition.EXTENSION_ALLOWLIST = CONF.Edition.ExtAllowList
+
 	for i := 0; i < len(CONF.Stream.TurnServerAddr); i++ {
 
 		tmp := struct {
@@ -55,16 +63,11 @@ func ConfigureRuntime(e *gin.Engine) {
 	pkgstream.PEERS_SIGNAL_PATH = CONF.Stream.PeerSignalAddr
 
 	pkgstream.RTCP_PLI_INTERVAL = time.Second * time.Duration(CONF.Stream.RtcpPLIInterval)
-	pkgstream.EXTENSION_ALLOWLIST = CONF.Stream.ExtAllowList
 
 	pkgstream.UDP_BUFFER_BYTE_SIZE = CONF.Stream.UdpBufferByteSize
 	pkgstream.UDP_MUX_PORT = CONF.Stream.UdpMuxPort
 	pkgstream.UDP_EPHEMERAL_PORT_MIN = CONF.Stream.UdpEphemeralPortMin
 	pkgstream.UDP_EPHEMERAL_PORT_MAX = CONF.Stream.UdpEphemeralPortMax
-
-	pkgstream.SIGNAL_ADDR = CONF.ServeAddr
-	pkgstream.SIGNAL_PORT = fmt.Sprintf("%d", CONF.Stream.SignalPort)
-	pkgstream.SIGNAL_PORT_EXTERNAL = fmt.Sprintf("%d", CONF.Stream.SignalPortExternal)
 
 	pkgstream.RTP_RECEIVE_ADDR = CONF.ServeAddr
 	pkgstream.RTP_RECEIVE_PORT = fmt.Sprintf("%d", CONF.Stream.RtpReceivePort)
@@ -88,11 +91,17 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/mypage", GetViewMypage)
 
+	e.GET("/mypage/article", GetViewMypage)
+
+	e.GET("/mypage/video", GetViewMypage)
+
+	e.GET("/mypage/room", GetViewMypage)
+
 	e.GET("/content/article/:articleId", GetViewContentArticle)
 
-	e.GET("/content/peers/:peersId", GetViewContentPeers)
-
 	e.GET("/content/video/:videoId", GetViewContentVideo)
+
+	e.GET("/room/:roomId", GetViewRoom)
 
 	// auth
 
@@ -100,11 +109,13 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/oauth2/google/callback", pkgauth.OauthGoogleCallback)
 
-	// e.POST("/api/auth/user/add", pkgauth.UserAdd)
+	e.POST("/api/auth/user/add", pkgauth.UserAdd)
 
-	// e.GET("/api/auth/signin", pkgauth.Login)
+	e.POST("/api/auth/user/remove", pkgauth.UserRemove)
 
-	// e.GET("/api/auth/signout", pkgauth.Logout)
+	e.GET("/api/auth/signin", pkgauth.Login)
+
+	e.GET("/api/auth/signout", pkgauth.Logout)
 
 	pkgauth.InitAuth()
 
@@ -112,11 +123,19 @@ func RegisterRoutes(e *gin.Engine) {
 
 	// e.POST("/api/article/upload", pkgedition.PostArticleUpload)
 
-	// e.GET("/api/article/c/:contentId", pkgeditioni.GetArticleContentById)
+	// e.POST("/api/article/delete", pkgedition.PostArticleDelete)
+
+	// e.GET("/api/article/c/:contentId", pkgedition.GetArticleContentById)
 
 	// e.POST("/api/image/upload", pkgedition.PostImageUpload)
 
 	// e.GET("/api/image/c/:contentId", pkgedition.GetImageContentById)
+
+	e.POST("/api/video/upload", pkgedition.PostVideoUpload)
+
+	e.POST("/api/video/delete", pkgedition.PostVideoDelete)
+
+	e.GET("/api/video/c/:contentId", pkgedition.GetVideoContentByID)
 
 	// stream
 
@@ -128,13 +147,13 @@ func RegisterRoutes(e *gin.Engine) {
 
 	go pkgstream.InitRTMPServer()
 
-	e.POST("/api/video/upload", pkgstream.PostVideoUpload)
-
-	e.GET("/api/video/c/:contentId", pkgstream.GetVideoContentByID)
-
 	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
 
-	pkgstream.AddSignalHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
+	// channel
 
-	go pkgstream.StartSignalHandler()
+	pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
+
+	pkgcom.AddChannelCallback(pkgstream.SignalDispatcher)
+
+	go pkgcom.StartAllChannelHandlers()
 }

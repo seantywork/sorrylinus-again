@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
+	"github.com/seantywork/sorrylinus-again/pkg/com"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
 
@@ -17,9 +18,9 @@ var PEERS_SIGNAL_PATH string
 
 func GetPeersSignalAddress(c *gin.Context) {
 
-	s_addr := EXTERNAL_URL + ":" + SIGNAL_PORT_EXTERNAL + PEERS_SIGNAL_PATH
+	s_addr := EXTERNAL_URL + ":" + com.CHANNEL_PORT_EXTERNAL + PEERS_SIGNAL_PATH
 
-	c.JSON(http.StatusOK, SERVER_RE{Status: "success", Reply: s_addr})
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: s_addr})
 
 }
 
@@ -34,7 +35,7 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := &threadSafeWriter{unsafeConn, sync.Mutex{}}
+	c := &com.ThreadSafeWriter{unsafeConn, sync.Mutex{}}
 
 	// When this frame returns close the Websocket
 	defer c.Close() //nolint
@@ -71,9 +72,9 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Add our new PeerConnection to global list
-	listLock.Lock()
+	com.ListLock.Lock()
 	peerConnections = append(peerConnections, peerConnectionState{peerConnection, c})
-	listLock.Unlock()
+	com.ListLock.Unlock()
 
 	// Trickle ICE. Emit server candidate to client
 	peerConnection.OnICECandidate(func(i *webrtc.ICECandidate) {
@@ -188,8 +189,8 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dispatchKeyFrame() {
-	listLock.Lock()
-	defer listLock.Unlock()
+	com.ListLock.Lock()
+	defer com.ListLock.Unlock()
 
 	for i := range peerConnections {
 		for _, receiver := range peerConnections[i].peerConnection.GetReceivers() {
@@ -207,10 +208,10 @@ func dispatchKeyFrame() {
 }
 
 func signalPeerConnections() {
-	listLock.Lock()
+	com.ListLock.Lock()
 
 	defer func() {
-		listLock.Unlock()
+		com.ListLock.Unlock()
 		dispatchKeyFrame()
 	}()
 

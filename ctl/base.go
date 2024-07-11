@@ -15,7 +15,25 @@ func GetViewSignin(c *gin.Context) {
 
 func GetViewMypage(c *gin.Context) {
 
-	c.HTML(200, "mypage.html", gin.H{})
+	c.HTML(200, "mypage/index.html", gin.H{})
+
+}
+
+func GetViewMypageArticle(c *gin.Context) {
+
+	c.HTML(200, "mypage/article.html", gin.H{})
+
+}
+
+func GetViewMypageVideo(c *gin.Context) {
+
+	c.HTML(200, "mypage/video.html", gin.H{})
+
+}
+
+func GetViewMypageRoom(c *gin.Context) {
+
+	c.HTML(200, "mypage/room.html", gin.H{})
 
 }
 
@@ -25,14 +43,14 @@ func GetViewContentArticle(c *gin.Context) {
 
 }
 
-func GetViewContentPeers(c *gin.Context) {
-
-	c.HTML(200, "content/peers.html", gin.H{})
-
-}
-
 func GetViewContentVideo(c *gin.Context) {
 
 	c.HTML(200, "content/video.html", gin.H{})
+
+}
+
+func GetViewRoom(c *gin.Context) {
+
+	c.HTML(200, "room/index.html", gin.H{})
 
 }

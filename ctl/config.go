@@ -13,23 +13,27 @@ type SOLIAGAIN_CONFIG struct {
 	ServeAddr   string `yaml:"serveAddr"`
 	ServePort   int    `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
-	Stream      struct {
+	Com         struct {
+		ChannelPort         int `yaml:"channelPort"`
+		ChannelPortExternal int `yaml:"channelPortExternal"`
+	} `yaml:"channel"`
+	Edition struct {
+		ExtAllowList []string `yaml:"extAllowList"`
+	} `yaml:"edition"`
+	Stream struct {
 		TurnServerAddr []struct {
 			Addr string `yaml:"addr"`
 			Id   string `yaml:"id"`
 			Pw   string `yaml:"pw"`
 		} `yaml:"turnServerAddr"`
-		PeerSignalAddr         string   `yaml:"peerSignalAddr"`
-		RtcpPLIInterval        int      `yaml:"rtcpPLIInterval"`
-		ExtAllowList           []string `yaml:"extAllowList"`
-		UdpBufferByteSize      int      `yaml:"udpBufferByteSize"`
-		UdpMuxPort             int      `yaml:"udpMuxPort"`
-		UdpEphemeralPortMin    int      `yaml:"udpEphemeralPortMin"`
-		UdpEphemeralPortMax    int      `yaml:"udpEphemeralPortMax"`
-		SignalPort             int      `yaml:"signalPort"`
-		SignalPortExternal     int      `yaml:"signalPortExternal"`
-		RtpReceivePort         int      `yaml:"rtpReceivePort"`
-		RtpReceivePortExternal int      `yaml:"rtpReceivePortExternal"`
+		PeerSignalAddr         string `yaml:"peerSignalAddr"`
+		RtcpPLIInterval        int    `yaml:"rtcpPLIInterval"`
+		UdpBufferByteSize      int    `yaml:"udpBufferByteSize"`
+		UdpMuxPort             int    `yaml:"udpMuxPort"`
+		UdpEphemeralPortMin    int    `yaml:"udpEphemeralPortMin"`
+		UdpEphemeralPortMax    int    `yaml:"udpEphemeralPortMax"`
+		RtpReceivePort         int    `yaml:"rtpReceivePort"`
+		RtpReceivePortExternal int    `yaml:"rtpReceivePortExternal"`
 	} `yaml:"stream"`
 	Utils struct {
 		UseCompress bool `yaml:"useCompress"`
