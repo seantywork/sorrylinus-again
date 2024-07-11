@@ -159,6 +159,6 @@ func GetVideoContentByID(c *gin.Context) {
 
 	}
 
-	fmt.Println("download success")
+	fmt.Println("video download success")
 
 }

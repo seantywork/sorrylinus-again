@@ -97,6 +97,8 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/mypage/room", GetViewMypageRoom)
 
+	e.GET("/api/base", GetBase)
+
 	e.GET("/content/article/:articleId", GetViewContentArticle)
 
 	e.GET("/content/video/:videoId", GetViewContentVideo)
@@ -119,17 +121,23 @@ func RegisterRoutes(e *gin.Engine) {
 
 	pkgauth.InitAuth()
 
+	// sorrylinus
+
+	// e.POST("/api/sorrylinus/connect", pkgsoli.Connect)
+	// e.POST("/api/sorrylinus/disconnect", pkgsoli.Disconnect)
+	// e.POST("/api/sorrylinus/rt", pkgsoli.RoundTrip)
+
 	// edition
 
-	// e.POST("/api/article/upload", pkgedition.PostArticleUpload)
+	e.POST("/api/article/upload", pkgedition.PostArticleUpload)
 
-	// e.POST("/api/article/delete", pkgedition.PostArticleDelete)
+	e.POST("/api/article/delete", pkgedition.PostArticleDelete)
 
-	// e.GET("/api/article/c/:contentId", pkgedition.GetArticleContentById)
+	e.GET("/api/article/c/:contentId", pkgedition.GetArticleContentById)
 
-	// e.POST("/api/image/upload", pkgedition.PostImageUpload)
+	e.POST("/api/image/upload", pkgedition.PostImageUpload)
 
-	// e.GET("/api/image/c/:contentId", pkgedition.GetImageContentById)
+	e.GET("/api/image/c/:contentId", pkgedition.GetImageContentById)
 
 	e.POST("/api/video/upload", pkgedition.PostVideoUpload)
 
@@ -141,9 +149,9 @@ func RegisterRoutes(e *gin.Engine) {
 
 	pkgstream.InitWebRTCApi()
 
-	e.POST("/api/cctv/create", pkgstream.PostCCTVCreate)
+	e.POST("/api/cctv/open", pkgstream.PostCCTVOpen)
 
-	e.POST("/api/cctv/delete", pkgstream.PostCCTVDelete)
+	e.POST("/api/cctv/close", pkgstream.PostCCTVClose)
 
 	go pkgstream.InitRTMPServer()
 

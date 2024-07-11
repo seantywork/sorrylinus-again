@@ -396,6 +396,197 @@ func MakeSessionForUser(session_key string, id string, duration_seconds int) err
 	return nil
 }
 
+func UploadArticle(content string, plain_name string, new_name string) error {
+
+	ms := MediaStruct{}
+
+	ms.ISPublic = true
+	ms.Type = "article"
+	ms.PlainName = plain_name
+	ms.Extension = "json"
+
+	this_file_path := mediaPath + new_name + ".json"
+
+	this_article_path := articlePath + new_name + ".json"
+
+	content_b := []byte(content)
+
+	jb, err := json.Marshal(ms)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	err = os.WriteFile(this_file_path, jb, 0644)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	err = os.WriteFile(this_article_path, content_b, 0644)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	return nil
+}
+
+func DeleteArticle(media_key string) error {
+
+	var ms MediaStruct
+
+	this_file_path := mediaPath + media_key + ".json"
+
+	file_b, err := os.ReadFile(this_file_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete article: %s", err.Error())
+
+	}
+
+	err = json.Unmarshal(file_b, &ms)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete article: marshal: %s", err.Error())
+	}
+
+	this_article_path := articlePath + media_key + "." + ms.Extension
+
+	err = os.Remove(this_article_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete article: rmart: %s", err.Error())
+	}
+
+	err = os.Remove(this_file_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete video: rmmd: %s", err.Error())
+	}
+
+	return nil
+}
+
+func GetArticle(media_key string) (string, error) {
+
+	var ms MediaStruct
+
+	var content string
+
+	this_file_path := mediaPath + media_key + ".json"
+
+	file_b, err := os.ReadFile(this_file_path)
+
+	if err != nil {
+
+		return "", fmt.Errorf("failed to get article: %s", err.Error())
+
+	}
+
+	err = json.Unmarshal(file_b, &ms)
+
+	if err != nil {
+
+		return "", fmt.Errorf("failed to get article: marshal: %s", err.Error())
+	}
+
+	if ms.Type != "article" {
+
+		return "", fmt.Errorf("failed to get article: %s: %s", "wrong type", ms.Type)
+
+	}
+
+	this_article_path := mediaPath + media_key + "." + ms.Extension
+
+	article_b, err := os.ReadFile(this_article_path)
+
+	if err != nil {
+
+		return "", fmt.Errorf("failed to get article: read file: %s", err.Error())
+
+	}
+
+	content = string(article_b)
+
+	return content, nil
+
+}
+
+func UploadImage(c *gin.Context, file *multipart.FileHeader, filename string, new_filename string, extension string) error {
+
+	ms := MediaStruct{}
+
+	this_file_path := mediaPath + new_filename + ".json"
+
+	this_image_path := imagePath + new_filename + "." + extension
+
+	ms.ISPublic = true
+	ms.Type = "image"
+	ms.PlainName = filename
+	ms.Extension = extension
+
+	jb, err := json.Marshal(ms)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	err = os.WriteFile(this_file_path, jb, 0644)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	err = c.SaveUploadedFile(file, this_image_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	return nil
+}
+
+func DownloadImage(c *gin.Context, watchId string) error {
+
+	ms, err := GetByMediaKeyFromMedia(watchId)
+
+	if ms == nil {
+
+		return fmt.Errorf("failed to download image: %s", err.Error())
+
+	}
+
+	if ms.Type != "image" {
+
+		return fmt.Errorf("failed to download image: %s: %s", "wrong type", ms.Type)
+	}
+
+	this_image_path := imagePath + watchId + "." + ms.Extension
+
+	if _, err := os.Stat(this_image_path); err != nil {
+
+		return err
+
+	}
+
+	c.Header("Content-Type", "image/"+ms.Extension)
+
+	c.File(this_image_path)
+
+	return nil
+}
+
 func UploadVideo(c *gin.Context, file *multipart.FileHeader, filename string, new_filename string, extension string) error {
 
 	ms := MediaStruct{}

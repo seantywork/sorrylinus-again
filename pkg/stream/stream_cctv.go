@@ -48,7 +48,7 @@ type RTMPWebRTCPeer struct {
 	audioTrack     *webrtc.TrackLocalStaticSample
 }
 
-func PostCCTVCreate(c *gin.Context) {
+func PostCCTVOpen(c *gin.Context) {
 
 	log.Println("Incoming HTTP Request")
 
@@ -158,7 +158,7 @@ func PostCCTVCreate(c *gin.Context) {
 
 }
 
-func PostCCTVDelete(c *gin.Context) {
+func PostCCTVClose(c *gin.Context) {
 
 	/*
 

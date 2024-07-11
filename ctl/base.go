@@ -1,6 +1,13 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
+	"github.com/seantywork/sorrylinus-again/pkg/com"
+)
 
 func GetIndex(c *gin.Context) {
 
@@ -15,11 +22,35 @@ func GetViewSignin(c *gin.Context) {
 
 func GetViewMypage(c *gin.Context) {
 
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("view my page: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
 	c.HTML(200, "mypage/index.html", gin.H{})
 
 }
 
 func GetViewMypageArticle(c *gin.Context) {
+
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("view my page: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
 
 	c.HTML(200, "mypage/article.html", gin.H{})
 
@@ -27,13 +58,41 @@ func GetViewMypageArticle(c *gin.Context) {
 
 func GetViewMypageVideo(c *gin.Context) {
 
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("view my page: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
 	c.HTML(200, "mypage/video.html", gin.H{})
 
 }
 
 func GetViewMypageRoom(c *gin.Context) {
 
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("view my page: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
 	c.HTML(200, "mypage/room.html", gin.H{})
+
+}
+
+func GetBase(c *gin.Context) {
 
 }
 
