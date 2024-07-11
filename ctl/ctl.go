@@ -91,11 +91,11 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/mypage", GetViewMypage)
 
-	e.GET("/mypage/article", GetViewMypage)
+	e.GET("/mypage/article", GetViewMypageArticle)
 
-	e.GET("/mypage/video", GetViewMypage)
+	e.GET("/mypage/video", GetViewMypageVideo)
 
-	e.GET("/mypage/room", GetViewMypage)
+	e.GET("/mypage/room", GetViewMypageRoom)
 
 	e.GET("/content/article/:articleId", GetViewContentArticle)
 
