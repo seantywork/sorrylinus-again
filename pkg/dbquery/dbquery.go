@@ -242,6 +242,54 @@ func GetByIdFromSession(email string) (string, *SessionStruct, error) {
 	return "", nil, fmt.Errorf("id: %s: not found", email)
 }
 
+func GetEntryForMedia() (map[string]MediaStruct, error) {
+
+	em := make(map[string]MediaStruct)
+
+	files, err := os.ReadDir(mediaPath)
+
+	if err != nil {
+
+		return nil, fmt.Errorf("media entry: failed to read dir: %s", err.Error())
+
+	}
+
+	for _, f := range files {
+
+		ms := MediaStruct{}
+
+		f_name := f.Name()
+
+		if !strings.Contains(f_name, ".json") {
+			continue
+		}
+
+		key_name := strings.ReplaceAll(f_name, ".json", "")
+
+		this_file_path := mediaPath + f_name
+
+		file_b, err := os.ReadFile(this_file_path)
+
+		if err != nil {
+
+			return nil, fmt.Errorf("media entry: failed to read file: %s", err.Error())
+
+		}
+
+		err = json.Unmarshal(file_b, &ms)
+
+		if err != nil {
+
+			return nil, fmt.Errorf("media entry: failed to marshal: %s", err.Error())
+		}
+
+		em[key_name] = ms
+
+	}
+
+	return em, nil
+}
+
 func RemoveSessionKeyFromSession(session_key string) error {
 
 	this_file_path := sessionPath + session_key + ".json"

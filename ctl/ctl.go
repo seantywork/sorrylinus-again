@@ -97,13 +97,13 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/mypage/room", GetViewMypageRoom)
 
-	e.GET("/api/base", GetBase)
-
 	e.GET("/content/article/:articleId", GetViewContentArticle)
 
 	e.GET("/content/video/:videoId", GetViewContentVideo)
 
 	e.GET("/room/:roomId", GetViewRoom)
+
+	e.GET("/api/content/entry", GetMediaEntry)
 
 	// auth
 
@@ -124,8 +124,10 @@ func RegisterRoutes(e *gin.Engine) {
 	// sorrylinus
 
 	// e.POST("/api/sorrylinus/connect", pkgsoli.Connect)
+
 	// e.POST("/api/sorrylinus/disconnect", pkgsoli.Disconnect)
-	// e.POST("/api/sorrylinus/rt", pkgsoli.RoundTrip)
+
+	// e.POST("/api/sorrylinus/rt", pkgsoli.RoundTripEx)
 
 	// edition
 
@@ -157,7 +159,7 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
 
-	// channel
+	// com
 
 	pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
 
