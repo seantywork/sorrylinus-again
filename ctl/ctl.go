@@ -9,6 +9,7 @@ import (
 	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
 	pkgcom "github.com/seantywork/sorrylinus-again/pkg/com"
 	pkgedition "github.com/seantywork/sorrylinus-again/pkg/edition"
+	pkgsoli "github.com/seantywork/sorrylinus-again/pkg/sorrylinus"
 	pkgstream "github.com/seantywork/sorrylinus-again/pkg/stream"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
@@ -33,11 +34,15 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	e.MaxMultipartMemory = CONF.MaxFileSize
 
+	pkgsoli.SOLI_FRONT_ADDR = CONF.Sorrylinus.FrontAddr
+
+	pkgsoli.SOLI_SIGNAL_PATH = CONF.Sorrylinus.SoliSignalAddr
+
+	pkgsoli.TIMEOUT_SEC = CONF.Sorrylinus.TimeoutSec
+
+	pkgsoli.EXTERNAL_URL = CONF.ExternalUrl
+
 	pkgauth.DEBUG = CONF.Debug
-
-	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
-
-	pkgstream.INTERNAL_URL = CONF.InternalUrl
 
 	pkgcom.CHANNEL_ADDR = CONF.ServeAddr
 	pkgcom.CHANNEL_PORT = fmt.Sprintf("%d", CONF.Com.ChannelPort)
@@ -59,6 +64,10 @@ func ConfigureRuntime(e *gin.Engine) {
 
 		pkgstream.TURN_SERVER_ADDR = append(pkgstream.TURN_SERVER_ADDR, tmp)
 	}
+
+	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
+
+	pkgstream.INTERNAL_URL = CONF.InternalUrl
 
 	pkgstream.PEERS_SIGNAL_PATH = CONF.Stream.PeerSignalAddr
 
@@ -123,11 +132,7 @@ func RegisterRoutes(e *gin.Engine) {
 
 	// sorrylinus
 
-	// e.POST("/api/sorrylinus/connect", pkgsoli.Connect)
-
-	// e.POST("/api/sorrylinus/disconnect", pkgsoli.Disconnect)
-
-	// e.POST("/api/sorrylinus/rt", pkgsoli.RoundTripEx)
+	e.GET("/api/sorrylinus/signal/address", pkgsoli.GetSoliSignalAddress)
 
 	// edition
 
@@ -160,6 +165,8 @@ func RegisterRoutes(e *gin.Engine) {
 	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
 
 	// com
+
+	pkgcom.AddChannelHandler(CONF.Sorrylinus.SoliSignalAddr, pkgsoli.SoliSignalHandler)
 
 	pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
 

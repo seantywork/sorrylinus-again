@@ -17,6 +17,11 @@ type SOLIAGAIN_CONFIG struct {
 		ChannelPort         int `yaml:"channelPort"`
 		ChannelPortExternal int `yaml:"channelPortExternal"`
 	} `yaml:"channel"`
+	Sorrylinus struct {
+		FrontAddr      string `yaml:"frontAddr"`
+		SoliSignalAddr string `yaml:"soliSignalAddr"`
+		TimeoutSec     int    `yaml:"timeoutSec"`
+	} `yaml:"sorrylinus"`
 	Edition struct {
 		ExtAllowList []string `yaml:"extAllowList"`
 	} `yaml:"edition"`
