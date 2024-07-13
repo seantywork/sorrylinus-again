@@ -48,6 +48,11 @@ type RTMPWebRTCPeer struct {
 	audioTrack     *webrtc.TrackLocalStaticSample
 }
 
+type CCTVStruct struct {
+	StreamingKey string `json:"streaming_key"`
+	Description  string `json:"description"`
+}
+
 func PostCCTVOpen(c *gin.Context) {
 
 	log.Println("Incoming HTTP Request")
@@ -121,7 +126,7 @@ func PostCCTVOpen(c *gin.Context) {
 	}
 	<-gatherComplete
 
-	streamingKey, err := utils.GetRandomHex(16)
+	streamingKey, err := utils.GetRandomHex(32)
 
 	if err != nil {
 
@@ -136,13 +141,6 @@ func PostCCTVOpen(c *gin.Context) {
 		audioTrack:     audioTrack,
 	}
 
-	/*
-
-		TODO:
-			send to sorrylinus
-
-	*/
-
 	desc_b, err := json.Marshal(peerConnection.LocalDescription())
 
 	if err != nil {
@@ -151,8 +149,21 @@ func PostCCTVOpen(c *gin.Context) {
 
 	var resp com.SERVER_RE
 
+	var cs CCTVStruct
+
+	cs.StreamingKey = streamingKey
+	cs.Description = string(desc_b)
+
+	cs_b, err := json.Marshal(cs)
+
+	if err != nil {
+
+		panic(err)
+
+	}
+
 	resp.Status = "success"
-	resp.Reply = string(desc_b)
+	resp.Reply = string(cs_b)
 
 	c.JSON(200, resp)
 
@@ -160,17 +171,22 @@ func PostCCTVOpen(c *gin.Context) {
 
 func PostCCTVClose(c *gin.Context) {
 
-	/*
-
-		TODO:
-			sorrylinus exchange
-
-	*/
-
 	var resp com.SERVER_RE
 
+	var req com.CLIENT_REQ
+
+	if err := c.BindJSON(&req); err != nil {
+
+		panic(err)
+
+	}
+
+	log.Printf("cctv close: %s\n", req.Data)
+
+	delete(RTP_CONSUMERS, req.Data)
+
 	resp.Status = "success"
-	resp.Reply = ""
+	resp.Reply = "cctv closed"
 
 	c.JSON(200, resp)
 }
@@ -227,12 +243,15 @@ func (h *RTMPHandler) OnPublish(ctx *rtmp.StreamContext, timestamp uint32, cmd *
 		return errors.New("publishing name is empty")
 	}
 
-	/*
+	_, okay := RTP_CONSUMERS[cmd.PublishingName]
 
-		TODO:
-			key validation
+	if !okay {
 
-	*/
+		log.Printf("publishing name doesn't exist")
+
+		return errors.New("publishing name doesn't exist")
+
+	}
 
 	h.PublisherKey = cmd.PublishingName
 

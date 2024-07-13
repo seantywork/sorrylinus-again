@@ -27,6 +27,8 @@ var UDP_EPHEMERAL_PORT_MIN int
 
 var UDP_EPHEMERAL_PORT_MAX int
 
+var TIMEOUT_SEC int
+
 var TURN_SERVER_ADDR []struct {
 	Addr string `json:"addr"`
 	Id   string `json:"id"`

@@ -13,6 +13,7 @@ type SOLIAGAIN_CONFIG struct {
 	ServeAddr   string `yaml:"serveAddr"`
 	ServePort   int    `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
+	TimeoutSec  int    `yaml:"timeoutSec"`
 	Com         struct {
 		ChannelPort         int `yaml:"channelPort"`
 		ChannelPortExternal int `yaml:"channelPortExternal"`
@@ -20,7 +21,6 @@ type SOLIAGAIN_CONFIG struct {
 	Sorrylinus struct {
 		FrontAddr      string `yaml:"frontAddr"`
 		SoliSignalAddr string `yaml:"soliSignalAddr"`
-		TimeoutSec     int    `yaml:"timeoutSec"`
 	} `yaml:"sorrylinus"`
 	Edition struct {
 		ExtAllowList []string `yaml:"extAllowList"`

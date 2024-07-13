@@ -17,6 +17,16 @@ type SERVER_RE struct {
 	Reply  string `json:"reply"`
 }
 
+type RT_REQ_DATA struct {
+	Command string `json:"command"`
+	Data    string `json:"data"`
+}
+
+type RT_RESP_DATA struct {
+	Status string `json:"status"`
+	Data   string `json:"data"`
+}
+
 var CHANNEL_ADDR string
 
 var CHANNEL_PORT string

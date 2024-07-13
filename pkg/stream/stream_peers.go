@@ -2,6 +2,7 @@ package stream
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -10,11 +11,35 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v4"
+	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
 	"github.com/seantywork/sorrylinus-again/pkg/com"
+	"github.com/seantywork/sorrylinus-again/pkg/utils"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
 
 var PEERS_SIGNAL_PATH string
+
+type PeersEntryStruct struct {
+	RoomName []string `json:"room_name"`
+}
+
+type PeersUserStruct struct {
+	UserKey string `json:"user_key"`
+	User    string `json:"user"`
+}
+
+type PeersCreate struct {
+	RoomName string   `json:"room_name"`
+	Users    []string `json:"users"`
+}
+
+type PeersJoin struct {
+	RoomName string `json:"room_name"`
+	User     string `json:"user"`
+	UserKey  string `json:"user_key"`
+}
+
+var ROOMREG = make(map[string][]PeersUserStruct)
 
 func GetPeersSignalAddress(c *gin.Context) {
 
@@ -22,6 +47,247 @@ func GetPeersSignalAddress(c *gin.Context) {
 
 	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: s_addr})
 
+}
+
+func GetPeersEntry(c *gin.Context) {
+
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("peers entry: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
+	pes := PeersEntryStruct{}
+
+	for k, _ := range ROOMREG {
+
+		pes.RoomName = append(pes.RoomName, k)
+
+	}
+
+	pes_b, err := json.Marshal(pes)
+
+	if err != nil {
+
+		fmt.Printf("peers entry: marshal: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "failed to get peers entry"})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: string(pes_b)})
+
+	return
+
+}
+
+func PostPeersCreate(c *gin.Context) {
+
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("peers create: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
+	fmt.Println("create peers")
+
+	var req com.CLIENT_REQ
+
+	if err := c.BindJSON(&req); err != nil {
+
+		fmt.Printf("create peers: failed to bind: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+	}
+
+	var p_create PeersCreate
+
+	err := json.Unmarshal([]byte(req.Data), &p_create)
+
+	if err != nil {
+
+		fmt.Printf("create peers: marshal: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
+	ROOMREG[p_create.RoomName] = make([]PeersUserStruct, 0)
+
+	u_len := len(p_create.Users)
+
+	for i := 0; i < u_len; i++ {
+
+		u_key, _ := utils.GetRandomHex(32)
+
+		ROOMREG[p_create.RoomName] = append(ROOMREG[p_create.RoomName], PeersUserStruct{
+			UserKey: u_key,
+			User:    p_create.Users[i],
+		})
+
+	}
+
+	u_key, _ := utils.GetRandomHex(32)
+
+	ROOMREG[p_create.RoomName] = append(ROOMREG[p_create.RoomName], PeersUserStruct{
+		UserKey: u_key,
+		User:    "seantywork@gmail.com",
+	})
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: fmt.Sprintf("room: %s :created", p_create.RoomName)})
+
+	return
+
+}
+
+func PostPeersDelete(c *gin.Context) {
+
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("peers delete: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
+	fmt.Println("delete peers")
+
+	var req com.CLIENT_REQ
+
+	if err := c.BindJSON(&req); err != nil {
+
+		fmt.Printf("delete peers: failed to bind: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+	}
+
+	delete(ROOMREG, req.Data)
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: fmt.Sprintf("room: %s : deleted", req.Data)})
+
+	return
+
+}
+
+func roomJoinAuth(c *com.ThreadSafeWriter) error {
+
+	timeout_iter_count := 0
+
+	timeout_iter := TIMEOUT_SEC * 10
+
+	ticker := time.NewTicker(100 * time.Millisecond)
+
+	received_auth := make(chan com.RT_REQ_DATA)
+
+	got_auth := 0
+
+	var req com.RT_REQ_DATA
+
+	go func() {
+
+		auth_req := com.RT_REQ_DATA{}
+
+		err := c.ReadJSON(&auth_req)
+
+		if err != nil {
+
+			log.Fatal("read auth:", err)
+			return
+		}
+
+		received_auth <- auth_req
+
+	}()
+
+	for got_auth == 0 {
+
+		select {
+
+		case <-ticker.C:
+
+			if timeout_iter_count <= timeout_iter {
+
+				timeout_iter_count += 1
+
+			} else {
+
+				return fmt.Errorf("read auth: timed out")
+			}
+
+		case a := <-received_auth:
+
+			req = a
+
+			got_auth = 1
+
+			break
+		}
+
+	}
+
+	var pj PeersJoin
+
+	err := json.Unmarshal([]byte(req.Data), &pj)
+
+	if err != nil {
+
+		return fmt.Errorf("read auth: marshal: %s", err.Error())
+	}
+
+	p_users, okay := ROOMREG[pj.RoomName]
+
+	if !okay {
+
+		return fmt.Errorf("failed to get okay: %s", "no such room")
+	}
+
+	pu_len := len(p_users)
+
+	found := 0
+
+	for i := 0; i < pu_len; i++ {
+
+		if p_users[i].User == pj.User && p_users[i].UserKey == pj.UserKey {
+
+			found = 1
+
+			break
+
+		}
+
+	}
+
+	if found != 1 {
+
+		return fmt.Errorf("no matching user found")
+
+	}
+
+	return nil
 }
 
 func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +305,15 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 	// When this frame returns close the Websocket
 	defer c.Close() //nolint
+
+	err = roomJoinAuth(c)
+
+	if err != nil {
+
+		log.Print("auth:", err)
+
+		return
+	}
 
 	// Create new PeerConnection
 	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{

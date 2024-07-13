@@ -18,17 +18,7 @@ var EXTERNAL_URL string
 
 var TIMEOUT_SEC int
 
-type RT_REQ_DATA struct {
-	Command string `json:"command"`
-	Data    string `json:"data"`
-}
-
-type RT_RESP_DATA struct {
-	Status string `json:"status"`
-	Data   string `json:"data"`
-}
-
-var UREG map[*websocket.Conn]string
+var UREG = make(map[*websocket.Conn]string)
 
 var UPGRADER = websocket.Upgrader{}
 
@@ -56,17 +46,17 @@ func SoliSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 	ticker := time.NewTicker(100 * time.Millisecond)
 
-	received_auth := make(chan RT_REQ_DATA)
+	received_auth := make(chan com.RT_REQ_DATA)
 
 	got_auth := 0
 
-	c_ret := RT_RESP_DATA{}
+	c_ret := com.RT_RESP_DATA{}
 
-	var req RT_REQ_DATA
+	var req com.RT_REQ_DATA
 
 	go func() {
 
-		auth_req := RT_REQ_DATA{}
+		auth_req := com.RT_REQ_DATA{}
 
 		err := c.ReadJSON(&auth_req)
 

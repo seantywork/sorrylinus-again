@@ -38,7 +38,7 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgsoli.SOLI_SIGNAL_PATH = CONF.Sorrylinus.SoliSignalAddr
 
-	pkgsoli.TIMEOUT_SEC = CONF.Sorrylinus.TimeoutSec
+	pkgsoli.TIMEOUT_SEC = CONF.TimeoutSec
 
 	pkgsoli.EXTERNAL_URL = CONF.ExternalUrl
 
@@ -68,6 +68,8 @@ func ConfigureRuntime(e *gin.Engine) {
 	pkgstream.EXTERNAL_URL = CONF.ExternalUrl
 
 	pkgstream.INTERNAL_URL = CONF.InternalUrl
+
+	pkgstream.TIMEOUT_SEC = CONF.TimeoutSec
 
 	pkgstream.PEERS_SIGNAL_PATH = CONF.Stream.PeerSignalAddr
 
@@ -161,6 +163,12 @@ func RegisterRoutes(e *gin.Engine) {
 	e.POST("/api/cctv/close", pkgstream.PostCCTVClose)
 
 	go pkgstream.InitRTMPServer()
+
+	e.GET("/api/peers/entry", pkgstream.GetPeersEntry)
+
+	e.POST("/api/peers/create", pkgstream.PostPeersCreate)
+
+	e.POST("/api/peers/delete", pkgstream.PostPeersDelete)
 
 	e.GET("/api/peers/signal/address", pkgstream.GetPeersSignalAddress)
 

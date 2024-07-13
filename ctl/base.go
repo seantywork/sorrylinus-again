@@ -9,6 +9,7 @@ import (
 	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
 	"github.com/seantywork/sorrylinus-again/pkg/com"
 	"github.com/seantywork/sorrylinus-again/pkg/dbquery"
+	pkgstream "github.com/seantywork/sorrylinus-again/pkg/stream"
 )
 
 type EntryStruct struct {
@@ -103,19 +104,116 @@ func GetViewMypageRoom(c *gin.Context) {
 
 func GetViewContentArticle(c *gin.Context) {
 
-	c.HTML(200, "content/article.html", gin.H{})
+	watchId := c.Param("articleId")
+
+	if !pkgauth.VerifyCodeNameValue(watchId) {
+
+		fmt.Printf("get article: illegal: %s\n", watchId)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
+	c.HTML(200, "content/article.html", gin.H{
+		"article_code": watchId,
+	})
 
 }
 
 func GetViewContentVideo(c *gin.Context) {
 
-	c.HTML(200, "content/video.html", gin.H{})
+	watchId := c.Param("videoId")
+
+	if !pkgauth.VerifyCodeNameValue(watchId) {
+
+		fmt.Printf("get video: illegal: %s\n", watchId)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
+	c.HTML(200, "content/video.html", gin.H{
+		"video_code": watchId,
+	})
 
 }
 
 func GetViewRoom(c *gin.Context) {
 
-	c.HTML(200, "room/index.html", gin.H{})
+	my_key, my_type, my_id := pkgauth.WhoAmI(c)
+
+	if my_key == "" && my_type == "" {
+
+		fmt.Printf("view room: not logged in\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "not logged in"})
+
+		return
+
+	}
+
+	watchId := c.Param("roomId")
+
+	p_users, okay := pkgstream.ROOMREG[watchId]
+
+	if !okay {
+
+		fmt.Printf("view room: no such room\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "not allowed"})
+
+		return
+
+	}
+
+	pu_len := len(p_users)
+
+	allowed := 0
+
+	user_index := -1
+
+	for i := 0; i < pu_len; i++ {
+
+		if p_users[i].User == my_id {
+
+			allowed = 1
+
+			user_index = i
+
+			break
+		}
+
+	}
+
+	if allowed != 1 {
+
+		fmt.Printf("view room: user not allowed\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "not allowed"})
+
+		return
+
+	}
+
+	jb, err := json.Marshal(p_users[user_index])
+
+	if err != nil {
+
+		fmt.Printf("view room: marshal\n")
+
+		c.JSON(http.StatusInternalServerError, com.SERVER_RE{Status: "error", Reply: "failed to get room"})
+
+		return
+
+	}
+
+	c.HTML(200, "room/index.html", gin.H{
+		"room_code": string(jb),
+	})
 
 }
 
