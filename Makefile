@@ -2,7 +2,7 @@
 
 all:
 
-	@echo "go tv"
+	@echo "sorrylinus-again"
 
 
 build:
@@ -17,9 +17,14 @@ test:
 
 clean-data:
 
-	rm -f data/media/*.json
-	rm -f data/meda_video
+	rm -rf data/media/*.json
+	rm -rf data/media/article/*.json
+	rm -rf data/media/image/*.json data/media/image/*.jpg data/media/image/*.jpeg data/media/image/*.png
+	rm -rf data/media/video/*.json data/media/video/*.mp4
+	rm -rf data/session/*.json 
+	rm -rf data/user/*.json
+
 
 clean:
 
-	rm -r *.out
+	rm -rf *.out

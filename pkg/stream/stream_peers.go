@@ -51,23 +51,31 @@ func GetPeersSignalAddress(c *gin.Context) {
 
 func GetPeersEntry(c *gin.Context) {
 
-	_, my_type, _ := pkgauth.WhoAmI(c)
-
-	if my_type != "admin" {
-
-		fmt.Printf("peers entry: not admin\n")
-
-		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
-
-		return
-
-	}
+	_, my_type, my_id := pkgauth.WhoAmI(c)
 
 	pes := PeersEntryStruct{}
 
-	for k, _ := range ROOMREG {
+	for k, v := range ROOMREG {
 
-		pes.RoomName = append(pes.RoomName, k)
+		if my_type == "admin" {
+
+			pes.RoomName = append(pes.RoomName, k)
+
+		} else {
+
+			pu_len := len(v)
+
+			for i := 0; i < pu_len; i++ {
+
+				if v[i].User == my_id {
+
+					pes.RoomName = append(pes.RoomName, k)
+
+				}
+
+			}
+
+		}
 
 	}
 

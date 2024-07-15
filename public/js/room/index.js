@@ -9,8 +9,20 @@ TURN_SERVER_ADDRESS= {}
 
 ICE_SENT = 0
 
-function initPeers(){
+async function initPeers(){
 
+
+
+    let roomInfo = ROOM_INFO
+
+    if(roomInfo == ""){
+
+        alert("no room info provided")
+
+        return
+    }
+
+    await init()
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(function(stream){
@@ -173,4 +185,9 @@ async function init(){
 
 }
 
-init()
+
+(async function (){
+
+    await initPeers()
+
+})()

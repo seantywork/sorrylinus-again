@@ -25,6 +25,10 @@ type UserLogin struct {
 	Passphrase string `json:"passphrase"`
 }
 
+type UserListStruct struct {
+	Users []string `json:"users"`
+}
+
 func GenerateStateAuthCookie(c *gin.Context) string {
 
 	state, _ := pkgutils.GetRandomHex(64)
@@ -158,6 +162,56 @@ func OauthGoogleCallback(c *gin.Context) {
 
 }
 
+func UserList(c *gin.Context) {
+
+	_, my_type, _ := WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("user list: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
+	var uls UserListStruct
+
+	us, err := dbquery.GetAllUsers()
+
+	if err != nil {
+
+		fmt.Printf("user list: failed to get all: %s\n", err.Error())
+
+		c.JSON(http.StatusInternalServerError, com.SERVER_RE{Status: "error", Reply: "failed to get all users"})
+
+		return
+
+	}
+
+	for k, _ := range us {
+
+		uls.Users = append(uls.Users, k)
+
+	}
+
+	jb, err := json.Marshal(uls)
+
+	if err != nil {
+
+		fmt.Printf("user list: failed to marshal: %s\n", err.Error())
+
+		c.JSON(http.StatusInternalServerError, com.SERVER_RE{Status: "error", Reply: "failed to get all users"})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: string(jb)})
+
+}
+
 func UserAdd(c *gin.Context) {
 
 	_, my_type, _ := WhoAmI(c)
@@ -279,11 +333,23 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	err := json.Unmarshal([]byte(req.Data), &u_login)
+
+	if err != nil {
+
+		fmt.Printf("user login: failed to unmarshal: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
 	us, err := dbquery.GetByIdFromUser(u_login.Id)
 
 	if err != nil {
 
-		fmt.Printf("user login: failed to get from user: %s", err.Error())
+		fmt.Printf("user login: failed to get from user: %s\n", err.Error())
 
 		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "id doesn't exist"})
 
@@ -313,6 +379,8 @@ func Login(c *gin.Context) {
 		return
 
 	}
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: "logged in"})
 
 }
 
@@ -353,5 +421,7 @@ func Logout(c *gin.Context) {
 		return
 
 	}
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: "logged out"})
 
 }

@@ -1,3 +1,4 @@
+{{ define "mypage/index.html" }}
 <html>
   <head>
     <title> mypage </title>
@@ -5,15 +6,47 @@
   </head>
 
   <body>
-    <h1> RTMP to WebRTC </h1>
-    <div id="rtmpFeed"></div>
 
-    <button onclick="initCCTV()"> start cctv </button>
-    
+    <h1> Sorrylinus </h1>
+
+    <h3> CCTV </h3>
+
+    <div id="cctv-reader"></div>
+
+    <button onclick="initCCTV()"> Start CCTV </button>
+
+
+    <h1> Sorrylinus Again </h1>
+
+    <h3> Article Edit </h3>
+
+    <a href="/mypage/article"></a>
+
+    <h3> Video Edit </h3>
+
+    <a href="/mypage/video"></a>
+
+    <h3> Room Edit </h3>
+
+    <a href="/mypage/room"></a>
+
+    <h3> Users </h3>
+
+    <label for="create-user-id">User ID</label>
+    <input type="text" id="create-user-id">
+    <label for="create-user-pw">User PW</label>
+    <input type="text" id="create-user-pw">
+    <label for="create-user-duratioin">User Duration</label>
+    <input type="text" id="create-user-duration">
+    <button onclick="createUser()"> Create User </button>
+
+    <div id="user-reader"></div>
+
 
   </body>
 
-  <script src="/public/js/cctv.js"></script>
+  <script src="/public/js/mypage/index.js"></script>
 
 
 </html>
+{{ end }}

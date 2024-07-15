@@ -348,6 +348,55 @@ func MakeSessionForAdmin(session_key string, email string) error {
 	return nil
 }
 
+func GetAllUsers() (map[string]UserStruct, error) {
+
+	var ret_us = make(map[string]UserStruct)
+
+	files, err := os.ReadDir(userPath)
+
+	if err != nil {
+
+		return nil, fmt.Errorf("all users: failed to read dir: %s", err.Error())
+
+	}
+
+	for _, f := range files {
+
+		us := UserStruct{}
+
+		f_name := f.Name()
+
+		if !strings.Contains(f_name, ".json") {
+			continue
+		}
+
+		key_name := strings.ReplaceAll(f_name, ".json", "")
+
+		this_file_path := userPath + f_name
+
+		file_b, err := os.ReadFile(this_file_path)
+
+		if err != nil {
+
+			return nil, fmt.Errorf("all users: failed to read file: %s", err.Error())
+
+		}
+
+		err = json.Unmarshal(file_b, &us)
+
+		if err != nil {
+
+			return nil, fmt.Errorf("all users: failed to marshal: %s", err.Error())
+		}
+
+		ret_us[key_name] = us
+
+	}
+
+	return ret_us, nil
+
+}
+
 func MakeUser(id string, passphrase string, duration_seconds int) error {
 
 	var us UserStruct
@@ -552,7 +601,7 @@ func GetArticle(media_key string) (string, error) {
 
 	}
 
-	this_article_path := mediaPath + media_key + "." + ms.Extension
+	this_article_path := articlePath + media_key + "." + ms.Extension
 
 	article_b, err := os.ReadFile(this_article_path)
 

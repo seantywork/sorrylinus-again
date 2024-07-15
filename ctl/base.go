@@ -14,19 +14,20 @@ import (
 
 type EntryStruct struct {
 	Entry []struct {
-		Title string
-		Id    string
+		Title string `json:"title"`
+		Id    string `json:"id"`
+		Type  string `json:"type"`
 	} `json:"entry"`
 }
 
 func GetIndex(c *gin.Context) {
 
-	c.HTML(200, "index.html", gin.H{})
+	c.HTML(200, "index/index.html", gin.H{})
 }
 
 func GetViewSignin(c *gin.Context) {
 
-	c.HTML(200, "signin.html", gin.H{})
+	c.HTML(200, "index/signin.html", gin.H{})
 
 }
 
@@ -238,23 +239,27 @@ func GetMediaEntry(c *gin.Context) {
 		if v.Type == "article" {
 
 			entry.Entry = append(entry.Entry, struct {
-				Title string
-				Id    string
+				Title string `json:"title"`
+				Id    string `json:"id"`
+				Type  string `json:"type"`
 			}{
 
 				Title: v.PlainName,
 				Id:    k,
+				Type:  "article",
 			})
 
 		} else if v.Type == "video" {
 
 			entry.Entry = append(entry.Entry, struct {
-				Title string
-				Id    string
+				Title string `json:"title"`
+				Id    string `json:"id"`
+				Type  string `json:"type"`
 			}{
 
 				Title: v.PlainName + "." + v.Extension,
 				Id:    k,
+				Type:  "video",
 			})
 
 		} else {

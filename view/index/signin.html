@@ -1,0 +1,44 @@
+{{ define "index/signin.html" }}
+
+<html>
+
+    <head>
+
+
+    </head>
+
+    <body>
+
+
+        <div>
+            <div>
+                <input type='text' id='user-id'/>
+                <label for='user-id'>Enter User ID</label>
+            </div>
+        </div>
+        <div>
+            <div>
+                <input type='password' id='user-pw'/>
+                <label for='user-pw'>Enter User Password</label>
+            </div>
+        </div>
+
+        <br/>
+        <div>
+            <button onclick="userSignin()">
+                User Login
+            </button>
+        </div>
+
+        <div>
+            <a href="/api/oauth2/google/signin">
+                Admin Login
+            </a>
+        </div>
+
+
+    <script src="/public/js/index/signin.js"></script>
+    </body>
+
+</html>
+{{ end }}

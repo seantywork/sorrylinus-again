@@ -1,3 +1,4 @@
+{{ define "mypage/room.html" }}
 <!DOCTYPE html>
 <html>
   <head>
@@ -9,20 +10,18 @@
 
   </head>
   <body>
-    <h3> Local Video </h3>
-    <video id="localVideo" width="160" height="120" autoplay muted></video> <br />
 
-    <h3> Remote Video </h3>
-    <div id="remoteVideos"></div> <br />
+    <label for="create-room-name">Room Name</label>
+    <input type="text" id="create-room-name">
+    <label for="create-room-users">Allowed Users</label>
+    <input type="text" id="create-room-users">
+    <button onclick="createRoom()"> Create Room </button>
 
-    <h3> Logs </h3>
-    <div id="logs"></div>
-
-
-    <button onclick="initPeers()">Join</button>
+    <div id="room-reader"></div>
 
 
+    <script src="/public/js/mypage/room.js"></script>
   </body>
 
-  <script src="/public/js/peers.js"></script>
 </html>
+{{ end }}

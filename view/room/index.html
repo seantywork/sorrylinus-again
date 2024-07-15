@@ -1,11 +1,16 @@
+{{ define "room/index.html" }}
 <!DOCTYPE html>
 <html>
   <head>
 
     <meta charset="utf-8">
-    <title>peers</title>
-    <!--<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>-->
-    <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
+    <title> room </title>
+
+    <script>
+
+      ROOM_INFO = "{{ .room_code }}"
+
+    </script>
 
   </head>
   <body>
@@ -24,5 +29,6 @@
 
   </body>
 
-  <script src="/public/js/peers.js"></script>
+  <script src="/public/js/room/index.js"></script>
 </html>
+{{ end }}

@@ -92,7 +92,7 @@ func RegisterRoutes(e *gin.Engine) {
 
 	// base
 
-	e.LoadHTMLGlob("view/*")
+	e.LoadHTMLGlob("view/**/*")
 
 	e.Static("/public", "./public")
 
@@ -122,13 +122,15 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/oauth2/google/callback", pkgauth.OauthGoogleCallback)
 
+	e.GET("/api/auth/user/list", pkgauth.UserList)
+
 	e.POST("/api/auth/user/add", pkgauth.UserAdd)
 
 	e.POST("/api/auth/user/remove", pkgauth.UserRemove)
 
-	e.GET("/api/auth/signin", pkgauth.Login)
+	e.POST("/api/auth/signin", pkgauth.Login)
 
-	e.GET("/api/auth/signout", pkgauth.Logout)
+	e.POST("/api/auth/signout", pkgauth.Logout)
 
 	pkgauth.InitAuth()
 

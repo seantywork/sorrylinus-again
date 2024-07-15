@@ -1,0 +1,48 @@
+{{ define "mypage/article.html" }}
+<!doctype html>
+<html>
+    <head>
+        <title> mypage/article </title>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/link@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    </head>
+    <body>
+        <div id="article-editor"></div>
+
+        <button id="saveButton">
+            Save
+        </button>
+
+        <div>
+            Readonly:
+            <b id="readonly-state">
+              Off
+            </b>
+            <button id="toggleReadOnlyButton">
+              Toggle
+            </button>
+        </div>
+
+        <div id="article-reader"></div>
+
+    
+    
+        
+        <script src="/public/js/mypage/article.js"></script>
+
+    </body>
+</html>
+{{ end }}
