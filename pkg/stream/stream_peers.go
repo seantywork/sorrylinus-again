@@ -451,6 +451,7 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Signal for the new PeerConnection
+
 	signalPeerConnections(roomParam)
 
 	message := &SIGNAL_INFO{}
@@ -589,7 +590,7 @@ func attemptSync(k string) bool {
 			existingSenders[sender.Track().ID()] = true
 
 			// If we have a RTPSender that doesn't map to a existing track remove and signal
-			if _, ok := trackLocals[sender.Track().ID()]; !ok {
+			if _, ok := roomTrackLocals[k][sender.Track().ID()]; !ok {
 
 				if err := roomPeerConnections[k][i].peerConnection.RemoveTrack(sender); err != nil {
 					return true
@@ -598,18 +599,26 @@ func attemptSync(k string) bool {
 		}
 
 		// Don't receive videos we are sending, make sure we don't have loopback
+
 		for _, receiver := range roomPeerConnections[k][i].peerConnection.GetReceivers() {
 			if receiver.Track() == nil {
 				continue
 			}
 
 			existingSenders[receiver.Track().ID()] = true
+
 		}
 
 		// Add all track we aren't sending yet to the PeerConnection
-		for trackID := range trackLocals {
+		for trackID, t := range roomTrackLocals[k] {
+
+			log.Printf("!!!!! tracks: i: %d, id : %s, kind: %s, room: %s\n", i, t.ID(), t.Kind(), k)
+
 			if _, ok := existingSenders[trackID]; !ok {
-				if _, err := roomPeerConnections[k][i].peerConnection.AddTrack(trackLocals[trackID]); err != nil {
+
+				log.Printf("!!!!! add track\n")
+
+				if _, err := roomPeerConnections[k][i].peerConnection.AddTrack(t); err != nil {
 					return true
 				}
 			}

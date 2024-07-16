@@ -18,7 +18,7 @@ var UPGRADER = websocket.Upgrader{}
 
 var roomPeerConnections = make(map[string][]peerConnectionState)
 
-var trackLocals = make(map[string]*webrtc.TrackLocalStaticRTP)
+var roomTrackLocals = make(map[string]map[string]*webrtc.TrackLocalStaticRTP)
 
 type peerConnectionState struct {
 	peerConnection *webrtc.PeerConnection
@@ -27,7 +27,7 @@ type peerConnectionState struct {
 
 func SignalDispatcher() {
 
-	for range time.NewTicker(time.Second * 3).C {
+	for range time.NewTicker(time.Millisecond * 10).C {
 
 		for k, _ := range roomPeerConnections {
 

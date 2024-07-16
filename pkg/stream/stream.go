@@ -160,11 +160,11 @@ func addTrack(k string, t *webrtc.TrackRemote) *webrtc.TrackLocalStaticRTP {
 		panic(err)
 	}
 
-	//tl := map[string]*webrtc.TrackLocalStaticRTP{
-	//	t.ID(): trackLocal,
-	//}
+	tl := map[string]*webrtc.TrackLocalStaticRTP{
+		t.ID(): trackLocal,
+	}
 
-	trackLocals[t.ID()] = trackLocal
+	roomTrackLocals[k] = tl
 	return trackLocal
 }
 
@@ -175,5 +175,5 @@ func removeTrack(k string, t *webrtc.TrackLocalStaticRTP) {
 		signalPeerConnections(k)
 	}()
 
-	delete(trackLocals, t.ID())
+	delete(roomTrackLocals, k)
 }

@@ -138,9 +138,19 @@ async function initPeers(){
                 document.getElementById('remoteVideos').appendChild(el)
         
                 event.track.onmute = function(event) {
-                    el.play()
+                    var playPromise = el.play()
+ 
+                    if (playPromise !== undefined) {
+                      playPromise.then(function() {
+                        video.pause()
+                      })
+                      .catch(function(error) {
+                        // Auto-play was prevented
+                        // Show paused UI.
+                        alert(error)
+                      })
+                    }
                 }
-        
                 event.streams[0].onremovetrack = function({track}) {
 
                     if (el.parentNode) {
