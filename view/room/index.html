@@ -8,7 +8,7 @@
 
     <script>
 
-      ROOM_INFO = "{{ .room_code }}"
+      ROOM_INFO = JSON.parse("{{ .room_code }}")
 
     </script>
 
@@ -25,12 +25,11 @@
     <textarea id="chat-sender"></textarea>
     <br>
 
-    <input type="button" onlick="sendChat()">send</button>
+    <input type="button" value="send" onlick="sendChat()">
   
-    <pre id="chat-reader">
+    <p>Thread</p>
 
-
-    </pre>
+    <pre id="chat-reader"></pre>
 
 
   </body>

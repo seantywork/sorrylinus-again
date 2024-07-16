@@ -20,7 +20,7 @@ async function initPeers(){
 
 
 
-    let roomInfo = ROOM_INFO
+    let roomInfo = JSON.stringify(ROOM_INFO)
 
     if(roomInfo == ""){
 
@@ -30,6 +30,8 @@ async function initPeers(){
     }
 
     await init()
+
+
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(function(stream){
@@ -49,11 +51,11 @@ async function initPeers(){
         
             if (location.protocol !== 'https:') {
 
-                ws = new WebSocket("ws://" + PEERS_SIGNAL_ADDRESS)
+                ws = new WebSocket("ws://" + PEERS_SIGNAL_ADDRESS + ROOM_INFO.room_name)
         
             } else {
         
-                ws = new WebSocket("wss://" + PEERS_SIGNAL_ADDRESS)
+                ws = new WebSocket("wss://" + PEERS_SIGNAL_ADDRESS + ROOM_INFO.room_name)
         
         
             }
@@ -65,7 +67,7 @@ async function initPeers(){
             }
             
             ws.onclose = function(evt) {
-                window.alert("Websocket has closed")
+                alert("Websocket has closed")
             }
         
             ws.onmessage = function(evt) {
@@ -140,6 +142,7 @@ async function initPeers(){
                 }
         
                 event.streams[0].onremovetrack = function({track}) {
+
                     if (el.parentNode) {
                         el.parentNode.removeChild(el)
                     }
@@ -216,7 +219,7 @@ async function init(){
 
     PEERS_SIGNAL_ADDRESS = data.reply 
 
-    console.log("peersSignalAddr: " + PEERS_SIGNAL_ADDRESS)
+    console.log("peersSignalAddr: " + PEERS_SIGNAL_ADDRESS + ROOM_INFO.room_name)
 
 
     console.log("opened channel for peer signal")

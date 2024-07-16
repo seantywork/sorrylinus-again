@@ -73,6 +73,8 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgstream.TIMEOUT_SEC = CONF.TimeoutSec
 
+	pkgstream.PEER_SIGNAL_ATTEMPT_SYNC = CONF.Stream.PeerSignalAttemptSync
+
 	pkgstream.PEERS_SIGNAL_PATH = CONF.Stream.PeerSignalAddr
 
 	pkgstream.RTCP_PLI_INTERVAL = time.Second * time.Duration(CONF.Stream.RtcpPLIInterval)

@@ -304,7 +304,7 @@ async function getArticleList(){
         <a href="/content/${contentEntry.entry[i].type}/${contentEntry.entry[i].id}">
             ${contentEntry.entry[i].title}
         </a>
-        <button onclick="deleteArticle('${contentEntry.entry[i].id}')">Delete</button>
+        <input type="button" onclick="deleteArticle('${contentEntry.entry[i].id}')" value="delete">
         <br>
         `
         articleCount += 1

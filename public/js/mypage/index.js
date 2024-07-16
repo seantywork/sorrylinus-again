@@ -159,7 +159,7 @@ async function listUsers(){
     
             userReader.innerHTML += `
             <pre> ${userList.users[i]} </pre> 
-            <button onclick="deleteUser('${userList.users[i]}')">Delete</button>
+            <input type="button" onclick="deleteUser('${userList.users[i]}')" value="delete">
             <br>
             `
          

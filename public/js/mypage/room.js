@@ -44,7 +44,7 @@ async function getRoomList(){
             <a href="/room/${roomEntry.room_name[i]}">
                 ${roomEntry.room_name[i]}
             </a>
-            <button onclick="deleteRoom('${roomEntry.room_name[i]}')">Delete</button>
+            <input type="button" onclick="deleteRoom('${roomEntry.room_name[i]}')" value="delete">
             <br>
             `
         

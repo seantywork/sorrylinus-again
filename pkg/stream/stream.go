@@ -148,11 +148,11 @@ func createTrack(peerConnection *webrtc.PeerConnection,
 
 }
 
-func addTrack(t *webrtc.TrackRemote) *webrtc.TrackLocalStaticRTP {
+func addTrack(k string, t *webrtc.TrackRemote) *webrtc.TrackLocalStaticRTP {
 	com.ListLock.Lock()
 	defer func() {
 		com.ListLock.Unlock()
-		signalPeerConnections()
+		signalPeerConnections(k)
 	}()
 
 	trackLocal, err := webrtc.NewTrackLocalStaticRTP(t.Codec().RTPCodecCapability, t.ID(), t.StreamID())
@@ -160,15 +160,19 @@ func addTrack(t *webrtc.TrackRemote) *webrtc.TrackLocalStaticRTP {
 		panic(err)
 	}
 
+	//tl := map[string]*webrtc.TrackLocalStaticRTP{
+	//	t.ID(): trackLocal,
+	//}
+
 	trackLocals[t.ID()] = trackLocal
 	return trackLocal
 }
 
-func removeTrack(t *webrtc.TrackLocalStaticRTP) {
+func removeTrack(k string, t *webrtc.TrackLocalStaticRTP) {
 	com.ListLock.Lock()
 	defer func() {
 		com.ListLock.Unlock()
-		signalPeerConnections()
+		signalPeerConnections(k)
 	}()
 
 	delete(trackLocals, t.ID())

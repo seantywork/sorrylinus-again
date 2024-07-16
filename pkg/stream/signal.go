@@ -16,7 +16,8 @@ type SIGNAL_INFO struct {
 
 var UPGRADER = websocket.Upgrader{}
 
-var peerConnections = make([]peerConnectionState, 0)
+var roomPeerConnections = make(map[string][]peerConnectionState)
+
 var trackLocals = make(map[string]*webrtc.TrackLocalStaticRTP)
 
 type peerConnectionState struct {
@@ -27,6 +28,11 @@ type peerConnectionState struct {
 func SignalDispatcher() {
 
 	for range time.NewTicker(time.Second * 3).C {
-		dispatchKeyFrame()
+
+		for k, _ := range roomPeerConnections {
+
+			dispatchKeyFrame(k)
+		}
+
 	}
 }
