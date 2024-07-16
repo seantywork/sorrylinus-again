@@ -3,6 +3,7 @@ package stream
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"sync"
@@ -43,7 +44,17 @@ var ROOMREG = make(map[string][]PeersUserStruct)
 
 func GetPeersSignalAddress(c *gin.Context) {
 
-	s_addr := EXTERNAL_URL + ":" + com.CHANNEL_PORT_EXTERNAL + PEERS_SIGNAL_PATH
+	var s_addr string
+
+	if DEBUG {
+
+		s_addr = INTERNAL_URL + ":" + com.CHANNEL_PORT + PEERS_SIGNAL_PATH
+
+	} else {
+
+		s_addr = EXTERNAL_URL + ":" + com.CHANNEL_PORT_EXTERNAL + PEERS_SIGNAL_PATH
+
+	}
 
 	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: s_addr})
 
@@ -467,6 +478,13 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 				return
 			}
+
+		case "chat":
+
+			message.Data = html.EscapeString(message.Data)
+
+			broadcastPeerConnectioins(message)
+
 		}
 	}
 }
@@ -488,6 +506,16 @@ func dispatchKeyFrame() {
 			})
 		}
 	}
+}
+
+func broadcastPeerConnectioins(message *SIGNAL_INFO) {
+
+	for i := range peerConnections {
+
+		peerConnections[i].websocket.WriteJSON(*message)
+
+	}
+
 }
 
 func signalPeerConnections() {

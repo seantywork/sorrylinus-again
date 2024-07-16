@@ -17,7 +17,7 @@ type SOLIAGAIN_CONFIG struct {
 	Com         struct {
 		ChannelPort         int `yaml:"channelPort"`
 		ChannelPortExternal int `yaml:"channelPortExternal"`
-	} `yaml:"channel"`
+	} `yaml:"com"`
 	Sorrylinus struct {
 		FrontAddr      string `yaml:"frontAddr"`
 		SoliSignalAddr string `yaml:"soliSignalAddr"`

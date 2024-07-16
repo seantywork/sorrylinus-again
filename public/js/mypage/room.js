@@ -44,6 +44,7 @@ async function getRoomList(){
             <a href="/room/${roomEntry.room_name[i]}">
                 ${roomEntry.room_name[i]}
             </a>
+            <button onclick="deleteRoom('${roomEntry.room_name[i]}')">Delete</button>
             <br>
             `
         
@@ -109,6 +110,38 @@ async function createRoom(){
     await getRoomList()
 
 }
+
+
+async function deleteRoom(roomName){
+
+    let req = {
+        data: roomName
+    }
+
+
+    let resp = await fetch(`/api/peers/delete`, {
+        body: JSON.stringify(req),
+        method: "POST"
+    })
+
+    let result = await resp.json()
+
+    if(result.status != "success"){
+
+    alert("failed to delete room")
+
+    return
+    }
+
+    alert("successfully deleted room: " + result.reply)
+
+
+    await getRoomList()
+
+
+}
+
+
 
 (async function() {
 

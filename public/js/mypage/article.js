@@ -304,6 +304,7 @@ async function getArticleList(){
         <a href="/content/${contentEntry.entry[i].type}/${contentEntry.entry[i].id}">
             ${contentEntry.entry[i].title}
         </a>
+        <button onclick="deleteArticle('${contentEntry.entry[i].id}')">Delete</button>
         <br>
         `
         articleCount += 1
@@ -319,6 +320,37 @@ async function getArticleList(){
   
   }
   
+
+async function deleteArticle(articleId){
+
+
+  let req = {
+    data: articleId
+  }
+
+
+  let resp = await fetch(`/api/article/delete`, {
+      body: JSON.stringify(req),
+      method: "POST"
+  })
+
+  let result = await resp.json()
+
+  if(result.status != "success"){
+
+    alert("failed to delete article")
+
+    return
+  }
+
+  alert("successfully deleted article: " + result.reply)
+
+
+  await getArticleList()
+
+
+}
+
 (async function() {
 
     await getArticleList()

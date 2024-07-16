@@ -15,6 +15,8 @@ import (
 	"github.com/seantywork/sorrylinus-again/pkg/com"
 )
 
+var DEBUG bool
+
 var EXTERNAL_URL string
 
 var INTERNAL_URL string

@@ -121,7 +121,7 @@ async function initCCTV(){
 
 async function closeCCTV(){
 
-
+    alert("Not implemented, yet")
 
 }
 
@@ -158,7 +158,8 @@ async function listUsers(){
         for(let i = 0; i < userList.users.length; i ++){
     
             userReader.innerHTML += `
-            <pre> ${userList.users[i]} </pre>
+            <pre> ${userList.users[i]} </pre> 
+            <button onclick="deleteUser('${userList.users[i]}')">Delete</button>
             <br>
             `
          
@@ -229,12 +230,35 @@ async function createUser(){
 
     alert("successfully created user: " + result.reply)
 
+    await listUsers()
 
 }
 
-async function deleteUser(){
+async function deleteUser(userId){
+
+    let req = {
+        data: userId
+    }
 
 
+    let resp = await fetch(`/api/auth/user/remove`, {
+        body: JSON.stringify(req),
+        method: "POST"
+    })
+
+    let result = await resp.json()
+
+    if(result.status != "success"){
+
+        alert("failed to delete user")
+
+        return
+    }
+
+    alert("successfully deleted user: " + result.reply)
+
+
+    await listUsers()
 
 }
 

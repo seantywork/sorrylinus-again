@@ -22,7 +22,19 @@ type EntryStruct struct {
 
 func GetIndex(c *gin.Context) {
 
-	c.HTML(200, "index/index.html", gin.H{})
+	my_key, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_key == "" && my_type == "" {
+
+		c.HTML(200, "index/index.html", gin.H{})
+
+	} else {
+
+		c.HTML(200, "index/index.html", gin.H{
+			"logged_in": true,
+		})
+	}
+
 }
 
 func GetViewSignin(c *gin.Context) {
@@ -200,7 +212,13 @@ func GetViewRoom(c *gin.Context) {
 
 	}
 
-	jb, err := json.Marshal(p_users[user_index])
+	var pj pkgstream.PeersJoin
+
+	pj.RoomName = watchId
+	pj.User = p_users[user_index].User
+	pj.UserKey = p_users[user_index].UserKey
+
+	jb, err := json.Marshal(pj)
 
 	if err != nil {
 

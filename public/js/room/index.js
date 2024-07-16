@@ -9,6 +9,13 @@ TURN_SERVER_ADDRESS= {}
 
 ICE_SENT = 0
 
+MESSAGE_FORMAT = {
+
+    command: "",
+    data: ""
+
+}
+
 async function initPeers(){
 
 
@@ -49,6 +56,12 @@ async function initPeers(){
                 ws = new WebSocket("wss://" + PEERS_SIGNAL_ADDRESS)
         
         
+            }
+
+            ws.onopen = function(evt){
+
+                ws.send(JSON.stringify({command: 'auth', data: roomInfo}))
+
             }
             
             ws.onclose = function(evt) {
@@ -95,6 +108,15 @@ async function initPeers(){
 
                     console.log("added candidate")
 
+                    return
+
+                    case 'chat':
+                    
+                    let chatData = msg.data
+
+                    document.getElementById("chat-reader").innerText += chatData + "\n"
+
+                    return
                 }
             }
 
@@ -158,6 +180,22 @@ async function initPeers(){
 
 
 }
+
+function sendChat(){
+
+    let chatConent = document.getElementById("chat-sender").value
+
+    document.getElementById("chat-sender").value = ""
+
+    let req = JSON.parse(JSON.stringify(MESSAGE_FORMAT))
+
+    req.command = "chat"
+    req.data = chatConent
+
+    ws.send(JSON.stringify(req))
+
+}
+
 
 async function init(){
 

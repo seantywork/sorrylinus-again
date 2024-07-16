@@ -50,6 +50,8 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgedition.EXTENSION_ALLOWLIST = CONF.Edition.ExtAllowList
 
+	pkgstream.DEBUG = CONF.Debug
+
 	for i := 0; i < len(CONF.Stream.TurnServerAddr); i++ {
 
 		tmp := struct {
@@ -130,7 +132,7 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.POST("/api/auth/signin", pkgauth.Login)
 
-	e.POST("/api/auth/signout", pkgauth.Logout)
+	e.GET("/api/auth/signout", pkgauth.Logout)
 
 	pkgauth.InitAuth()
 

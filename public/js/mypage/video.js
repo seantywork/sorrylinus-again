@@ -43,6 +43,7 @@ async function getVideoList(){
         <a href="/content/${contentEntry.entry[i].type}/${contentEntry.entry[i].id}">
             ${contentEntry.entry[i].title}
         </a>
+        <button onclick="deleteVideo('${contentEntry.entry[i].id}')">Delete</button>
         <br>
         `
         videoCount += 1
@@ -57,6 +58,36 @@ async function getVideoList(){
   
   
   }
+
+async function deleteVideo(videoId){
+
+  let req = {
+    data: videoId
+  }
+
+
+  let resp = await fetch(`/api/video/delete`, {
+      body: JSON.stringify(req),
+      method: "POST"
+  })
+
+  let result = await resp.json()
+
+  if(result.status != "success"){
+
+    alert("failed to delete video")
+
+    return
+  }
+
+  alert("successfully deleted video: " + result.reply)
+
+
+  await getVideoList()
+
+
+
+}
   
 (async function() {
 
