@@ -49,3 +49,27 @@ func VerifyCodeNameValue(raw string) bool {
 
 	return true
 }
+
+func VerifyDefaultValue(raw string) bool {
+
+	for _, c := range raw {
+
+		if unicode.IsLower(c) {
+
+			continue
+
+		} else if unicode.IsDigit(c) {
+
+			continue
+
+		} else if c == '-' {
+
+		} else {
+
+			return false
+		}
+
+	}
+
+	return true
+}

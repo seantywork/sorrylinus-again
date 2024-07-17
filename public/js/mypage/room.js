@@ -82,10 +82,22 @@ async function createRoom(){
     }
 
 
+    roomUsers = roomUsers.replace(" ", "")
+
+    let roomUserList = roomUsers.split(",")
+
+    console.log(roomUserList)
+
     let p_create = JSON.parse(JSON.stringify(PEERS_CREATE))
 
     p_create.room_name = roomName
-    p_create.users.push(roomUsers)
+
+    for(let i = 0 ; i < roomUserList.length; i ++){
+
+        if(roomUserList[i] != ""){
+            p_create.users.push(roomUserList[i])
+        }
+    }
 
     let req = {
         data: JSON.stringify(p_create)

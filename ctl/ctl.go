@@ -79,6 +79,8 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	pkgstream.RTCP_PLI_INTERVAL = time.Second * time.Duration(CONF.Stream.RtcpPLIInterval)
 
+	pkgstream.SINGLE_ROOM_MODE = CONF.Stream.SingleRoomMode
+
 	pkgstream.UDP_BUFFER_BYTE_SIZE = CONF.Stream.UdpBufferByteSize
 	pkgstream.UDP_MUX_PORT = CONF.Stream.UdpMuxPort
 	pkgstream.UDP_EPHEMERAL_PORT_MIN = CONF.Stream.UdpEphemeralPortMin
@@ -182,9 +184,16 @@ func RegisterRoutes(e *gin.Engine) {
 
 	pkgcom.AddChannelHandler(CONF.Sorrylinus.SoliSignalAddr, pkgsoli.SoliSignalHandler)
 
-	pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
+	if pkgstream.SINGLE_ROOM_MODE {
+		pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandlerSingle)
 
-	pkgcom.AddChannelCallback(pkgstream.SignalDispatcher)
+		pkgcom.AddChannelCallback(pkgstream.SignalDispatcherSingle)
+
+	} else {
+		pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandler)
+
+		pkgcom.AddChannelCallback(pkgstream.SignalDispatcher)
+	}
 
 	go pkgcom.StartAllChannelHandlers()
 }

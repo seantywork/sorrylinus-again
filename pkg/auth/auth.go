@@ -251,6 +251,16 @@ func UserAdd(c *gin.Context) {
 
 	}
 
+	if !VerifyDefaultValue(u_create.Id) {
+
+		fmt.Printf("user add: invalid id: %s\n", u_create.Id)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
 	err = dbquery.MakeUser(u_create.Id, u_create.Passphrase, u_create.DurationSeconds)
 
 	if err != nil {
@@ -284,18 +294,28 @@ func UserRemove(c *gin.Context) {
 
 	if err := c.BindJSON(&req); err != nil {
 
-		fmt.Printf("user add: failed to bind: %s\n", err.Error())
+		fmt.Printf("user remove: failed to bind: %s\n", err.Error())
 
 		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
 
 		return
 	}
 
+	if !VerifyDefaultValue(req.Data) {
+
+		fmt.Printf("user remove: invalid id: %s\n", req.Data)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
 	err := dbquery.RemoveUser(req.Data)
 
 	if err != nil {
 
-		fmt.Printf("user add: failed to remove: %s", err.Error())
+		fmt.Printf("user remove: failed to remove: %s", err.Error())
 
 		c.JSON(http.StatusInternalServerError, com.SERVER_RE{Status: "error", Reply: "failed to remove user"})
 
@@ -343,6 +363,15 @@ func Login(c *gin.Context) {
 
 		return
 
+	}
+
+	if !VerifyDefaultValue(u_login.Id) {
+
+		fmt.Printf("user login: not valid id: %s\n", u_login.Id)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
 	}
 
 	us, err := dbquery.GetByIdFromUser(u_login.Id)

@@ -33,6 +33,7 @@ type SOLIAGAIN_CONFIG struct {
 		} `yaml:"turnServerAddr"`
 		PeerSignalAttemptSync  int    `yaml:"peerSignalAttemptSync"`
 		PeerSignalAddr         string `yaml:"peerSignalAddr"`
+		SingleRoomMode         bool   `yaml:"singleRoomMode"`
 		RtcpPLIInterval        int    `yaml:"rtcpPLIInterval"`
 		UdpBufferByteSize      int    `yaml:"udpBufferByteSize"`
 		UdpMuxPort             int    `yaml:"udpMuxPort"`

@@ -116,7 +116,9 @@ async function initPeers(){
                     
                     let chatData = msg.data
 
-                    document.getElementById("chat-reader").innerText += chatData + "\n"
+                    let chatMessage = JSON.parse(chatData) 
+
+                    document.getElementById("chat-reader").innerText += `<${chatMessage.user}> ${chatMessage.message} \n`
 
                     return
                 }
@@ -138,19 +140,9 @@ async function initPeers(){
                 document.getElementById('remoteVideos').appendChild(el)
         
                 event.track.onmute = function(event) {
-                    var playPromise = el.play()
- 
-                    if (playPromise !== undefined) {
-                      playPromise.then(function() {
-                        video.pause()
-                      })
-                      .catch(function(error) {
-                        // Auto-play was prevented
-                        // Show paused UI.
-                        alert(error)
-                      })
-                    }
+                    el.play()
                 }
+                
                 event.streams[0].onremovetrack = function({track}) {
 
                     if (el.parentNode) {

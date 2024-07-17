@@ -20,6 +20,10 @@ var roomPeerConnections = make(map[string][]peerConnectionState)
 
 var roomTrackLocals = make(map[string]map[string]*webrtc.TrackLocalStaticRTP)
 
+var roomPeerConnectionsSingle = make([]peerConnectionState, 0)
+
+var roomTrackLocalsSingle = make(map[string]*webrtc.TrackLocalStaticRTP)
+
 type peerConnectionState struct {
 	peerConnection *webrtc.PeerConnection
 	websocket      *ch.ThreadSafeWriter
@@ -27,12 +31,21 @@ type peerConnectionState struct {
 
 func SignalDispatcher() {
 
-	for range time.NewTicker(time.Millisecond * 10).C {
+	for range time.NewTicker(time.Second * RTCP_PLI_INTERVAL).C {
 
 		for k, _ := range roomPeerConnections {
 
 			dispatchKeyFrame(k)
 		}
+
+	}
+}
+
+func SignalDispatcherSingle() {
+
+	for range time.NewTicker(time.Second * RTCP_PLI_INTERVAL).C {
+
+		dispatchKeyFrameSingle()
 
 	}
 }
