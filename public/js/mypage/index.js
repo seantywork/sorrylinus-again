@@ -1,7 +1,12 @@
 pc = {}
 
+ws = {}
+
+CH_SOLI_ALIVE = 0
+
 TURN_SERVER_ADDRESS = {}
 
+SOLI_SIGNAL_ADDRESS = ""
 
 STREAMING_KEY = ""
 
@@ -27,6 +32,20 @@ USER_CREATE = {
     duration_seconds:""
 }
 
+SOLI_USER = {
+
+    user: "",
+    passphrase: ""
+
+}
+
+SOLI_ENTER = {
+
+    user: "",
+    key: ""
+
+}
+
 CCTV_STRUCT = {
 
     "streaming_key":"",
@@ -35,8 +54,176 @@ CCTV_STRUCT = {
 }
 
 
+async function openSoli(){
+
+
+    let u_id = document.getElementById("soli-open-user-id").value 
+
+    if(u_id == ""){
+  
+        alert("no soli id")
+    
+        return
+    
+    }
+
+
+    let u_pw = document.getElementById("soli-open-user-pw").value 
+
+
+    if(u_pw == ""){
+  
+        alert("no soli pw")
+    
+        return
+    
+    }
+
+    document.getElementById("soli-open-user-id").value = ""
+
+    document.getElementById("soli-open-user-pw").value = ""
+
+    let su = JSON.parse(JSON.stringify(SOLI_USER))
+
+    su.user = u_id
+    su.passphrase = u_pw
+
+    let req = {
+        data: JSON.stringify(su)
+    }
+
+    let resp = await fetch(`/api/sorrylinus/open`, {
+        body: JSON.stringify(req),
+        method: "POST"
+    })
+
+    let result = await resp.json()
+
+    if (result.status != "success"){
+
+        alert("failed to open: " + result.reply)
+    
+        return
+    }
+
+    let enterInfo = JSON.parse(result.reply)
+
+    console.log(enterInfo)
+
+
+    if (location.protocol !== 'https:') {
+
+        ws = new WebSocket("ws://" + SOLI_SIGNAL_ADDRESS)
+
+    } else {
+
+        ws = new WebSocket("wss://" + SOLI_SIGNAL_ADDRESS)
+
+
+    }
+
+
+    ws.onopen = function(evt){
+
+
+        ws.send(JSON.stringify({command: 'auth', data: result.reply}))
+
+        console.log("sent enter auth")
+
+    }
+
+    ws.onclose = function(evt) {
+        alert("Soli websocket has closed")
+    }
+
+    ws.onmessage = function(evt){
+
+        let msg = JSON.parse(evt.data)
+
+        if (!msg) {
+            console.log('failed to parse msg')
+            console.log("evt--------")
+            console.log(msg)
+            return 
+        }
+
+        if (msg.status != "success"){
+
+            alert("failed: " + msg.data)
+
+            return
+
+        } else {
+
+            if (CH_SOLI_ALIVE == 0){
+                CH_SOLI_ALIVE = 1
+            }
+
+        }
+
+        document.getElementById("soli-action-result").innerText = msg.data
+
+
+    }
+
+}
+
+
+
+async function sendSoliQuery(){
+
+
+    let u_query = document.getElementById("soli-action-data").value 
+
+
+    if(u_query == ""){
+  
+        alert("no soli query")
+    
+        return
+    
+    }
+
+    document.getElementById("soli-action-data").value = ""
+
+    ws.send(JSON.stringify({command: 'roundtrip', data: u_query + ":"}))
+
+}
+
+
+
+async function initSoli(){
+
+    let options = {
+        method: "GET"
+    }
+    let result = await fetch("/api/sorrylinus/signal/address", options)
+
+    let data = await result.json()
+
+    if(data.status != "success"){
+
+        alert("failed to get soli signal address")
+
+        return
+    }
+
+
+    SOLI_SIGNAL_ADDRESS = data.reply 
+
+    console.log("soliSignalAddr: " + SOLI_SIGNAL_ADDRESS)
+
+}
+
+
 async function initCCTV(){
 
+    if(CH_SOLI_ALIVE != 1){
+
+        alert("soli not opened, yet")
+
+        return
+    }
 
     pc = new RTCPeerConnection({
 //        iceServers: [
@@ -116,6 +303,9 @@ async function initCCTV(){
 
     console.log("init success")
 
+    let req = "cctv:" + STREAMING_KEY
+
+    ws.send(JSON.stringify({command: 'roundtrip', data: req}))
 }
 
 
@@ -158,7 +348,7 @@ async function listUsers(){
         for(let i = 0; i < userList.users.length; i ++){
     
             userReader.innerHTML += `
-            <pre> ${userList.users[i]} </pre> 
+            <p> ${userList.users[i]} </p> 
             <input type="button" onclick="deleteUser('${userList.users[i]}')" value="delete">
             <br>
             `
@@ -268,6 +458,8 @@ async function deleteUser(userId){
 (async function (){
 
     await listUsers()
+
+    await initSoli()
 
 })()
 

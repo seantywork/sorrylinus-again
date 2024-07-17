@@ -8,12 +8,14 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pion/webrtc/v4"
 	"github.com/pion/webrtc/v4/pkg/media"
 	"github.com/pkg/errors"
+	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
 	"github.com/seantywork/sorrylinus-again/pkg/com"
 	"github.com/seantywork/sorrylinus-again/pkg/utils"
 	flvtag "github.com/yutopp/go-flv/tag"
@@ -55,7 +57,19 @@ type CCTVStruct struct {
 
 func PostCCTVOpen(c *gin.Context) {
 
-	log.Println("Incoming HTTP Request")
+	log.Println("incoming cctv open request")
+
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("soli open: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
 
 	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
@@ -171,6 +185,20 @@ func PostCCTVOpen(c *gin.Context) {
 
 func PostCCTVClose(c *gin.Context) {
 
+	log.Println("incoming cctv close request")
+
+	_, my_type, _ := pkgauth.WhoAmI(c)
+
+	if my_type != "admin" {
+
+		fmt.Printf("soli open: not admin\n")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
+
+		return
+
+	}
+
 	var resp com.SERVER_RE
 
 	var req com.CLIENT_REQ
@@ -192,7 +220,7 @@ func PostCCTVClose(c *gin.Context) {
 }
 
 func InitRTMPServer() {
-	log.Println("Starting RTMP Server")
+	log.Println("starting RTMP Server")
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", RTP_RECEIVE_ADDR+":"+RTP_RECEIVE_PORT)
 	if err != nil {

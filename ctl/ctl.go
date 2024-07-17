@@ -34,6 +34,8 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	e.MaxMultipartMemory = CONF.MaxFileSize
 
+	pkgsoli.DEBUG = CONF.Debug
+
 	pkgsoli.SOLI_FRONT_ADDR = CONF.Sorrylinus.FrontAddr
 
 	pkgsoli.SOLI_SIGNAL_PATH = CONF.Sorrylinus.SoliSignalAddr
@@ -41,6 +43,8 @@ func ConfigureRuntime(e *gin.Engine) {
 	pkgsoli.TIMEOUT_SEC = CONF.TimeoutSec
 
 	pkgsoli.EXTERNAL_URL = CONF.ExternalUrl
+
+	pkgsoli.INTERNAL_URL = CONF.InternalUrl
 
 	pkgauth.DEBUG = CONF.Debug
 
@@ -141,6 +145,10 @@ func RegisterRoutes(e *gin.Engine) {
 	pkgauth.InitAuth()
 
 	// sorrylinus
+
+	e.POST("/api/sorrylinus/open", pkgsoli.PostSoliOpen)
+
+	e.POST("/api/sorrylinus/close", pkgsoli.PostSoliClose)
 
 	e.GET("/api/sorrylinus/signal/address", pkgsoli.GetSoliSignalAddress)
 

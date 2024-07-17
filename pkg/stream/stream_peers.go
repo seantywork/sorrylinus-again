@@ -332,7 +332,7 @@ func RoomSignalHandler(w http.ResponseWriter, r *http.Request) {
 
 	unsafeConn, err := UPGRADER.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("upgrade: %s\b", err.Error())
+		log.Printf("upgrade: %s\n", err.Error())
 		return
 	}
 

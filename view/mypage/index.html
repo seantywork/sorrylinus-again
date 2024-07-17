@@ -9,6 +9,26 @@
 
     <h1> Sorrylinus </h1>
 
+    <label for="soli-open-user-id">Soli ID</label>
+    <input type="text" id="soli-open-user-id">
+    <br>
+    <label for="soli-open-user-pw">Soli PW</label>
+    <input type="text" id="soli-open-user-pw">
+    <br>
+    <input type="button" onclick="openSoli()" value="open">
+
+    <h3> Action </h3>
+  
+    <label for="soli-action-data">Query</label>
+    <input type="text" id="soli-action-data">
+    <br>
+    <input type="button" onclick="sendSoliQuery()" value="send">
+
+    <h3> Result </h3>
+
+    <pre id="soli-action-result"></pre>
+
+
     <h3> CCTV </h3>
 
     <div id="cctv-reader"></div>
