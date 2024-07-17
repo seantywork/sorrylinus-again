@@ -165,6 +165,15 @@ func PostCCTVOpen(c *gin.Context) {
 
 	var cs CCTVStruct
 
+	if DEBUG {
+
+		cs.StreamingKey = "rtmp://" + INTERNAL_URL + ":" + string(RTP_RECEIVE_PORT) + "/publish/" + streamingKey
+	} else {
+
+		cs.StreamingKey = "rtmps://" + EXTERNAL_URL + ":" + string(RTP_RECEIVE_PORT_EXTERNAL) + "/publish/" + streamingKey
+
+	}
+
 	cs.StreamingKey = streamingKey
 	cs.Description = string(desc_b)
 

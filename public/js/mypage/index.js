@@ -273,6 +273,8 @@ async function initCCTV(){
                 pc.setRemoteDescription(new RTCSessionDescription(remoteDesc))
             
                 STREAMING_KEY = cs.streaming_key
+
+                console.log("streaming address: " + STREAMING_KEY)
             
             } catch (e){
 
