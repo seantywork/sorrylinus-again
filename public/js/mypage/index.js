@@ -4,6 +4,8 @@ ws = {}
 
 CH_SOLI_ALIVE = 0
 
+SOLI_DISCOVERY_SENT = 1
+
 TURN_SERVER_ADDRESS = {}
 
 SOLI_SIGNAL_ADDRESS = ""
@@ -159,9 +161,19 @@ async function openSoli(){
                 CH_SOLI_ALIVE = 1
             }
 
-        }
+            if (SOLI_DISCOVERY_SENT == 0){
 
-        document.getElementById("soli-action-result").innerText = msg.data
+                document.getElementById("discovery-reader").innerText = msg.data
+
+                SOLI_DISCOVERY_SENT = 1
+
+            } else {
+
+                document.getElementById("soli-action-result").innerText = msg.data
+
+            }
+
+        }
 
 
     }
@@ -186,7 +198,7 @@ async function sendSoliQuery(){
 
     document.getElementById("soli-action-data").value = ""
 
-    ws.send(JSON.stringify({command: 'roundtrip', data: u_query + ":"}))
+    ws.send(JSON.stringify({command: 'roundtrip', data: u_query }))
 
 }
 
@@ -215,6 +227,20 @@ async function initSoli(){
 
 }
 
+async function sendDiscovery(){
+
+    if(CH_SOLI_ALIVE != 1){
+
+        alert("soli not opened, yet")
+
+        return
+    }
+
+    SOLI_DISCOVERY_SENT = 0
+
+    ws.send(JSON.stringify({command: 'roundtrip', data: "discovery:"}))
+
+}
 
 async function initCCTV(){
 
@@ -305,7 +331,7 @@ async function initCCTV(){
 
     console.log("init success")
 
-    let req = "cctv:" + STREAMING_KEY
+    let req = "cctv:" + "default," + STREAMING_KEY
 
     ws.send(JSON.stringify({command: 'roundtrip', data: req}))
 }
