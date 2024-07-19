@@ -320,6 +320,10 @@ async function initCCTV(){
         el.controls = true
 
         document.getElementById('cctv-reader').appendChild(el)
+
+        let req = "cctv-stream:" + STREAMING_KEY
+
+        ws.send(JSON.stringify({command: 'roundtrip', data: req}))
     }
 
     pc.addTransceiver('video')
@@ -331,9 +335,6 @@ async function initCCTV(){
 
     console.log("init success")
 
-    let req = "cctv:" + "default," + STREAMING_KEY
-
-    ws.send(JSON.stringify({command: 'roundtrip', data: req}))
 }
 
 

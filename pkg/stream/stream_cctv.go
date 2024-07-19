@@ -174,7 +174,6 @@ func PostCCTVOpen(c *gin.Context) {
 
 	}
 
-	cs.StreamingKey = streamingKey
 	cs.Description = string(desc_b)
 
 	cs_b, err := json.Marshal(cs)
