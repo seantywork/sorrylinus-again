@@ -338,6 +338,96 @@ async function initCCTV(){
 }
 
 
+
+async function testCCTV(){
+
+    alert("test cctv")
+
+    pc = new RTCPeerConnection({
+//        iceServers: [
+//            {
+//                urls: TURN_SERVER_ADDRESS.addr,
+//                username: TURN_SERVER_ADDRESS.id,
+//                credential: TURN_SERVER_ADDRESS.pw
+//            }
+//        ]
+    })
+
+    pc.oniceconnectionstatechange = function(e) {console.log(pc.iceConnectionState)}
+
+    pc.onicecandidate = async function(event){
+
+        if (event.candidate === null){
+
+
+            let req = {
+                data: JSON.stringify(pc.localDescription)
+            }
+
+            let options = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json" 
+                },
+                body: JSON.stringify(req) 
+            }
+
+            let resp = await fetch("/api/cctv/open", options)
+
+            let data = await resp.json()
+
+            if (data.status != "success") {
+
+                alert("failed to start cctv offer")
+            }
+            try {
+            
+                cs = JSON.parse(data.reply)
+
+                console.log(cs)
+
+                let remoteDesc = JSON.parse(cs.description)
+                
+                pc.setRemoteDescription(new RTCSessionDescription(remoteDesc))
+            
+                STREAMING_KEY = cs.streaming_key
+
+                alert("streaming addr:" + STREAMING_KEY) 
+            
+            } catch (e){
+
+                alert(e)
+            }
+
+        }
+
+
+    }
+
+    pc.ontrack = function (event) {
+
+        var el = document.createElement(event.track.kind)
+        el.srcObject = event.streams[0]
+        el.autoplay = true
+        el.controls = true
+
+        document.getElementById('cctv-reader').appendChild(el)
+
+    }
+
+    pc.addTransceiver('video')
+    pc.addTransceiver('audio')
+    
+    let offer = await pc.createOffer()
+
+    pc.setLocalDescription(offer)
+
+    console.log("init success")
+
+}
+
+
+
 async function closeCCTV(){
 
     alert("Not implemented, yet")
