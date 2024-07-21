@@ -301,6 +301,10 @@ async function initCCTV(){
                 STREAMING_KEY = cs.streaming_key
 
                 console.log("streaming address: " + STREAMING_KEY)
+
+                await delayMs(15000)
+                
+                ws.send(JSON.stringify({command: 'roundtrip', data:  "cctv-stream:" +STREAMING_KEY}))
             
             } catch (e){
 
@@ -322,8 +326,6 @@ async function initCCTV(){
         document.getElementById('cctv-reader').appendChild(el)
 
         let req = "cctv-stream:" + STREAMING_KEY
-
-        ws.send(JSON.stringify({command: 'roundtrip', data: req}))
     }
 
     pc.addTransceiver('video')
@@ -337,6 +339,13 @@ async function initCCTV(){
 
 }
 
+
+function delayMs (ms) {
+    
+    return new Promise(function(res) {
+        setTimeout(res, ms)
+    })
+}
 
 
 async function testCCTV(){
