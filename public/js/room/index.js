@@ -161,14 +161,10 @@ async function initPeers(){
                     return
                 }
         
-                if(ICE_SENT == 0){
-                    ws.send(JSON.stringify({command: 'candidate', data: btoa(JSON.stringify(e.candidate))}))
-                    console.log("sent ice candidate")
-                    ICE_SENT = 1
-                } else {
-                    
-                    console.log("already sent ice candidate")
-                }
+ 
+                ws.send(JSON.stringify({command: 'candidate', data: btoa(JSON.stringify(e.candidate))}))
+                console.log("sent ice candidate")
+
 
             }
                 
