@@ -300,11 +300,11 @@ async function initCCTV(){
             
                 STREAMING_KEY = cs.streaming_key
 
-                console.log("streaming address: " + STREAMING_KEY)
+                console.log("streaming address: " + cs.location)
 
                 await delayMs(15000)
                 
-                ws.send(JSON.stringify({command: 'roundtrip', data:  "cctv-stream:" +STREAMING_KEY}))
+                ws.send(JSON.stringify({command: 'roundtrip', data:  "cctv-stream:" + cs.location}))
             
             } catch (e){
 
@@ -325,7 +325,6 @@ async function initCCTV(){
 
         document.getElementById('cctv-reader').appendChild(el)
 
-        let req = "cctv-stream:" + STREAMING_KEY
     }
 
     pc.addTransceiver('video')
@@ -401,7 +400,7 @@ async function testCCTV(){
             
                 STREAMING_KEY = cs.streaming_key
 
-                alert("streaming addr:" + STREAMING_KEY) 
+                alert("streaming addr:" + cs.location) 
             
             } catch (e){
 
@@ -439,7 +438,31 @@ async function testCCTV(){
 
 async function closeCCTV(){
 
-    alert("Not implemented, yet")
+    let req = {
+        data: STREAMING_KEY
+    }
+
+    let options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify(req) 
+    }
+
+    let resp = await fetch("/api/cctv/close", options)
+
+    let data = await resp.json()
+
+    if (data.status != "success") {
+
+        alert("failed to close cctv")
+    } else {
+
+        alert("successfully closed cctv:" + data.reply)
+    }
+
+
 
 }
 
