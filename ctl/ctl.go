@@ -114,13 +114,13 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/mypage/article", GetViewMypageArticle)
 
-	e.GET("/mypage/video", GetViewMypageVideo)
+	// e.GET("/mypage/video", GetViewMypageVideo)
 
 	e.GET("/mypage/room", GetViewMypageRoom)
 
 	e.GET("/content/article/:articleId", GetViewContentArticle)
 
-	e.GET("/content/video/:videoId", GetViewContentVideo)
+	// e.GET("/content/video/:videoId", GetViewContentVideo)
 
 	e.GET("/room/:roomId", GetViewRoom)
 
@@ -160,15 +160,15 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/api/article/c/:contentId", pkgedition.GetArticleContentById)
 
-	e.POST("/api/image/upload", pkgedition.PostImageUpload)
+	e.POST("/api/media/upload", pkgedition.PostMediaUpload)
 
-	e.GET("/api/image/c/:contentId", pkgedition.GetImageContentById)
+	e.GET("/api/media/c/:contentId", pkgedition.GetMediaContentById)
 
-	e.POST("/api/video/upload", pkgedition.PostVideoUpload)
+	// e.POST("/api/video/upload", pkgedition.PostVideoUpload)
 
-	e.POST("/api/video/delete", pkgedition.PostVideoDelete)
+	// e.POST("/api/video/delete", pkgedition.PostVideoDelete)
 
-	e.GET("/api/video/c/:contentId", pkgedition.GetVideoContentByID)
+	//e.GET("/api/video/c/:contentId", pkgedition.GetVideoContentByID)
 
 	// stream
 

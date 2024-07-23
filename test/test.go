@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image/color"
+	"os"
 
 	"gocv.io/x/gocv"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/wimspaargaren/yolov3"
 
 	"github.com/gorilla/websocket"
+	"github.com/seantywork/sorrylinus-again/pkg/dbquery"
 )
 
 func turn_on_gui_with_video() {
@@ -255,6 +257,23 @@ func sorrylinus_roundtrip() {
 	}
 
 }
+func test_editorjs_parse() {
+
+	file_b, _ := os.ReadFile("./test.json")
+
+	tlist, err := dbquery.GetAssociateMediaKeysForEditorjsSrc(file_b)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+
+		return
+
+	}
+
+	fmt.Println(tlist)
+
+}
 
 func main() {
 
@@ -266,6 +285,8 @@ func main() {
 
 	// print_bits()
 
-	sorrylinus_roundtrip()
+	//sorrylinus_roundtrip()
+
+	test_editorjs_parse()
 
 }

@@ -9,14 +9,14 @@ const ImageTool = window.ImageTool;
 
 
 
-async function imageUploader(fileData){
+async function mediaUploader(fileData){
 
   const form = new FormData()
 
   form.append("file", fileData)
 
 
-  let resp = await fetch("/api/image/upload", {
+  let resp = await fetch("/api/media/upload", {
         body: form,
         method: "POST"
   })
@@ -101,7 +101,7 @@ var editor = new EditorJS({
             uploadByFile(file){
 
 
-              return imageUploader(file).then(function(data){
+              return mediaUploader(file).then(function(data){
 
                 if(data.status != "success"){
 
@@ -114,7 +114,7 @@ var editor = new EditorJS({
                   success: 1,
                   file: {
 
-                    url: '/api/image/c/' + data.reply,
+                    url: '/api/media/c/' + data.reply,
               
                   }
                 }
@@ -296,7 +296,7 @@ async function getArticleList(){
 
     for(let i = 0; i < contentEntry.entry.length; i ++){
 
-        if(contentEntry.entry[i].type != "video"){
+        if(contentEntry.entry[i].type != "article"){
             continue
         }
 

@@ -14,6 +14,8 @@ import (
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
 
+var EXTENSION_ALLOWLIST []string
+
 type ArticleInfo struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
@@ -159,13 +161,13 @@ func GetArticleContentById(c *gin.Context) {
 
 }
 
-func PostImageUpload(c *gin.Context) {
+func PostMediaUpload(c *gin.Context) {
 
 	_, my_type, _ := pkgauth.WhoAmI(c)
 
 	if my_type != "admin" {
 
-		fmt.Printf("image upload: not admin\n")
+		fmt.Printf("media upload: not admin\n")
 
 		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "you're not admin"})
 
@@ -174,6 +176,13 @@ func PostImageUpload(c *gin.Context) {
 	}
 
 	file, _ := c.FormFile("file")
+
+	rawMediaType := file.Header.Get("Content-Type")
+
+	mediaProplist := strings.Split(rawMediaType, "/")
+
+	mediaType := mediaProplist[0]
+	mediaExt := mediaProplist[1]
 
 	f_name := file.Filename
 
@@ -204,11 +213,21 @@ func PostImageUpload(c *gin.Context) {
 
 	}
 
-	fmt.Printf("received: %s, size: %d\n", file.Filename, file.Size)
+	fmt.Printf("received: %s, size: %d, type: %s\n", file.Filename, file.Size, rawMediaType)
 
 	file_name, _ := pkgutils.GetRandomHex(32)
 
-	err := dbquery.UploadImage(c, file, v_fname, file_name, extension)
+	var err error
+
+	if mediaType == "image" {
+
+		err = dbquery.UploadImage(c, file, v_fname, file_name, mediaExt)
+
+	} else if mediaType == "video" {
+
+		err = dbquery.UploadVideo(c, file, v_fname, file_name, mediaExt)
+
+	}
 
 	if err != nil {
 
@@ -220,17 +239,21 @@ func PostImageUpload(c *gin.Context) {
 
 	}
 
-	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: file_name})
+	client_file_name := file_name + "." + mediaExt
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: client_file_name})
 
 }
 
-func GetImageContentById(c *gin.Context) {
+func GetMediaContentById(c *gin.Context) {
 
 	watchId := c.Param("contentId")
 
-	if !pkgauth.VerifyCodeNameValue(watchId) {
+	check, san := pkgauth.VerifyCodeNameValueWithStop(watchId, '.')
 
-		fmt.Printf("download image: illegal: %s\n", watchId)
+	if !check {
+
+		fmt.Printf("download media: illegal: %s\n", watchId)
 
 		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
 
@@ -238,11 +261,11 @@ func GetImageContentById(c *gin.Context) {
 
 	}
 
-	err := dbquery.DownloadImage(c, watchId)
+	err := dbquery.DownloadMedia(c, san)
 
 	if err != nil {
 
-		fmt.Printf("download image: %s\n", err.Error())
+		fmt.Printf("download media: %s\n", err.Error())
 
 		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
 
@@ -250,5 +273,5 @@ func GetImageContentById(c *gin.Context) {
 
 	}
 
-	fmt.Println("image download success")
+	fmt.Println("media download success")
 }

@@ -555,6 +555,34 @@ func DeleteArticle(media_key string) error {
 
 	this_article_path := articlePath + media_key + "." + ms.Extension
 
+	article_file_b, err := os.ReadFile(this_article_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete article: article file: %s", err.Error())
+	}
+
+	associatedTargets, err := GetAssociateMediaKeysForEditorjsSrc(article_file_b)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete article: %s", err.Error())
+
+	}
+
+	atLen := len(associatedTargets)
+
+	for i := 0; i < atLen; i++ {
+
+		err := DeleteMedia(associatedTargets[i])
+
+		if err != nil {
+
+			return fmt.Errorf("failed to delete associated key: %s", err.Error())
+		}
+
+	}
+
 	err = os.Remove(this_article_path)
 
 	if err != nil {
@@ -654,6 +682,49 @@ func UploadImage(c *gin.Context, file *multipart.FileHeader, filename string, ne
 	return nil
 }
 
+func DownloadMedia(c *gin.Context, watchId string) error {
+
+	ms, err := GetByMediaKeyFromMedia(watchId)
+
+	if ms == nil {
+
+		return fmt.Errorf("failed to download media: %s", err.Error())
+
+	}
+
+	this_media_path := ""
+
+	if ms.Type == "image" {
+
+		this_media_path = imagePath + watchId + "." + ms.Extension
+
+	} else if ms.Type == "video" {
+
+		this_media_path = videoPath + watchId + "." + ms.Extension
+
+	}
+
+	if _, err := os.Stat(this_media_path); err != nil {
+
+		return err
+
+	}
+
+	if ms.Type == "image" {
+
+		c.Header("Content-Type", "image/"+ms.Extension)
+
+	} else if ms.Type == "video" {
+
+		c.Header("Content-Type", "video/"+ms.Extension)
+
+	}
+
+	c.File(this_media_path)
+
+	return nil
+}
+
 func DownloadImage(c *gin.Context, watchId string) error {
 
 	ms, err := GetByMediaKeyFromMedia(watchId)
@@ -716,6 +787,55 @@ func UploadVideo(c *gin.Context, file *multipart.FileHeader, filename string, ne
 	if err != nil {
 
 		return fmt.Errorf("failed to upload: %s", err.Error())
+	}
+
+	return nil
+}
+
+func DeleteMedia(media_key string) error {
+
+	var ms MediaStruct
+
+	this_file_path := mediaPath + media_key + ".json"
+
+	file_b, err := os.ReadFile(this_file_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete media: %s", err.Error())
+
+	}
+
+	err = json.Unmarshal(file_b, &ms)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete media: marshal: %s", err.Error())
+	}
+
+	var this_media_path string
+
+	if ms.Type == "image" {
+
+		this_media_path = imagePath + media_key + "." + ms.Extension
+
+	} else if ms.Type == "video" {
+
+		this_media_path = videoPath + media_key + "." + ms.Extension
+	}
+
+	err = os.Remove(this_media_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete media: rm: %s", err.Error())
+	}
+
+	err = os.Remove(this_file_path)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to delete media: rmkey: %s", err.Error())
 	}
 
 	return nil

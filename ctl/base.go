@@ -267,19 +267,6 @@ func GetMediaEntry(c *gin.Context) {
 				Type:  "article",
 			})
 
-		} else if v.Type == "video" {
-
-			entry.Entry = append(entry.Entry, struct {
-				Title string `json:"title"`
-				Id    string `json:"id"`
-				Type  string `json:"type"`
-			}{
-
-				Title: v.PlainName + "." + v.Extension,
-				Id:    k,
-				Type:  "video",
-			})
-
 		} else {
 
 			continue
