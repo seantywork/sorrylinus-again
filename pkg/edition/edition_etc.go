@@ -15,7 +15,7 @@ import (
 
 func PostVideoUpload(c *gin.Context) {
 
-	_, my_type, _ := pkgauth.WhoAmI(c)
+	_, my_type, my_id := pkgauth.WhoAmI(c)
 
 	if my_type != "admin" {
 
@@ -62,7 +62,7 @@ func PostVideoUpload(c *gin.Context) {
 
 	file_name, _ := pkgutils.GetRandomHex(32)
 
-	err := pkgdbq.UploadVideo(c, file, v_fname, file_name, extension)
+	err := pkgdbq.UploadVideo(c, my_id, file, v_fname, file_name, extension)
 
 	if err != nil {
 
@@ -163,7 +163,7 @@ func GetVideoContentByID(c *gin.Context) {
 
 func PostImageUpload(c *gin.Context) {
 
-	_, my_type, _ := pkgauth.WhoAmI(c)
+	_, my_type, my_id := pkgauth.WhoAmI(c)
 
 	if my_type != "admin" {
 
@@ -210,7 +210,7 @@ func PostImageUpload(c *gin.Context) {
 
 	file_name, _ := pkgutils.GetRandomHex(32)
 
-	err := dbquery.UploadImage(c, file, v_fname, file_name, extension)
+	err := dbquery.UploadImage(c, my_id, file, v_fname, file_name, extension)
 
 	if err != nil {
 

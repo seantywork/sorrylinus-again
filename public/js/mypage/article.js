@@ -294,17 +294,15 @@ async function getArticleList(){
   
     contentReader.innerHTML = ""
 
-    for(let i = 0; i < contentEntry.entry.length; i ++){
+    let sortedEntry = getNewDateSortedList("desc", "timestamp", contentEntry.entry)
 
-        if(contentEntry.entry[i].type != "article"){
-            continue
-        }
+    for(let i = 0; i < sortedEntry.length; i ++){
 
         contentReader.innerHTML += `
-        <a href="/content/${contentEntry.entry[i].type}/${contentEntry.entry[i].id}">
-            ${contentEntry.entry[i].title}
-        </a>
-        <input type="button" onclick="deleteArticle('${contentEntry.entry[i].id}')" value="delete">
+        <a href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
+            ${sortedEntry[i].title} 
+        </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}]
+        <input type="button" onclick="deleteArticle('${sortedEntry[i].id}')" value="delete">
         <br>
         `
         articleCount += 1

@@ -23,7 +23,7 @@ type ArticleInfo struct {
 
 func PostArticleUpload(c *gin.Context) {
 
-	_, my_type, _ := pkgauth.WhoAmI(c)
+	_, my_type, my_id := pkgauth.WhoAmI(c)
 
 	if my_type != "admin" {
 
@@ -64,7 +64,7 @@ func PostArticleUpload(c *gin.Context) {
 
 	plain_name := pkgauth.SanitizePlainNameValue(a_info.Title)
 
-	err = dbquery.UploadArticle(a_info.Content, plain_name, new_file_name)
+	err = dbquery.UploadArticle(my_id, a_info.Content, plain_name, new_file_name)
 
 	if err != nil {
 
@@ -163,7 +163,7 @@ func GetArticleContentById(c *gin.Context) {
 
 func PostMediaUpload(c *gin.Context) {
 
-	_, my_type, _ := pkgauth.WhoAmI(c)
+	_, my_type, my_id := pkgauth.WhoAmI(c)
 
 	if my_type != "admin" {
 
@@ -221,11 +221,11 @@ func PostMediaUpload(c *gin.Context) {
 
 	if mediaType == "image" {
 
-		err = dbquery.UploadImage(c, file, v_fname, file_name, mediaExt)
+		err = dbquery.UploadImage(c, my_id, file, v_fname, file_name, mediaExt)
 
 	} else if mediaType == "video" {
 
-		err = dbquery.UploadVideo(c, file, v_fname, file_name, mediaExt)
+		err = dbquery.UploadVideo(c, my_id, file, v_fname, file_name, mediaExt)
 
 	}
 

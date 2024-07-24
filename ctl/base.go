@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
@@ -14,9 +15,11 @@ import (
 
 type EntryStruct struct {
 	Entry []struct {
-		Title string `json:"title"`
-		Id    string `json:"id"`
-		Type  string `json:"type"`
+		Title     string    `json:"title"`
+		Id        string    `json:"id"`
+		Type      string    `json:"type"`
+		Timestamp time.Time `json:"timestamp"`
+		Author    string    `json:"author"`
 	} `json:"entry"`
 }
 
@@ -254,17 +257,23 @@ func GetMediaEntry(c *gin.Context) {
 
 	for k, v := range em {
 
+		t, _ := time.Parse("2006-01-02-15-04-05", v.CreatedAt)
+
 		if v.Type == "article" {
 
 			entry.Entry = append(entry.Entry, struct {
-				Title string `json:"title"`
-				Id    string `json:"id"`
-				Type  string `json:"type"`
+				Title     string    `json:"title"`
+				Id        string    `json:"id"`
+				Type      string    `json:"type"`
+				Timestamp time.Time `json:"timestamp"`
+				Author    string    `json:"author"`
 			}{
 
-				Title: v.PlainName,
-				Id:    k,
-				Type:  "article",
+				Title:     v.PlainName,
+				Id:        k,
+				Type:      "article",
+				Timestamp: t,
+				Author:    v.Author,
 			})
 
 		} else {

@@ -28,9 +28,11 @@ type SessionStruct struct {
 
 type MediaStruct struct {
 	ISPublic  bool     `json:"is_public"`
+	CreatedAt string   `json:"created_at"`
 	Type      string   `json:"type"`
 	Extension string   `json:"extension"`
 	PlainName string   `json:"plain_name"`
+	Author    string   `json:"author"`
 	AllowedId []string `json:"allowed_id"`
 }
 
@@ -493,14 +495,20 @@ func MakeSessionForUser(session_key string, id string, duration_seconds int) err
 	return nil
 }
 
-func UploadArticle(content string, plain_name string, new_name string) error {
+func UploadArticle(author string, content string, plain_name string, new_name string) error {
 
 	ms := MediaStruct{}
+
+	c_time := time.Now()
+
+	c_time_fmt := c_time.Format("2006-01-02-15-04-05")
 
 	ms.ISPublic = true
 	ms.Type = "article"
 	ms.PlainName = plain_name
 	ms.Extension = "json"
+	ms.CreatedAt = c_time_fmt
+	ms.Author = author
 
 	this_file_path := mediaPath + new_name + ".json"
 
@@ -645,7 +653,7 @@ func GetArticle(media_key string) (string, error) {
 
 }
 
-func UploadImage(c *gin.Context, file *multipart.FileHeader, filename string, new_filename string, extension string) error {
+func UploadImage(c *gin.Context, author string, file *multipart.FileHeader, filename string, new_filename string, extension string) error {
 
 	ms := MediaStruct{}
 
@@ -653,10 +661,16 @@ func UploadImage(c *gin.Context, file *multipart.FileHeader, filename string, ne
 
 	this_image_path := imagePath + new_filename + "." + extension
 
+	c_time := time.Now()
+
+	c_time_fmt := c_time.Format("2006-01-02-15-04-05")
+
 	ms.ISPublic = true
 	ms.Type = "image"
 	ms.PlainName = filename
 	ms.Extension = extension
+	ms.CreatedAt = c_time_fmt
+	ms.Author = author
 
 	jb, err := json.Marshal(ms)
 
@@ -755,7 +769,7 @@ func DownloadImage(c *gin.Context, watchId string) error {
 	return nil
 }
 
-func UploadVideo(c *gin.Context, file *multipart.FileHeader, filename string, new_filename string, extension string) error {
+func UploadVideo(c *gin.Context, author string, file *multipart.FileHeader, filename string, new_filename string, extension string) error {
 
 	ms := MediaStruct{}
 
@@ -763,10 +777,16 @@ func UploadVideo(c *gin.Context, file *multipart.FileHeader, filename string, ne
 
 	this_video_path := videoPath + new_filename + "." + extension
 
+	c_time := time.Now()
+
+	c_time_fmt := c_time.Format("2006-01-02-15-04-05")
+
 	ms.ISPublic = true
 	ms.Type = "video"
 	ms.PlainName = filename
 	ms.Extension = extension
+	ms.CreatedAt = c_time_fmt
+	ms.Author = author
 
 	jb, err := json.Marshal(ms)
 

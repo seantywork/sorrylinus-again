@@ -339,13 +339,6 @@ async function initCCTV(){
 }
 
 
-function delayMs (ms) {
-    
-    return new Promise(function(res) {
-        setTimeout(res, ms)
-    })
-}
-
 
 async function testCCTV(){
 

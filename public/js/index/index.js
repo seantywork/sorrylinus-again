@@ -49,14 +49,17 @@ async function getContentList(){
 
   } else {
 
-    for(let i = 0; i < contentEntry.entry.length; i ++){
+    let sortedEntry = getNewDateSortedList("desc", "timestamp", contentEntry.entry)
 
-        contentReader.innerHTML += `
-        <a href="/content/${contentEntry.entry[i].type}/${contentEntry.entry[i].id}">
-            ${contentEntry.entry[i].title}
-        </a>
-        <br>
-        `
+    for(let i = 0; i < sortedEntry.length; i ++){
+
+      contentReader.innerHTML += `
+      <a href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
+        ${sortedEntry[i].title} 
+      </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}] 
+      <input type="button" onclick="deleteArticle('${sortedEntry[i].id}')" value="delete">
+      <br>
+      `
      
     }
   }
