@@ -6,6 +6,19 @@ function delayMs (ms) {
     })
 }
 
+function toggleDisplayById(tagId){
+
+    if(document.getElementById(tagId).style.display == "none"){
+
+        document.getElementById(tagId).style.display = "block"
+        
+    } else {
+
+        document.getElementById(tagId).style.display = "none"
+    }
+
+
+}
 
 function getNewDateSortedList(flag, fieldName, orgList){
 

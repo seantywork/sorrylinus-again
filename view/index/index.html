@@ -3,6 +3,7 @@
 <html>
   <head>
     <title> feebdaed.xyz </title>
+    <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
   </head>
   <body>
 
@@ -10,41 +11,53 @@
 
     {{ if .logged_in }}
     <a href="/api/auth/signout"> Sign Out </a>
+    <a href="/mypage"> My Page </a>
     {{ else }}
     <a href="/signin"> Sign in </a>
     {{ end }}
 
+    <br>
+    <br>
 
-    <pre> 
+    <input type="button" value="README" onclick="toggleDisplayById('readme-reader')">
+    <div id="readme-reader" style="display: none;"> 
+      <pre> 
+        This website is part of a broader project named <a href="https://github.com/seantywork/sorrylinus"> "sorrylinus" </a>
 
+        You can also check some more out from my <a href="https://github.com/seantywork"> GitHub </a> 
 
-      Every content listed down there is freely accessible.
+        I've been uploading to <a href="https://medium.com/@seantywork"> Medium.com </a>
+        but I intend to direct my contents here onward.
+      </pre>
 
-      Except for video chat.
+      <pre>
+        Every content listed down there is freely accessible shareable.
 
-      To sign in and use video chat,
-      Contact [ seantywork@gmail.com ] 
+        Except for video chat.
+        
+        To sign in and use video chat,
+        Contact [ seantywork@gmail.com ] 
 
-      If deemed fit, I will send you back: 
-        - temporary ID, password
-        - video chat room address
+        If deemed fit, I will send you back: 
 
-      I've been uploading to <a href="https://medium.com/@seantywork"> Medium.com </a>
-      but I intend to switch to here.
+          - temporary ID, password
+          - video chat room address
 
-    </pre>
+      </pre>
+    </div>
 
    
     <h2> Contents </h2>
 
     <div id="content-reader"></div>
 
+    <br>
+
     <h2> Video Chat </h2>
 
     <div id="room-reader"></div>
 
-
-    <a href="/mypage"> My Page </a>
+    <br>
 
     <script src="/public/js/common.js"></script>
     <script src="/public/js/index/index.js"></script>
