@@ -597,6 +597,26 @@ async function deleteUser(userId){
 }
 
 
+async function flushLog(){
+
+    let options = {
+        method: "GET"
+    }
+    let result = await fetch("/api/manage/log/flush", options)
+
+    let data = await result.json()
+
+    if(data.status != "success"){
+
+        alert("failed to flush log")
+
+        return
+    }
+
+    alert("successfully flushed log: "+ data.reply)
+
+}
+
 
 
 (async function (){

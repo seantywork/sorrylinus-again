@@ -23,6 +23,8 @@ clean-data:
 	rm -rf data/media/video/*.json data/media/video/*.mp4
 	rm -rf data/session/*.json 
 	rm -rf data/user/*.json
+	rm -rf data/log/*.txt
+	rm -rf data/log/*.json
 
 
 clean:

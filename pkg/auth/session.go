@@ -1,11 +1,13 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/seantywork/sorrylinus-again/pkg/dbquery"
+	pkglog "github.com/seantywork/sorrylinus-again/pkg/log"
 )
 
 func WhoAmI(c *gin.Context) (string, string, string) {
@@ -19,6 +21,24 @@ func WhoAmI(c *gin.Context) (string, string, string) {
 	session := sessions.Default(c)
 
 	var session_id string
+
+	route_key := c.Request.URL.Path
+
+	header, err := json.Marshal(c.Request.Header)
+
+	var header_string string
+
+	if err != nil {
+
+		header_string = err.Error()
+
+	} else {
+
+		header_string = string(header)
+
+	}
+
+	pkglog.PushLog(route_key, header_string)
 
 	v := session.Get("SOLIAGAIN")
 

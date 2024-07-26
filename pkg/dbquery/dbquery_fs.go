@@ -50,6 +50,8 @@ var imagePath string = "./data/media/image/"
 
 var videoPath string = "./data/media/video/"
 
+var logPath string = "./data/log/"
+
 func GetByIdFromAdmin(email string) (*AdminStruct, error) {
 
 	var as AdminStruct
@@ -929,4 +931,49 @@ func DownloadVideo(c *gin.Context, watchId string) error {
 	c.File(this_video_path)
 
 	return nil
+}
+
+func LoadLogStat() ([]byte, error) {
+
+	this_log_path := logPath + "stat.json"
+
+	file_b, err := os.ReadFile(this_log_path)
+
+	if err != nil {
+
+		return nil, fmt.Errorf("failed to load log stat: %s", err.Error())
+	}
+
+	return file_b, nil
+
+}
+
+func UnloadLogStat(content []byte) error {
+
+	this_log_path := logPath + "stat.json"
+
+	err := os.WriteFile(this_log_path, content, 0644)
+
+	if err != nil {
+		return fmt.Errorf("failed to save log stat: %s", err.Error())
+	}
+
+	return nil
+
+}
+
+func UnloadLogDetail(timestamp string, logDetail []byte) error {
+
+	this_log_path := logPath + timestamp + ".txt"
+
+	err := os.WriteFile(this_log_path, logDetail, 0644)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to save log detail: %s", err.Error())
+
+	}
+
+	return nil
+
 }

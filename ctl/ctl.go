@@ -9,6 +9,8 @@ import (
 	pkgauth "github.com/seantywork/sorrylinus-again/pkg/auth"
 	pkgcom "github.com/seantywork/sorrylinus-again/pkg/com"
 	pkgedition "github.com/seantywork/sorrylinus-again/pkg/edition"
+	pkglog "github.com/seantywork/sorrylinus-again/pkg/log"
+	pkgman "github.com/seantywork/sorrylinus-again/pkg/manage"
 	pkgsoli "github.com/seantywork/sorrylinus-again/pkg/sorrylinus"
 	pkgstream "github.com/seantywork/sorrylinus-again/pkg/stream"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
@@ -93,6 +95,8 @@ func ConfigureRuntime(e *gin.Engine) {
 	pkgstream.RTP_RECEIVE_ADDR = CONF.ServeAddr
 	pkgstream.RTP_RECEIVE_PORT = fmt.Sprintf("%d", CONF.Stream.RtpReceivePort)
 	pkgstream.RTP_RECEIVE_PORT_EXTERNAL = fmt.Sprintf("%d", CONF.Stream.RtpReceivePortExternal)
+
+	pkglog.FLUSH_INTERVAL_SEC = CONF.Log.FlushIntervalSec
 
 	pkgutils.USE_COMPRESS = CONF.Utils.UseCompress
 
@@ -204,4 +208,12 @@ func RegisterRoutes(e *gin.Engine) {
 	}
 
 	go pkgcom.StartAllChannelHandlers()
+
+	// manage
+
+	e.GET("/api/manage/log/flush", pkgman.GetManualLogFlush)
+
+	// log
+
+	pkglog.InitLog()
 }

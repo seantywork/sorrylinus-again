@@ -42,6 +42,9 @@ type SOLIAGAIN_CONFIG struct {
 		RtpReceivePort         int    `yaml:"rtpReceivePort"`
 		RtpReceivePortExternal int    `yaml:"rtpReceivePortExternal"`
 	} `yaml:"stream"`
+	Log struct {
+		FlushIntervalSec int `yaml:"flushIntervalSec"`
+	} `yaml:"log"`
 	Utils struct {
 		UseCompress bool `yaml:"useCompress"`
 	} `yaml:"utils"`
