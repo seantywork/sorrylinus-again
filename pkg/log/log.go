@@ -29,18 +29,22 @@ var GMTX sync.Mutex
 
 func InitLog() {
 
-	ResetLOGS()
+	ResetLog()
 
 	go AutomaticLogFlush()
 
 	log.Println("initiated log")
 }
 
-func ResetLOGS() {
+func ResetLog() {
 
 	LOGS.LogRouteCount = nil
 
 	LOGS.LogRouteCount = make(map[string]int)
+
+	LOGD_QUEUE = nil
+
+	LOGD_QUEUE = make([]LogDetailStruct, 0)
 }
 
 func AutomaticLogFlush() {
@@ -156,6 +160,8 @@ func LogFlush() {
 		return
 
 	}
+
+	ResetLog()
 
 	GMTX.Unlock()
 
