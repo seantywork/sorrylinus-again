@@ -102,7 +102,7 @@ func LogFlush() {
 
 	for k, v := range LOGS.LogRouteCount {
 
-		count, okay := oldLs.LogRouteCount[k]
+		_, okay := oldLs.LogRouteCount[k]
 
 		if !okay {
 
@@ -110,7 +110,7 @@ func LogFlush() {
 
 		} else {
 
-			oldLs.LogRouteCount[k] += count + v
+			oldLs.LogRouteCount[k] += v
 
 		}
 
@@ -177,7 +177,7 @@ func PushLog(logRoute string, logDetail string) {
 		LogDetail: logDetail,
 	}
 
-	route_count, okay := LOGS.LogRouteCount[logRoute]
+	_, okay := LOGS.LogRouteCount[logRoute]
 
 	if !okay {
 
@@ -185,7 +185,7 @@ func PushLog(logRoute string, logDetail string) {
 
 	} else {
 
-		LOGS.LogRouteCount[logRoute] += route_count + 1
+		LOGS.LogRouteCount[logRoute] += 1
 	}
 
 	LOGD_QUEUE = append(LOGD_QUEUE, log_detail)
