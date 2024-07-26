@@ -42,6 +42,8 @@ func GetIndex(c *gin.Context) {
 
 func GetViewSignin(c *gin.Context) {
 
+	pkgauth.WhoAmI(c)
+
 	c.HTML(200, "index/signin.html", gin.H{})
 
 }
@@ -119,6 +121,8 @@ func GetViewMypageRoom(c *gin.Context) {
 }
 
 func GetViewContentArticle(c *gin.Context) {
+
+	pkgauth.WhoAmI(c)
 
 	watchId := c.Param("articleId")
 
@@ -240,6 +244,8 @@ func GetViewRoom(c *gin.Context) {
 }
 
 func GetMediaEntry(c *gin.Context) {
+
+	pkgauth.WhoAmI(c)
 
 	entry := EntryStruct{}
 

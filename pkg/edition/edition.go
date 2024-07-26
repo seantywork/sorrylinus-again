@@ -134,6 +134,8 @@ func PostArticleDelete(c *gin.Context) {
 
 func GetArticleContentById(c *gin.Context) {
 
+	pkgauth.WhoAmI(c)
+
 	watchId := c.Param("contentId")
 
 	if !pkgauth.VerifyCodeNameValue(watchId) {
@@ -246,6 +248,8 @@ func PostMediaUpload(c *gin.Context) {
 }
 
 func GetMediaContentById(c *gin.Context) {
+
+	pkgauth.WhoAmI(c)
 
 	watchId := c.Param("contentId")
 

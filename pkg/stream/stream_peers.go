@@ -52,6 +52,8 @@ var ROOMREG = make(map[string][]PeersUserStruct)
 
 func GetPeersSignalAddress(c *gin.Context) {
 
+	pkgauth.WhoAmI(c)
+
 	var s_addr string
 
 	if DEBUG {
