@@ -88,6 +88,7 @@ func LogFlush() {
 
 		log.Printf("error log flush: load: %s\n", err.Error())
 
+		GMTX.Unlock()
 		return
 	}
 
@@ -97,6 +98,7 @@ func LogFlush() {
 
 		log.Printf("error log flush: unmarshal: %s\n", err.Error())
 
+		GMTX.Unlock()
 		return
 	}
 
@@ -122,6 +124,7 @@ func LogFlush() {
 
 		log.Printf("error log flush: unmarshal new stat: %s\n", err.Error())
 
+		GMTX.Unlock()
 		return
 	}
 
@@ -147,6 +150,7 @@ func LogFlush() {
 
 		log.Printf("error log flush: unload log stat: %s\n", err.Error())
 
+		GMTX.Unlock()
 		return
 
 	}
@@ -156,6 +160,8 @@ func LogFlush() {
 	if err != nil {
 
 		log.Printf("error log flush: unload log detail: %s\n", err.Error())
+
+		GMTX.Unlock()
 
 		return
 

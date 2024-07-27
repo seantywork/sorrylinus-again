@@ -1,6 +1,6 @@
 {{ define "content/article.html" }}
 <!doctype html>
-<html>
+<html class="tui-bg-blue-black">
   <head>
     <title> article</title>
   </head>
@@ -20,17 +20,21 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-
+  <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
+  <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
   <script>
 
       CONTENT_ID = "{{ .article_code }}"
 
   </script>
   <body>
-    <div id="article-reader">
+    <div class="tui-window tui-scroll-white">
+      <fieldset class="tui-fieldset tui-border-double">
+        <div id="article-reader">
 
+        </div>
+      </fieldset>
     </div>
-
 
     <script src="/public/js/content/article.js"> </script>
   </body>

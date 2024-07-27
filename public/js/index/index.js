@@ -43,7 +43,10 @@ async function getContentList(){
   if (contentEntry.entry == null){
 
     contentReader.innerHTML = `
+    <fieldset class="tui-fieldset tui-border-dotted">
         <pre> :(    Nothing to see here, yet </pre>
+    </fieldset>
+
     `
 
 
@@ -54,10 +57,9 @@ async function getContentList(){
     for(let i = 0; i < sortedEntry.length; i ++){
 
       contentReader.innerHTML += `
-      <a href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
+      <a class="tui-button" href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
         ${sortedEntry[i].title} 
       </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}] 
-      <input type="button" onclick="deleteArticle('${sortedEntry[i].id}')" value="delete">
       <br>
       `
      
@@ -93,7 +95,9 @@ async function getRoomList(){
     if (roomEntry.room_name == null){
   
       roomReader.innerHTML = `
+      <fieldset class="tui-fieldset tui-border-dotted">
           <pre> :(     You're not invited, yet </pre>
+      </fieldset>
       `
   
   
@@ -102,7 +106,7 @@ async function getRoomList(){
       for(let i = 0; i < roomEntry.room_name.length; i ++){
   
           roomReader.innerHTML += `
-          <a href="/room/${roomEntry.room_name[i]}">
+          <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
               ${roomEntry.room_name[i]}
           </a>
           <br>

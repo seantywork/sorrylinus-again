@@ -1,38 +1,43 @@
 {{ define "index/signin.html" }}
-
-<html>
+<!doctype html>
+<html class="tui-bg-blue-black">
 
     <head>
         <title> feebdaed.xyz </title>
         <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
+        <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
+        <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
     </head>
 
     <body>
 
+        <div class="tui-window tui-scroll-white">
+            <fieldset class="tui-fieldset tui-border-double">
+                <fieldset class="tui-fieldset tui-border-dotted">
+                    <div>
+                        <input class="tui-input" type='text' id='user-id'/>
+                        <label for='user-id'>Enter User ID</label>
+                    </div>
+                </fieldset>
+                <fieldset class="tui-fieldset tui-border-dotted">
+                    <div>
+                        <input class="tui-input" type='password' id='user-pw'/>
+                        <label for='user-pw'>Enter User Password</label>
+                    </div>
+                </fieldset>
 
-        <div>
-            <div>
-                <input type='text' id='user-id'/>
-                <label for='user-id'>Enter User ID</label>
-            </div>
-        </div>
-        <div>
-            <div>
-                <input type='password' id='user-pw'/>
-                <label for='user-pw'>Enter User Password</label>
-            </div>
-        </div>
+                <br/>
+                <div>
+                    <input class="tui-button" type="button" onclick="userSignin()" value="user login">
+                </div>
 
-        <br/>
-        <div>
-            <input type="button" onclick="userSignin()" value="user login">
-        </div>
-
-        <br>
-        <div>
-            <a href="/api/oauth2/google/signin">
-                Admin Login
-            </a>
+                <br>
+                <div>
+                    <a class="tui-button" href="/api/oauth2/google/signin">
+                        admin Login
+                    </a>
+                </div>
+            </fieldset>
         </div>
 
 
