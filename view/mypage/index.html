@@ -1,84 +1,98 @@
 {{ define "mypage/index.html" }}
-<html>
+<!doctype html>
+<html class="tui-bg-blue-black">
   <head>
     <title> mypage </title>
     <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
+    <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
+    <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
   </head>
 
   <body>
-
-    <h1> Sorrylinus </h1>
-
+    <div class="tui-window tui-scroll-white">
+      <h1> Sorrylinus </h1>
+      <fieldset class="tui-fieldset tui-border-double">
+    
+        <label for="soli-open-user-id">Soli ID</label>
+        <input class="tui-input" type="text" id="soli-open-user-id">
+        <br>
+        <br>
+        <label for="soli-open-user-pw">Soli PW</label>
+        <input class="tui-input" type="text" id="soli-open-user-pw">
+        <br>
+        <br>
+        <input class="tui-button" type="button" onclick="openSoli()" value="open">
+        <fieldset class="tui-fieldset tui-border-dotted">
+          <pre id="discovery-reader"></pre>
+        </fieldset>
+        <input class="tui-button" type="button" onclick="sendDiscovery()" value="discover">
   
-    <label for="soli-open-user-id">Soli ID</label>
-    <input type="text" id="soli-open-user-id">
-    <br>
-    <label for="soli-open-user-pw">Soli PW</label>
-    <input type="text" id="soli-open-user-pw">
-    <br>
-    <input type="button" onclick="openSoli()" value="open">
+      </fieldset>
+      <fieldset class="tui-fieldset tui-border-double">
+        <h3> Action </h3>
+      
+        <label for="soli-action-data">Query</label>
+        <input class="tui-input" type="text" id="soli-action-data">
+        <br>
+        <input class="tui-button" type="button" onclick="sendSoliQuery()" value="send">
 
-    <pre id="discovery-reader"></pre>
+        <h3> Result </h3>
+        <fieldset class="tui-fieldset tui-border-dotted">
+          <pre id="soli-action-result"></pre>
+        </fieldset>
+      </fieldset>
 
-    <input type="button" onclick="sendDiscovery()" value="discover">
+      <fieldset class="tui-fieldset tui-border-double">
+        <h3> CCTV </h3>
+        <fieldset class="tui-fieldset tui-border-dotted">
+          <div id="cctv-reader"></div>
+        </fieldset>
+        <input class="tui-button" type="button" onclick="initCCTV()" value="start cctv">
+        <input class="tui-button" type="button" onclick="closeCCTV()" value="close cctv">  
 
-    <h3> Action </h3>
-  
-    <label for="soli-action-data">Query</label>
-    <input type="text" id="soli-action-data">
-    <br>
-    <input type="button" onclick="sendSoliQuery()" value="send">
+        <input class="tui-button" type="button" onclick="testCCTV()" value="test cctv">
+      </fieldset>
+    </div>
+    <div class="tui-window tui-scroll-white">
+      <h1> Sorrylinus Again </h1>
+      <fieldset class="tui-fieldset tui-border-double">
 
-    <h3> Result </h3>
+        <h3> Article Edit </h3>
 
-    <pre id="soli-action-result"></pre>
+        <a class="tui-button" href="/mypage/article">Edit</a>
 
+        <h3> Room Edit </h3>
 
-    <h3> CCTV </h3>
+        <a class="tui-button" href="/mypage/room">Edit</a>
 
-    <div id="cctv-reader"></div>
+        <h3> Users </h3>
 
-    <input type="button" onclick="initCCTV()" value="start cctv">
-    <input type="button" onclick="closeCCTV()" value="close cctv">  
-
-    <input type="button" onclick="testCCTV()" value="test cctv">
-
-
-    <h1> Sorrylinus Again </h1>
-
-    <h3> Article Edit </h3>
-
-    <a href="/mypage/article">Edit</a>
-
-    <h3> Video Edit </h3>
-
-    <a href="/mypage/video">Edit</a>
-
-    <h3> Room Edit </h3>
-
-    <a href="/mypage/room">Edit</a>
-
-    <h3> Users </h3>
-
-    <label for="create-user-id">User ID</label>
-    <input type="text" id="create-user-id">
-    <br>
-    <label for="create-user-pw">User PW</label>
-    <input type="text" id="create-user-pw">
-    <br>
-    <label for="create-user-duratioin">User Duration</label>
-    <input type="text" id="create-user-duration">
-    <br>
-    <input type="button" onclick="createUser()" value="create">
-    <br>
-    <div id="user-reader"></div>
-
-    <br>
-    <h3> Log </h3>
-    <input type="button" onclick="flushLog()" value="flush">
-    <br>
-
+        <label for="create-user-id">User ID</label>
+        <input class="tui-input" type="text" id="create-user-id">
+        <br>
+        <br>
+        <label for="create-user-pw">User PW</label>
+        <input class="tui-input" type="text" id="create-user-pw">
+        <br>
+        <br>
+        <label for="create-user-duratioin">User Duration</label>
+        <input class="tui-input" type="text" id="create-user-duration">
+        <br>
+        <br>
+        <input class="tui-button" type="button" onclick="createUser()" value="create">
+        <br>
+        <br>
+        <fieldset class="tui-fieldset tui-border-dotted">
+          <div id="user-reader"></div>
+        </fieldset>
+        <br>
+        <h3> Log </h3>
+        <input class="tui-button" type="button" onclick="flushLog()" value="flush">
+        <br>
+      </fieldset>
+    </div>
+    
   </body>
 
   <script src="/public/js/common.js"></script>

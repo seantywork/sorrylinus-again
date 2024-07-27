@@ -41,10 +41,10 @@ async function getRoomList(){
         for(let i = 0; i < roomEntry.room_name.length; i ++){
     
             roomReader.innerHTML += `
-            <a href="/room/${roomEntry.room_name[i]}">
+            <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
                 ${roomEntry.room_name[i]}
             </a>
-            <input type="button" onclick="deleteRoom('${roomEntry.room_name[i]}')" value="delete">
+            <input class="tui-button" type="button" onclick="deleteRoom('${roomEntry.room_name[i]}')" value="delete">
             <br>
             `
         

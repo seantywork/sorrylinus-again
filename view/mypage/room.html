@@ -1,6 +1,6 @@
 {{ define "mypage/room.html" }}
 <!DOCTYPE html>
-<html>
+<html class="tui-bg-blue-black">
   <head>
 
     <meta charset="utf-8">
@@ -8,18 +8,28 @@
     <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
     <!--<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>-->
     <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
-
+    <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
+    <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
   </head>
   <body>
+    <div class="tui-window tui-scroll-white">
+      <fieldset class="tui-fieldset tui-border-double">
+        <label for="create-room-name">Room Name</label>
+        <input class="tui-input" type="text" id="create-room-name">
+        <br>
+        <br>
+        <label for="create-room-users">Allowed Users</label>
+        <input class="tui-input" type="text" id="create-room-users">
+        <br>
+        <br>
+        <input class="tui-button" type="button" onclick="createRoom()" value="create">
 
-    <label for="create-room-name">Room Name</label>
-    <input type="text" id="create-room-name">
-    <label for="create-room-users">Allowed Users</label>
-    <input type="text" id="create-room-users">
-    <input type="button" onclick="createRoom()" value="create">
+        <fieldset class="tui-fieldset tui-border-dotted">
+          <div id="room-reader"></div>
+        </fieldset>
+      </fieldset>
 
-    <div id="room-reader"></div>
-
+    </div>
 
     <script src="/public/js/mypage/room.js"></script>
   </body>

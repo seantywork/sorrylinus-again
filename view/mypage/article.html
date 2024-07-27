@@ -1,6 +1,6 @@
 {{ define "mypage/article.html" }}
 <!doctype html>
-<html>
+<html class="tui-bg-blue-black">
     <head>
         <title> mypage/article </title>
         <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
@@ -19,21 +19,34 @@
         <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
         <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
         <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+        <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
+        <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
     </head>
     <body>
-        <div id="article-editor"></div>
-
-        <input type="button" id="saveButton" value="save">
-
-        <div>
-            Readonly:
-            <b id="readonly-state">
-              Off
-            </b>
-            <input type="button" id="toggleReadOnlyButton" value="toggle">
+        <div class="tui-window tui-scroll-white">
+            <h3> Article Edit </h3>
+            <fieldset class="tui-fieldset tui-border-double">
+                <div id="article-editor"></div>
+                <fieldset class="tui-fieldset tui-border-dotted">
+                    <input class="tui-button" type="button" id="saveButton" value="save">
+                    <div>
+                        Readonly:
+                        <b id="readonly-state">
+                        Off
+                        </b>
+                        <input class="tui-button" type="button" id="toggleReadOnlyButton" value="toggle">
+                    </div>
+                </fieldset>
+            </fieldset>
         </div>
-
-        <div id="article-reader"></div>
+        <div class="tui-window tui-scroll-white">
+            <h3> Article List </h3>
+            <fieldset class="tui-fieldset tui-border-double">
+                <fieldset class="tui-fieldset tui-border-dotted">
+                    <div id="article-reader"></div>
+                </fieldset>
+            </fieldset>
+        </div>
 
         <script src="/public/js/common.js"></script>
         <script src="/public/js/mypage/article.js"></script>

@@ -43,9 +43,9 @@ async function getContentList(){
   if (contentEntry.entry == null){
 
     contentReader.innerHTML = `
-    <fieldset class="tui-fieldset tui-border-dotted">
+
         <pre> :(    Nothing to see here, yet </pre>
-    </fieldset>
+
 
     `
 
@@ -95,9 +95,9 @@ async function getRoomList(){
     if (roomEntry.room_name == null){
   
       roomReader.innerHTML = `
-      <fieldset class="tui-fieldset tui-border-dotted">
+ 
           <pre> :(     You're not invited, yet </pre>
-      </fieldset>
+
       `
   
   
