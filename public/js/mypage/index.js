@@ -493,7 +493,7 @@ async function listUsers(){
     
             userReader.innerHTML += `
             <p> ${userList.users[i]} </p> 
-            <input class="tui-button" type="button" onclick="deleteUser('${userList.users[i]}')" value="delete">
+            <input class="tui-button red-255" type="button" onclick="deleteUser('${userList.users[i]}')" value="delete">
             <br>
             `
          

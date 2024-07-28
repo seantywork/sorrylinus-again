@@ -302,7 +302,7 @@ async function getArticleList(){
         <a class="tui-button" href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
             ${sortedEntry[i].title} 
         </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}]
-        <input class="tui-button" type="button" onclick="deleteArticle('${sortedEntry[i].id}')" value="delete">
+        <input class="tui-button red-255" type="button" onclick="deleteArticle('${sortedEntry[i].id}')" value="delete">
         <br>
         `
         articleCount += 1

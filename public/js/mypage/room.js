@@ -44,7 +44,7 @@ async function getRoomList(){
             <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
                 ${roomEntry.room_name[i]}
             </a>
-            <input class="tui-button" type="button" onclick="deleteRoom('${roomEntry.room_name[i]}')" value="delete">
+            <input class="tui-button red-255" type="button" onclick="deleteRoom('${roomEntry.room_name[i]}')" value="delete">
             <br>
             `
         
