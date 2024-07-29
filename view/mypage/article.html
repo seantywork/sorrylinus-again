@@ -23,31 +23,65 @@
         <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
     </head>
     <body>
-        <div class="tui-window tui-scroll-white">
-            <h3> Article Edit </h3>
-            <fieldset class="tui-fieldset tui-border-double">
-                <div id="article-editor"></div>
-                <fieldset class="tui-fieldset tui-border-dotted">
-                    <input class="tui-button" type="button" id="saveButton" value="save">
-                    <div>
-                        Readonly:
-                        <b id="readonly-state">
-                        Off
-                        </b>
-                        <input class="tui-button" type="button" id="toggleReadOnlyButton" value="toggle">
+        <nav class="tui-nav">
+            <ul>
+                <li class="tui-dropdown">
+                    <span class="red-168-text">M</span>enu
+                    <div class="tui-dropdown-content">
+                          <ul>
+                            <li><a href="/"> <span class="red-168-text">H</span>ome </a></li>
+                          </ul>
+                          <ul>
+                            <li><a href="/mypage"> <span class="red-168-text">M</span>y Page </a></li>
+                          </ul>
+                        </ul>
                     </div>
-                </fieldset>
-            </fieldset>
+                </li>
+            </ul>
+        </nav>
+        <div class="container">
+            <div class="row">
+              <div class="col s12 m12 l12">article</div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="tui-window tui-scroll-white">
+                        <h3> Article Edit </h3>
+                        <fieldset class="tui-fieldset tui-border-double">
+                            <div id="article-editor"></div>
+                            <fieldset class="tui-fieldset tui-border-dotted">
+                                <input class="tui-button" type="button" id="saveButton" value="save">
+                                <div>
+                                    Readonly:
+                                    <b id="readonly-state">
+                                    Off
+                                    </b>
+                                    <input class="tui-button" type="button" id="toggleReadOnlyButton" value="toggle">
+                                </div>
+                            </fieldset>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="tui-window tui-scroll-white">
-            <h3> Article List </h3>
-            <fieldset class="tui-fieldset tui-border-double">
-                <fieldset class="tui-fieldset tui-border-dotted">
-                    <div id="article-reader"></div>
-                </fieldset>
-            </fieldset>
+        <div class="tui-overlap">
+            <div id="modal" class="tui-modal">
+              <div class="tui-window">
+                  <fieldset class="tui-fieldset">
+                      <legend class="red-255 yellow-255-text">Article List</legend>
+                        <fieldset class="tui-fieldset tui-border-dotted">
+                            <div id="article-reader"></div>
+                        </fieldset>
+                      <button class="tui-button tui-modal-close-button right" data-modal="modal">close</button>
+                  </fieldset>
+              </div>
+            </div>
         </div>
-
+        <div class="tui-statusbar">
+            <ul>
+                <li><a class="tui-modal-button" data-modal="modal"><span class="red-168-text" data-modal="modal">Click </span>List</a></li>
+            </ul>
+        </div>
         <script src="/public/js/common.js"></script>
         <script src="/public/js/mypage/article.js"></script>
 

@@ -28,14 +28,38 @@
 
   </script>
   <body>
-    <div class="tui-window tui-scroll-white">
-      <fieldset class="tui-fieldset tui-border-double">
-        <div id="article-reader">
-
+    <nav class="tui-nav">
+      <ul>
+          <li class="tui-dropdown">
+              <span class="red-168-text">M</span>enu
+              <div class="tui-dropdown-content">
+                    <ul>
+                      <li><a href="/"> <span class="red-168-text">H</span>ome </a></li>
+                    </ul>
+                  </ul>
+              </div>
+          </li>
+      </ul>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m12 l12">contents</div>
+      </div>
+      <div class="row">
+        <div class="col s12 m12 l12">
+          <div class="tui-window tui-scroll-white">
+            <fieldset class="tui-fieldset tui-border-double">
+              <div id="article-reader">
+      
+              </div>
+            </fieldset>
+          </div>
         </div>
-      </fieldset>
+      </div>
     </div>
+    <div class="tui-statusbar">
 
+    </div>
     <script src="/public/js/content/article.js"> </script>
   </body>
 </html>

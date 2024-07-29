@@ -11,35 +11,56 @@
 
     <body>
 
-        <div class="tui-window tui-scroll-white">
-            <fieldset class="tui-fieldset tui-border-double">
-                <fieldset class="tui-fieldset tui-border-dotted">
-                    <div>
-                        <input class="tui-input purple-255" type='text' id='user-id'/>
-                        <label for='user-id'>Enter User ID</label>
+        <nav class="tui-nav">
+            <ul>
+                <li class="tui-dropdown">
+                    <span class="red-168-text">M</span>enu
+                    <div class="tui-dropdown-content">
+                          <ul>
+                            <li><a  href="/"> <span class="red-168-text">H</span>ome </a></li>
+                          </ul>
+                        </ul>
                     </div>
-                </fieldset>
-                <fieldset class="tui-fieldset tui-border-dotted">
-                    <div>
-                        <input class="tui-input purple-255" type='password' id='user-pw'/>
-                        <label for='user-pw'>Enter User Password</label>
+                </li>
+            </ul>
+        </nav>
+        <div class="container">
+            <div class="row">
+              <div class="col s12 m12 l12">sign in</div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="tui-window tui-scroll-white">
+                        <fieldset class="tui-fieldset tui-border-double">
+                            <legend>sign in</legend>
+                            <fieldset class="tui-fieldset tui-border-dotted">
+                                <div>
+                                    <input class="tui-input purple-255" type='text' id='user-id'/>
+                                    <label for='user-id'>Enter User ID</label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="tui-fieldset tui-border-dotted">
+                                <div>
+                                    <input class="tui-input purple-255" type='password' id='user-pw'/>
+                                    <label for='user-pw'>Enter User Password</label>
+                                </div>
+                            </fieldset>
+            
+                            <br/>
+                            <div>
+                                <input class="tui-button" type="button" onclick="userSignin()" value="user login">
+                            </div>
+            
+                        </fieldset>
                     </div>
-                </fieldset>
-
-                <br/>
-                <div>
-                    <input class="tui-button" type="button" onclick="userSignin()" value="user login">
                 </div>
-
-                <br>
-                <div>
-                    <a class="tui-button" href="/api/oauth2/google/signin">
-                        admin Login
-                    </a>
-                </div>
-            </fieldset>
+            </div>
         </div>
-
+        <div class="tui-statusbar">
+            <ul>
+                <li><a href="/api/oauth2/google/signin"><span class="red-168-text">Click </span>Admin</a></li>
+            </ul>
+        </div>
 
     <script src="/public/js/index/signin.js"></script>
     </body>

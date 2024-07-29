@@ -9,75 +9,90 @@
   </head>
   <body>
 
+      <nav class="tui-nav">
+        <ul>
+            <li class="tui-dropdown">
+                <span class="red-168-text">M</span>enu
+                <div class="tui-dropdown-content">
+                      {{ if .logged_in }}
+                      <ul>
+                        <li><a href="/api/auth/signout"> <span class="red-168-text">S</span>ign Out </a></li>
+                      </ul>
+                      <ul>
+                        <li><a href="/mypage"> <span class="red-168-text">M</span>y Page </a></li>
+                      </ul>
+                      {{ else }}
+                      <ul>
+                        <li><a href="/signin"> <span class="red-168-text">S</span>ign in </a></li>
+                      </ul>
+                      {{ end }}
+                </div>
+            </li>
+        </ul>
+      </nav>
+      <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
 
-      <div class="tui-window tui-scroll-white">
-
-        <fieldset class="tui-fieldset tui-border-double">
-
-          <h1> feebdaed.xyz </h1>
-          {{ if .logged_in }}
-          <a class="tui-button" href="/api/auth/signout"> Sign Out </a>
-          <br>
-          <br>
-          <a class="tui-button" href="/mypage"> My Page </a>
-          {{ else }}
-          <a class="tui-button" href="/signin"> Sign in </a>
-          {{ end }}
-
-          <br>
-          <br>
-
-          <input class="tui-button orange-255" type="button" value="README" onclick="toggleDisplayById('readme-reader')">
-          <div id="readme-reader" style="display: none;"> 
-            <fieldset class="tui-fieldset tui-border-dotted">
-              <pre> 
-                This website is part of a broader project named <a class="tui-button" href="https://github.com/seantywork/sorrylinus"> "sorrylinus" </a>
-
-                You can also check some more out from my <a class="tui-button" href="https://github.com/seantywork"> GitHub </a> 
-
-                I've been uploading to <a class="tui-button" href="https://medium.com/@seantywork"> Medium.com </a>
-                but I intend to direct my contents here onward.
-              </pre>
-            </fieldset>
-
-            <fieldset class="tui-fieldset tui-border-dotted">
-              <pre>
-                Every content listed down there is freely accessible shareable.
-
-                Except for video chat.
-                
-                To sign in and use video chat,
-                Contact [ seantywork@gmail.com ] 
-
-                If deemed fit, I will send you back: 
-
-                  - temporary ID, password
-                  - video chat room address
-
-              </pre>
-            </fieldset>
           </div>
-
-        
-          <h2> Contents </h2>
-
-          <fieldset class="tui-fieldset tui-border-dotted">
-            <div id="content-reader"></div>
-          </fieldset>
-
-          <br>
-
-          <h2> Video Chat </h2>
-
-          <fieldset class="tui-fieldset tui-border-dotted">
-            <div id="room-reader"></div>
-          </fieldset>
-          <br>
-        </fieldset>
-
+        </div>
+        <div class="row">
+          <div class="col s6 m6 l6">
+            <div class="tui-window tui-scroll-white">
+              <fieldset class="tui-fieldset tui-border-double">
+                <legend>contents</legend>
+                <fieldset class="tui-fieldset tui-border-dotted">
+                  <div id="content-reader"></div>
+                </fieldset>
+              </fieldset>
+            </div>
+          </div>
+          <div class="col s6 m6 l6">
+            <div class="tui-window tui-scroll-white">
+              <fieldset class="tui-fieldset tui-border-double">
+                <legend>video chat</legend>
+                <fieldset class="tui-fieldset tui-border-dotted">
+                  <div id="room-reader"></div>
+                </fieldset>
+              </fieldset>
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="tui-overlap">
+        <div id="modal" class="tui-modal">
+          <div class="tui-window red-168">
+              <fieldset class="tui-fieldset">
+                  <legend class="red-255 yellow-255-text">README</legend>
+                    <pre>
+            This website is part of a broader project named <a class="tui-button" href="https://github.com/seantywork/sorrylinus"> "sorrylinus" </a>
 
+            You can also check some more out from my <a class="tui-button" href="https://github.com/seantywork"> GitHub </a> 
 
+            I've been uploading to <a class="tui-button" href="https://medium.com/@seantywork"> Medium.com </a>
+            but I intend to direct my contents here onward.
+            Every content listed down there is freely accessible shareable.
+
+            Except for video chat.
+            
+            To sign in and use video chat,
+            Contact [ seantywork@gmail.com ] 
+
+            If deemed fit, I will send you back: 
+
+              - temporary ID, password
+              - video chat room address
+                    </pre>
+                  <button class="tui-button tui-modal-close-button right" data-modal="modal">close</button>
+              </fieldset>
+          </div>
+        </div>
+      </div>
+      <div class="tui-statusbar">
+        <ul>
+            <li><a class="tui-modal-button" data-modal="modal"><span class="red-168-text" data-modal="modal">Click </span>README</a></li>
+        </ul>
+      </div>
     <script src="/public/js/common.js"></script>
     <script src="/public/js/index/index.js"></script>
   </body>

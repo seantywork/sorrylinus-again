@@ -12,23 +12,62 @@
     <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
   </head>
   <body>
-    <div class="tui-window tui-scroll-white">
-      <fieldset class="tui-fieldset tui-border-double">
-        <label for="create-room-name">Room Name</label>
-        <input class="tui-input purple-255" type="text" id="create-room-name">
-        <br>
-        <br>
-        <label for="create-room-users">Allowed Users</label>
-        <input class="tui-input purple-255" type="text" id="create-room-users">
-        <br>
-        <br>
-        <input class="tui-button" type="button" onclick="createRoom()" value="create">
 
-        <fieldset class="tui-fieldset tui-border-dotted">
-          <div id="room-reader"></div>
-        </fieldset>
-      </fieldset>
-
+    <nav class="tui-nav">
+      <ul>
+          <li class="tui-dropdown">
+              <span class="red-168-text">M</span>enu
+              <div class="tui-dropdown-content">
+                    <ul>
+                      <li><a href="/"> <span class="red-168-text">H</span>ome </a></li>
+                    </ul>
+                    <ul>
+                      <li><a href="/mypage"> <span class="red-168-text">M</span>y Page </a></li>
+                    </ul>
+                  </ul>
+              </div>
+          </li>
+      </ul>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m12 l12">room</div>
+      </div>
+      <div class="row">
+          <div class="col s12 m12 l12">
+            <div class="tui-window tui-scroll-white">
+              <fieldset class="tui-fieldset tui-border-double">
+                <label for="create-room-name">Room Name</label>
+                <input class="tui-input purple-255" type="text" id="create-room-name">
+                <br>
+                <br>
+                <label for="create-room-users">Allowed Users</label>
+                <input class="tui-input purple-255" type="text" id="create-room-users">
+                <br>
+                <br>
+                <input class="tui-button" type="button" onclick="createRoom()" value="create">
+              </fieldset>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="tui-overlap">
+      <div id="modal" class="tui-modal">
+        <div class="tui-window">
+            <fieldset class="tui-fieldset">
+                <legend class="red-255 yellow-255-text">Room List</legend>
+                  <fieldset class="tui-fieldset tui-border-dotted">
+                    <div id="room-reader"></div>
+                  </fieldset>
+                <button class="tui-button tui-modal-close-button right" data-modal="modal">close</button>
+            </fieldset>
+        </div>
+      </div>
+    </div>
+    <div class="tui-statusbar">
+        <ul>
+            <li><a class="tui-modal-button" data-modal="modal"><span class="red-168-text" data-modal="modal">Click </span>List</a></li>
+        </ul>
     </div>
 
     <script src="/public/js/mypage/room.js"></script>
