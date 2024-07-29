@@ -328,13 +328,13 @@ func UserRemove(c *gin.Context) {
 
 func Login(c *gin.Context) {
 
-	my_key, my_type, _ := WhoAmI(c)
+	my_key, my_type, my_id := WhoAmI(c)
 
 	if my_key != "" && my_type != "" {
 
-		fmt.Printf("user login: already logged in\n")
+		dbquery.RemoveSessionKeyFromSession(my_key)
 
-		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "already logged in"})
+		fmt.Printf("user login: removed existing id: %s\n", my_id)
 
 		return
 

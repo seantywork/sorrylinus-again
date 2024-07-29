@@ -3,6 +3,7 @@ package dbquery
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"mime/multipart"
 	"os"
 	"strings"
@@ -311,12 +312,13 @@ func RemoveSessionKeyFromSession(session_key string) error {
 
 func MakeSessionForAdmin(session_key string, email string) error {
 
-	_, ss, _ := GetByIdFromSession(email)
+	s_key, ss, _ := GetByIdFromSession(email)
 
 	if ss != nil {
 
-		return fmt.Errorf("valid session already exists for: %s", email)
+		_ = RemoveSessionKeyFromSession(s_key)
 
+		log.Printf("removed existing session for: %s\n", email)
 	}
 
 	new_ss := SessionStruct{}
