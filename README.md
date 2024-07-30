@@ -5,4 +5,4 @@ I'm sorry Linus, again, for abandoning C to create reliable and maintainable das
 
 ## Documentation
 
-See [sorrylinus](https://github.com/seantywork/sorrylinus)
+See [sorrylinus](https://github.com/seantywork/sorrylinus?tab=readme-ov-file#web)
