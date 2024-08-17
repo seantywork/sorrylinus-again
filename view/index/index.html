@@ -3,6 +3,7 @@
 <html class="tui-bg-blue-black">
   <head>
     <title> feebdaed.xyz </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
     <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
     <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
@@ -44,7 +45,8 @@
               </div>
               <div class="tui-panel-content">
                   Welcome to feebdaed.xyz, where worthlessness becomes the norm. <br>
-                  [Menu] at the top, [README] at the bottom!
+                  To sign in, use [Menu] <br> 
+                  To find out more, check [README] at the bottom.
               </div>
             </div>
           </div>
@@ -57,9 +59,12 @@
                 <fieldset class="tui-fieldset tui-border-dotted">
                   <div id="content-reader"></div>
                 </fieldset>
+                <button class="tui-button orange-168 white-text" onclick="contentNext()">next</button>
               </fieldset>
             </div>
           </div>
+        </div>
+        <div class="row">          
           <div class="col s6 m6 l6">
             <div class="tui-window tui-scroll-white">
               <fieldset class="tui-fieldset tui-border-double">
@@ -67,6 +72,7 @@
                 <fieldset class="tui-fieldset tui-border-dotted">
                   <div id="room-reader"></div>
                 </fieldset>
+                <button class="tui-button orange-168 white-text" onclick="roomNext()">next</button>
               </fieldset>
             </div>
           </div>

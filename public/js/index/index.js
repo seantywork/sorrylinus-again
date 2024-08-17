@@ -19,6 +19,17 @@ var PEERS_ENTRY_STRUCT = {
 }
 
 
+
+var CONTENT_LIST = []
+
+var ROOM_LIST = []
+
+var CONTENT_PAGE_PTR = 0
+var ROOM_PAGE_PTR = 0
+
+var PAGE_MAX = 5
+
+
 async function getContentList(){
 
   let resp = await fetch("/api/content/entry", {
@@ -35,37 +46,9 @@ async function getContentList(){
 
   }
 
+  CONTENT_LIST = JSON.parse(result.reply)
 
-  let contentReader = document.getElementById("content-reader")
-
-  let contentEntry = JSON.parse(result.reply)
-
-  if (contentEntry.entry == null){
-
-    contentReader.innerHTML = `
-
-        <pre> :(    Nothing to see here, yet </pre>
-
-
-    `
-
-
-  } else {
-
-    let sortedEntry = getNewDateSortedList("desc", "timestamp", contentEntry.entry)
-
-    for(let i = 0; i < sortedEntry.length; i ++){
-
-      contentReader.innerHTML += `
-      <a class="tui-button" href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
-        ${sortedEntry[i].title} 
-      </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}] 
-      <br>
-      `
-     
-    }
-  }
-
+  renderContentList()
 
 }
 
@@ -87,36 +70,172 @@ async function getRoomList(){
   
     }
   
-  
-    let roomReader = document.getElementById("room-reader")
-  
-    let roomEntry = JSON.parse(result.reply)
-  
-    if (roomEntry.room_name == null){
-  
-      roomReader.innerHTML = `
  
-          <pre> :(     You're not invited, yet </pre>
+    ROOM_LIST = JSON.parse(result.reply)
 
-      `
-  
-  
-    } else {
-  
-      for(let i = 0; i < roomEntry.room_name.length; i ++){
-  
-          roomReader.innerHTML += `
-          <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
-              ${roomEntry.room_name[i]}
-          </a>
-          <br>
-          `
-       
-      }
-    }
+
+    renderRoomList()
   
   
   }
+
+
+
+
+function renderContentList(){
+
+
+  let contentReader = document.getElementById("content-reader")
+
+  let contentEntry = JSON.parse(JSON.stringify(CONTENT_LIST))
+
+  contentReader.innerHTML = ""
+
+  if (contentEntry.entry == null){
+
+    contentReader.innerHTML = `
+
+        <pre> :(    Nothing to see here, yet </pre>
+
+
+    `
+
+  } else {
+
+    let sortedEntry = getNewDateSortedList("desc", "timestamp", contentEntry.entry)
+
+    let pageStart = CONTENT_PAGE_PTR * PAGE_MAX
+    let pageEnd = pageStart + PAGE_MAX
+
+    for(let i = 0; i < sortedEntry.length; i ++){
+
+      if(pageStart <= i && i < pageEnd){
+       
+        contentReader.innerHTML += `
+        <div style="display: block;">
+          <a class="tui-button" href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
+            ${sortedEntry[i].title} 
+          </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}]
+        </div> 
+        <br>
+        `
+      } else {
+
+        contentReader.innerHTML += `
+        <div style="display: none;">
+          <a class="tui-button" href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
+            ${sortedEntry[i].title} 
+          </a> [${sortedEntry[i].author}:${sortedEntry[i].timestamp}] 
+        </div>
+        <br>
+        ` 
+      }
+     
+    }
+  }
+}
+
+
+function renderRoomList(){
+
+
+
+  let roomReader = document.getElementById("room-reader")
+  
+  let roomEntry = JSON.parse(JSON.stringify(ROOM_LIST))
+
+  roomReader.innerHTML = ""
+
+  if (roomEntry.room_name == null){
+
+    roomReader.innerHTML = `
+
+        <pre> :(     You're not invited, yet </pre>
+
+    `
+
+
+  } else {
+
+    let pageStart = ROOM_PAGE_PTR * PAGE_MAX
+    let pageEnd = pageStart + PAGE_MAX
+
+    for(let i = 0; i < roomEntry.room_name.length; i ++){
+   
+      if(pageStart <= i && i < pageEnd){
+        roomReader.innerHTML += `
+        <div style="display: block;">
+          <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
+              ${roomEntry.room_name[i]}
+          </a>
+        </div>
+        <br>
+        `
+
+      } else {
+
+        roomReader.innerHTML += `
+        <div style="display: none;">
+          <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
+              ${roomEntry.room_name[i]}
+          </a>
+        </div>
+        <br>
+        `
+      }
+
+  
+    }
+
+  }
+
+}
+
+function contentNext(){
+
+
+  let contentLength = CONTENT_LIST.entry.length 
+
+  let tmpPagePtr = (CONTENT_PAGE_PTR + 1) * PAGE_MAX
+
+  if(tmpPagePtr >= contentLength){
+
+    alert("goto: content: first page")
+
+    CONTENT_PAGE_PTR = 0
+
+  } else {
+
+    CONTENT_PAGE_PTR += 1
+  }
+
+  renderContentList()
+
+
+}
+
+function roomNext(){
+
+  let roomLength = ROOM_LIST.room_name.length
+
+  let tmpPagePtr = (ROOM_PAGE_PTR + 1) * PAGE_MAX
+
+  if(tmpPagePtr >= roomLength){
+
+    alert("goto: room: first page")
+
+    ROOM_PAGE_PTR = 0
+
+  } else {
+
+    ROOM_PAGE_PTR += 1
+
+  }
+
+  renderRoomList()
+
+}
+
 
 (async function() {
 
