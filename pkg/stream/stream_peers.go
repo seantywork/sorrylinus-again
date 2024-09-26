@@ -74,7 +74,9 @@ func GetPeersEntry(c *gin.Context) {
 
 	_, my_type, my_id := pkgauth.WhoAmI(c)
 
-	pes := PeersEntryStruct{}
+	pes := PeersEntryStruct{
+		RoomName: make([]string, 0),
+	}
 
 	for k, v := range ROOMREG {
 

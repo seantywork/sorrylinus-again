@@ -107,6 +107,8 @@ function renderContentList(){
     let pageStart = CONTENT_PAGE_PTR * PAGE_MAX
     let pageEnd = pageStart + PAGE_MAX
 
+    contentReader.innerHTML = ``
+
     for(let i = 0; i < sortedEntry.length; i ++){
 
       if(pageStart <= i && i < pageEnd){
@@ -121,6 +123,8 @@ function renderContentList(){
         `
       } else {
 
+        continue
+        /*
         contentReader.innerHTML += `
         <div style="display: none;">
           <a class="tui-button" href="/content/${sortedEntry[i].type}/${sortedEntry[i].id}">
@@ -129,6 +133,7 @@ function renderContentList(){
         </div>
         <br>
         ` 
+        */
       }
      
     }
@@ -160,6 +165,8 @@ function renderRoomList(){
     let pageStart = ROOM_PAGE_PTR * PAGE_MAX
     let pageEnd = pageStart + PAGE_MAX
 
+    roomReader.innerHTML = ``
+
     for(let i = 0; i < roomEntry.room_name.length; i ++){
    
       if(pageStart <= i && i < pageEnd){
@@ -173,7 +180,9 @@ function renderRoomList(){
         `
 
       } else {
-
+        
+        continue
+        /*
         roomReader.innerHTML += `
         <div style="display: none;">
           <a class="tui-button" href="/room/${roomEntry.room_name[i]}">
@@ -182,6 +191,8 @@ function renderRoomList(){
         </div>
         <br>
         `
+        */
+        
       }
 
   

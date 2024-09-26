@@ -247,7 +247,15 @@ func GetMediaEntry(c *gin.Context) {
 
 	pkgauth.WhoAmI(c)
 
-	entry := EntryStruct{}
+	entry := EntryStruct{
+		Entry: make([]struct {
+			Title     string    "json:\"title\""
+			Id        string    "json:\"id\""
+			Type      string    "json:\"type\""
+			Timestamp time.Time "json:\"timestamp\""
+			Author    string    "json:\"author\""
+		}, 0),
+	}
 
 	em, err := dbquery.GetEntryForMedia()
 
