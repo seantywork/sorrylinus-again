@@ -91,7 +91,7 @@ function renderContentList(){
 
   contentReader.innerHTML = ""
 
-  if (contentEntry.entry == null){
+  if (contentEntry.entry.length == 0){
 
     contentReader.innerHTML = `
 
@@ -151,7 +151,7 @@ function renderRoomList(){
 
   roomReader.innerHTML = ""
 
-  if (roomEntry.room_name == null){
+  if (roomEntry.room_name.length == 0){
 
     roomReader.innerHTML = `
 
