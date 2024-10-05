@@ -3,8 +3,8 @@
 function usage_helper(){
 
     echo "usage:"
-    echo "  again : follow sorrylinus-again log"
-    echo "  hub   : follow sorrylinus-hub log"
+    echo "  f : follow sorrylinus-again log"
+
 }
 
 if [ -z "$1" ]
@@ -19,7 +19,7 @@ fi
 
 
 
-if [ "$1" == "again" ]
+if [ "$1" == "f" ]
 then 
 
     TARGET_POD=$(sudo kubectl -n frank get pods --no-headers -o custom-columns=":metadata.name" | grep 'sorrylinus-again')
@@ -29,14 +29,14 @@ then
     sudo kubectl -n frank logs "${TARGET_POD}" --follow
 
 
-elif [ "$1" == "hub" ]
-then 
+#elif [ "$1" == "hub" ]
+#then 
 
-    TARGET_POD=$(sudo kubectl -n frank get pods --no-headers -o custom-columns=":metadata.name" | grep 'sorrylinus-hub')
+#    TARGET_POD=$(sudo kubectl -n frank get pods --no-headers -o custom-columns=":metadata.name" | grep 'sorrylinus-hub')
     
-    echo "your follow target name: ${TARGET_POD}"
+#    echo "your follow target name: ${TARGET_POD}"
     
-    sudo kubectl -n frank logs "${TARGET_POD}" --follow
+#    sudo kubectl -n frank logs "${TARGET_POD}" --follow
 
 else 
 
