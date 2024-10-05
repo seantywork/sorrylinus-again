@@ -2,7 +2,7 @@
 function usage_helper(){
 
     echo "usage:"
-    echo "  soli  : do ci cd" 
+    echo "  again  : do ci cd" 
     echo "  test  : for test "
 }
 
@@ -91,7 +91,7 @@ source ./cicd.conf
 
 
 
-if [ "$1" == "soli" ]
+if [ "$1" == "again" ]
 then 
 
     build_sorrylinus_again

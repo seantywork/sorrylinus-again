@@ -2,7 +2,9 @@ package stream
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -54,12 +56,34 @@ func InitWebRTCApi() {
 
 	settingEngine := webrtc.SettingEngine{}
 
-	mux, err := ice.NewMultiUDPMuxFromPort(UDP_MUX_PORT)
+	var filterFunc func(string) bool = func(ifname string) bool {
+
+		if strings.HasPrefix(ifname, "br-") {
+
+			return false
+		} else if strings.HasPrefix(ifname, "vir") {
+
+			return false
+		} else if strings.HasPrefix(ifname, "docker") {
+
+			return false
+		}
+
+		return true
+
+	}
+
+	ifaceFilter := ice.UDPMuxFromPortWithInterfaceFilter(filterFunc)
+	mux, err := ice.NewMultiUDPMuxFromPort(UDP_MUX_PORT, ifaceFilter)
+
+	log.Println("creating webrtc api")
 
 	settingEngine.SetICEUDPMux(mux)
 	if err != nil {
 		panic(err)
 	}
+
+	log.Println("created webrtc api")
 
 	settingEngine.SetEphemeralUDPPortRange(uint16(UDP_EPHEMERAL_PORT_MIN), uint16(UDP_EPHEMERAL_PORT_MAX))
 

@@ -11,7 +11,6 @@ import (
 	pkgedition "github.com/seantywork/sorrylinus-again/pkg/edition"
 	pkglog "github.com/seantywork/sorrylinus-again/pkg/log"
 	pkgman "github.com/seantywork/sorrylinus-again/pkg/manage"
-	pkgsoli "github.com/seantywork/sorrylinus-again/pkg/sorrylinus"
 	pkgstream "github.com/seantywork/sorrylinus-again/pkg/stream"
 	pkgutils "github.com/seantywork/sorrylinus-again/pkg/utils"
 )
@@ -36,17 +35,17 @@ func ConfigureRuntime(e *gin.Engine) {
 
 	e.MaxMultipartMemory = CONF.MaxFileSize
 
-	pkgsoli.DEBUG = CONF.Debug
+	//pkgsoli.DEBUG = CONF.Debug
 
-	pkgsoli.SOLI_FRONT_ADDR = CONF.Sorrylinus.FrontAddr
+	//pkgsoli.SOLI_FRONT_ADDR = CONF.Sorrylinus.FrontAddr
 
-	pkgsoli.SOLI_SIGNAL_PATH = CONF.Sorrylinus.SoliSignalAddr
+	//pkgsoli.SOLI_SIGNAL_PATH = CONF.Sorrylinus.SoliSignalAddr
 
-	pkgsoli.TIMEOUT_SEC = CONF.TimeoutSec
+	//pkgsoli.TIMEOUT_SEC = CONF.TimeoutSec
 
-	pkgsoli.EXTERNAL_URL = CONF.ExternalUrl
+	//pkgsoli.EXTERNAL_URL = CONF.ExternalUrl
 
-	pkgsoli.INTERNAL_URL = CONF.InternalUrl
+	//pkgsoli.INTERNAL_URL = CONF.InternalUrl
 
 	pkgauth.DEBUG = CONF.Debug
 
@@ -150,11 +149,11 @@ func RegisterRoutes(e *gin.Engine) {
 
 	// sorrylinus
 
-	e.POST("/api/sorrylinus/open", pkgsoli.PostSoliOpen)
+	//e.POST("/api/sorrylinus/open", pkgsoli.PostSoliOpen)
 
-	e.POST("/api/sorrylinus/close", pkgsoli.PostSoliClose)
+	//e.POST("/api/sorrylinus/close", pkgsoli.PostSoliClose)
 
-	e.GET("/api/sorrylinus/signal/address", pkgsoli.GetSoliSignalAddress)
+	// e.GET("/api/sorrylinus/signal/address", pkgsoli.GetSoliSignalAddress)
 
 	// edition
 
@@ -194,7 +193,7 @@ func RegisterRoutes(e *gin.Engine) {
 
 	// com
 
-	pkgcom.AddChannelHandler(CONF.Sorrylinus.SoliSignalAddr, pkgsoli.SoliSignalHandler)
+	//pkgcom.AddChannelHandler(CONF.Sorrylinus.SoliSignalAddr, pkgsoli.SoliSignalHandler)
 
 	if pkgstream.SINGLE_ROOM_MODE {
 		pkgcom.AddChannelHandler(CONF.Stream.PeerSignalAddr, pkgstream.RoomSignalHandlerSingle)
