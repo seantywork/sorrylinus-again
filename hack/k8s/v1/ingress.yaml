@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-uc
+
+spec:
+  tls:
+  - hosts:
+    - "feebdaed.xyz"
+    - "www.feebdaed.xyz"
+    secretName: frank-tls-secret
+  rules:
+  - host: "feebdaed.xyz"
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: frankthecloud
+              port:
+                number: 8000
+  - host: "www.feebdaed.xyz"
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: frankthecloud
+              port:
+                number: 8000

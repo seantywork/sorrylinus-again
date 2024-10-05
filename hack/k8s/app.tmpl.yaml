@@ -1,0 +1,92 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sorrylinus-again-web
+spec:
+  type: NodePort
+  selector:
+    app: sorrylinus-again
+  ports:
+    - name: sorrylinus-again-8000
+      nodePort: 30010
+      port: 8000
+      targetPort: 8000
+    - name: sorrylinus-again-8002
+      nodePort: 30012
+      port: 8002
+      targetPort: 8002
+    - name: sorrylinus-again-8004
+      nodePort: 30014
+      port: 8004
+      targetPort: 8004
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sorrylinus-again-rtc
+spec:
+  type: NodePort
+  selector:
+    app: sorrylinus-again
+  ports:
+    - name: sorrylinus-again-8006
+      nodePort: 30016
+      port: 8006
+      targetPort: 8006
+      protocol: UDP
+    {{- range seq 0 100}}
+    - name: sorrylinus-again-{{add 31000 .}}
+      nodePort: {{add 31000 .}}
+      port: {{add 31000 .}}
+      targetPort: {{add 31000 .}}
+      protocol: UDP
+    {{- end -}}
+    {{ print "\n" }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sorrylinus-again
+spec:
+  selector:
+    matchLabels:
+      app: sorrylinus-again
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sorrylinus-again
+    spec:
+      imagePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      volumes: 
+        - name: sorrylinus-again-storage 
+          persistentVolumeClaim: 
+            claimName: sorrylinus-again-pvc
+      containers:
+      - name: sorrylinus-again
+        imagePullPolicy: Always
+        image: registry.gitlab.com/seantywork/sorrylinus-again
+        tty: true
+        volumeMounts: 
+        - mountPath: "/home/data" 
+          name: sorrylinus-again-storage 
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        - containerPort: 8002
+          protocol: TCP
+        - containerPort: 8004
+          protocol: TCP
+        - containerPort: 8006
+          protocol: UDP
+        {{- range seq 0 100}}
+        - containerPort: {{add 31000 .}}
+          protocol: UDP
+        {{- end -}}
+        {{ print "\n" }}
+

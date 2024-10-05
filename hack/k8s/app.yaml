@@ -1,0 +1,788 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sorrylinus-again-web
+spec:
+  type: NodePort
+  selector:
+    app: sorrylinus-again
+  ports:
+    - name: sorrylinus-again-8000
+      nodePort: 30010
+      port: 8000
+      targetPort: 8000
+    - name: sorrylinus-again-8002
+      nodePort: 30012
+      port: 8002
+      targetPort: 8002
+    - name: sorrylinus-again-8004
+      nodePort: 30014
+      port: 8004
+      targetPort: 8004
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sorrylinus-again-rtc
+spec:
+  type: NodePort
+  selector:
+    app: sorrylinus-again
+  ports:
+    - name: sorrylinus-again-8006
+      nodePort: 30016
+      port: 8006
+      targetPort: 8006
+      protocol: UDP
+    - name: sorrylinus-again-31000
+      nodePort: 31000
+      port: 31000
+      targetPort: 31000
+      protocol: UDP
+    - name: sorrylinus-again-31001
+      nodePort: 31001
+      port: 31001
+      targetPort: 31001
+      protocol: UDP
+    - name: sorrylinus-again-31002
+      nodePort: 31002
+      port: 31002
+      targetPort: 31002
+      protocol: UDP
+    - name: sorrylinus-again-31003
+      nodePort: 31003
+      port: 31003
+      targetPort: 31003
+      protocol: UDP
+    - name: sorrylinus-again-31004
+      nodePort: 31004
+      port: 31004
+      targetPort: 31004
+      protocol: UDP
+    - name: sorrylinus-again-31005
+      nodePort: 31005
+      port: 31005
+      targetPort: 31005
+      protocol: UDP
+    - name: sorrylinus-again-31006
+      nodePort: 31006
+      port: 31006
+      targetPort: 31006
+      protocol: UDP
+    - name: sorrylinus-again-31007
+      nodePort: 31007
+      port: 31007
+      targetPort: 31007
+      protocol: UDP
+    - name: sorrylinus-again-31008
+      nodePort: 31008
+      port: 31008
+      targetPort: 31008
+      protocol: UDP
+    - name: sorrylinus-again-31009
+      nodePort: 31009
+      port: 31009
+      targetPort: 31009
+      protocol: UDP
+    - name: sorrylinus-again-31010
+      nodePort: 31010
+      port: 31010
+      targetPort: 31010
+      protocol: UDP
+    - name: sorrylinus-again-31011
+      nodePort: 31011
+      port: 31011
+      targetPort: 31011
+      protocol: UDP
+    - name: sorrylinus-again-31012
+      nodePort: 31012
+      port: 31012
+      targetPort: 31012
+      protocol: UDP
+    - name: sorrylinus-again-31013
+      nodePort: 31013
+      port: 31013
+      targetPort: 31013
+      protocol: UDP
+    - name: sorrylinus-again-31014
+      nodePort: 31014
+      port: 31014
+      targetPort: 31014
+      protocol: UDP
+    - name: sorrylinus-again-31015
+      nodePort: 31015
+      port: 31015
+      targetPort: 31015
+      protocol: UDP
+    - name: sorrylinus-again-31016
+      nodePort: 31016
+      port: 31016
+      targetPort: 31016
+      protocol: UDP
+    - name: sorrylinus-again-31017
+      nodePort: 31017
+      port: 31017
+      targetPort: 31017
+      protocol: UDP
+    - name: sorrylinus-again-31018
+      nodePort: 31018
+      port: 31018
+      targetPort: 31018
+      protocol: UDP
+    - name: sorrylinus-again-31019
+      nodePort: 31019
+      port: 31019
+      targetPort: 31019
+      protocol: UDP
+    - name: sorrylinus-again-31020
+      nodePort: 31020
+      port: 31020
+      targetPort: 31020
+      protocol: UDP
+    - name: sorrylinus-again-31021
+      nodePort: 31021
+      port: 31021
+      targetPort: 31021
+      protocol: UDP
+    - name: sorrylinus-again-31022
+      nodePort: 31022
+      port: 31022
+      targetPort: 31022
+      protocol: UDP
+    - name: sorrylinus-again-31023
+      nodePort: 31023
+      port: 31023
+      targetPort: 31023
+      protocol: UDP
+    - name: sorrylinus-again-31024
+      nodePort: 31024
+      port: 31024
+      targetPort: 31024
+      protocol: UDP
+    - name: sorrylinus-again-31025
+      nodePort: 31025
+      port: 31025
+      targetPort: 31025
+      protocol: UDP
+    - name: sorrylinus-again-31026
+      nodePort: 31026
+      port: 31026
+      targetPort: 31026
+      protocol: UDP
+    - name: sorrylinus-again-31027
+      nodePort: 31027
+      port: 31027
+      targetPort: 31027
+      protocol: UDP
+    - name: sorrylinus-again-31028
+      nodePort: 31028
+      port: 31028
+      targetPort: 31028
+      protocol: UDP
+    - name: sorrylinus-again-31029
+      nodePort: 31029
+      port: 31029
+      targetPort: 31029
+      protocol: UDP
+    - name: sorrylinus-again-31030
+      nodePort: 31030
+      port: 31030
+      targetPort: 31030
+      protocol: UDP
+    - name: sorrylinus-again-31031
+      nodePort: 31031
+      port: 31031
+      targetPort: 31031
+      protocol: UDP
+    - name: sorrylinus-again-31032
+      nodePort: 31032
+      port: 31032
+      targetPort: 31032
+      protocol: UDP
+    - name: sorrylinus-again-31033
+      nodePort: 31033
+      port: 31033
+      targetPort: 31033
+      protocol: UDP
+    - name: sorrylinus-again-31034
+      nodePort: 31034
+      port: 31034
+      targetPort: 31034
+      protocol: UDP
+    - name: sorrylinus-again-31035
+      nodePort: 31035
+      port: 31035
+      targetPort: 31035
+      protocol: UDP
+    - name: sorrylinus-again-31036
+      nodePort: 31036
+      port: 31036
+      targetPort: 31036
+      protocol: UDP
+    - name: sorrylinus-again-31037
+      nodePort: 31037
+      port: 31037
+      targetPort: 31037
+      protocol: UDP
+    - name: sorrylinus-again-31038
+      nodePort: 31038
+      port: 31038
+      targetPort: 31038
+      protocol: UDP
+    - name: sorrylinus-again-31039
+      nodePort: 31039
+      port: 31039
+      targetPort: 31039
+      protocol: UDP
+    - name: sorrylinus-again-31040
+      nodePort: 31040
+      port: 31040
+      targetPort: 31040
+      protocol: UDP
+    - name: sorrylinus-again-31041
+      nodePort: 31041
+      port: 31041
+      targetPort: 31041
+      protocol: UDP
+    - name: sorrylinus-again-31042
+      nodePort: 31042
+      port: 31042
+      targetPort: 31042
+      protocol: UDP
+    - name: sorrylinus-again-31043
+      nodePort: 31043
+      port: 31043
+      targetPort: 31043
+      protocol: UDP
+    - name: sorrylinus-again-31044
+      nodePort: 31044
+      port: 31044
+      targetPort: 31044
+      protocol: UDP
+    - name: sorrylinus-again-31045
+      nodePort: 31045
+      port: 31045
+      targetPort: 31045
+      protocol: UDP
+    - name: sorrylinus-again-31046
+      nodePort: 31046
+      port: 31046
+      targetPort: 31046
+      protocol: UDP
+    - name: sorrylinus-again-31047
+      nodePort: 31047
+      port: 31047
+      targetPort: 31047
+      protocol: UDP
+    - name: sorrylinus-again-31048
+      nodePort: 31048
+      port: 31048
+      targetPort: 31048
+      protocol: UDP
+    - name: sorrylinus-again-31049
+      nodePort: 31049
+      port: 31049
+      targetPort: 31049
+      protocol: UDP
+    - name: sorrylinus-again-31050
+      nodePort: 31050
+      port: 31050
+      targetPort: 31050
+      protocol: UDP
+    - name: sorrylinus-again-31051
+      nodePort: 31051
+      port: 31051
+      targetPort: 31051
+      protocol: UDP
+    - name: sorrylinus-again-31052
+      nodePort: 31052
+      port: 31052
+      targetPort: 31052
+      protocol: UDP
+    - name: sorrylinus-again-31053
+      nodePort: 31053
+      port: 31053
+      targetPort: 31053
+      protocol: UDP
+    - name: sorrylinus-again-31054
+      nodePort: 31054
+      port: 31054
+      targetPort: 31054
+      protocol: UDP
+    - name: sorrylinus-again-31055
+      nodePort: 31055
+      port: 31055
+      targetPort: 31055
+      protocol: UDP
+    - name: sorrylinus-again-31056
+      nodePort: 31056
+      port: 31056
+      targetPort: 31056
+      protocol: UDP
+    - name: sorrylinus-again-31057
+      nodePort: 31057
+      port: 31057
+      targetPort: 31057
+      protocol: UDP
+    - name: sorrylinus-again-31058
+      nodePort: 31058
+      port: 31058
+      targetPort: 31058
+      protocol: UDP
+    - name: sorrylinus-again-31059
+      nodePort: 31059
+      port: 31059
+      targetPort: 31059
+      protocol: UDP
+    - name: sorrylinus-again-31060
+      nodePort: 31060
+      port: 31060
+      targetPort: 31060
+      protocol: UDP
+    - name: sorrylinus-again-31061
+      nodePort: 31061
+      port: 31061
+      targetPort: 31061
+      protocol: UDP
+    - name: sorrylinus-again-31062
+      nodePort: 31062
+      port: 31062
+      targetPort: 31062
+      protocol: UDP
+    - name: sorrylinus-again-31063
+      nodePort: 31063
+      port: 31063
+      targetPort: 31063
+      protocol: UDP
+    - name: sorrylinus-again-31064
+      nodePort: 31064
+      port: 31064
+      targetPort: 31064
+      protocol: UDP
+    - name: sorrylinus-again-31065
+      nodePort: 31065
+      port: 31065
+      targetPort: 31065
+      protocol: UDP
+    - name: sorrylinus-again-31066
+      nodePort: 31066
+      port: 31066
+      targetPort: 31066
+      protocol: UDP
+    - name: sorrylinus-again-31067
+      nodePort: 31067
+      port: 31067
+      targetPort: 31067
+      protocol: UDP
+    - name: sorrylinus-again-31068
+      nodePort: 31068
+      port: 31068
+      targetPort: 31068
+      protocol: UDP
+    - name: sorrylinus-again-31069
+      nodePort: 31069
+      port: 31069
+      targetPort: 31069
+      protocol: UDP
+    - name: sorrylinus-again-31070
+      nodePort: 31070
+      port: 31070
+      targetPort: 31070
+      protocol: UDP
+    - name: sorrylinus-again-31071
+      nodePort: 31071
+      port: 31071
+      targetPort: 31071
+      protocol: UDP
+    - name: sorrylinus-again-31072
+      nodePort: 31072
+      port: 31072
+      targetPort: 31072
+      protocol: UDP
+    - name: sorrylinus-again-31073
+      nodePort: 31073
+      port: 31073
+      targetPort: 31073
+      protocol: UDP
+    - name: sorrylinus-again-31074
+      nodePort: 31074
+      port: 31074
+      targetPort: 31074
+      protocol: UDP
+    - name: sorrylinus-again-31075
+      nodePort: 31075
+      port: 31075
+      targetPort: 31075
+      protocol: UDP
+    - name: sorrylinus-again-31076
+      nodePort: 31076
+      port: 31076
+      targetPort: 31076
+      protocol: UDP
+    - name: sorrylinus-again-31077
+      nodePort: 31077
+      port: 31077
+      targetPort: 31077
+      protocol: UDP
+    - name: sorrylinus-again-31078
+      nodePort: 31078
+      port: 31078
+      targetPort: 31078
+      protocol: UDP
+    - name: sorrylinus-again-31079
+      nodePort: 31079
+      port: 31079
+      targetPort: 31079
+      protocol: UDP
+    - name: sorrylinus-again-31080
+      nodePort: 31080
+      port: 31080
+      targetPort: 31080
+      protocol: UDP
+    - name: sorrylinus-again-31081
+      nodePort: 31081
+      port: 31081
+      targetPort: 31081
+      protocol: UDP
+    - name: sorrylinus-again-31082
+      nodePort: 31082
+      port: 31082
+      targetPort: 31082
+      protocol: UDP
+    - name: sorrylinus-again-31083
+      nodePort: 31083
+      port: 31083
+      targetPort: 31083
+      protocol: UDP
+    - name: sorrylinus-again-31084
+      nodePort: 31084
+      port: 31084
+      targetPort: 31084
+      protocol: UDP
+    - name: sorrylinus-again-31085
+      nodePort: 31085
+      port: 31085
+      targetPort: 31085
+      protocol: UDP
+    - name: sorrylinus-again-31086
+      nodePort: 31086
+      port: 31086
+      targetPort: 31086
+      protocol: UDP
+    - name: sorrylinus-again-31087
+      nodePort: 31087
+      port: 31087
+      targetPort: 31087
+      protocol: UDP
+    - name: sorrylinus-again-31088
+      nodePort: 31088
+      port: 31088
+      targetPort: 31088
+      protocol: UDP
+    - name: sorrylinus-again-31089
+      nodePort: 31089
+      port: 31089
+      targetPort: 31089
+      protocol: UDP
+    - name: sorrylinus-again-31090
+      nodePort: 31090
+      port: 31090
+      targetPort: 31090
+      protocol: UDP
+    - name: sorrylinus-again-31091
+      nodePort: 31091
+      port: 31091
+      targetPort: 31091
+      protocol: UDP
+    - name: sorrylinus-again-31092
+      nodePort: 31092
+      port: 31092
+      targetPort: 31092
+      protocol: UDP
+    - name: sorrylinus-again-31093
+      nodePort: 31093
+      port: 31093
+      targetPort: 31093
+      protocol: UDP
+    - name: sorrylinus-again-31094
+      nodePort: 31094
+      port: 31094
+      targetPort: 31094
+      protocol: UDP
+    - name: sorrylinus-again-31095
+      nodePort: 31095
+      port: 31095
+      targetPort: 31095
+      protocol: UDP
+    - name: sorrylinus-again-31096
+      nodePort: 31096
+      port: 31096
+      targetPort: 31096
+      protocol: UDP
+    - name: sorrylinus-again-31097
+      nodePort: 31097
+      port: 31097
+      targetPort: 31097
+      protocol: UDP
+    - name: sorrylinus-again-31098
+      nodePort: 31098
+      port: 31098
+      targetPort: 31098
+      protocol: UDP
+    - name: sorrylinus-again-31099
+      nodePort: 31099
+      port: 31099
+      targetPort: 31099
+      protocol: UDP
+    - name: sorrylinus-again-31100
+      nodePort: 31100
+      port: 31100
+      targetPort: 31100
+      protocol: UDP
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sorrylinus-again
+spec:
+  selector:
+    matchLabels:
+      app: sorrylinus-again
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sorrylinus-again
+    spec:
+      imagePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      volumes: 
+        - name: sorrylinus-again-storage 
+          persistentVolumeClaim: 
+            claimName: sorrylinus-again-pvc
+      containers:
+      - name: sorrylinus-again
+        imagePullPolicy: Always
+        image: registry.gitlab.com/seantywork/sorrylinus-again
+        tty: true
+        volumeMounts: 
+        - mountPath: "/home/data" 
+          name: sorrylinus-again-storage 
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        - containerPort: 8002
+          protocol: TCP
+        - containerPort: 8004
+          protocol: TCP
+        - containerPort: 8006
+          protocol: UDP
+        - containerPort: 31000
+          protocol: UDP
+        - containerPort: 31001
+          protocol: UDP
+        - containerPort: 31002
+          protocol: UDP
+        - containerPort: 31003
+          protocol: UDP
+        - containerPort: 31004
+          protocol: UDP
+        - containerPort: 31005
+          protocol: UDP
+        - containerPort: 31006
+          protocol: UDP
+        - containerPort: 31007
+          protocol: UDP
+        - containerPort: 31008
+          protocol: UDP
+        - containerPort: 31009
+          protocol: UDP
+        - containerPort: 31010
+          protocol: UDP
+        - containerPort: 31011
+          protocol: UDP
+        - containerPort: 31012
+          protocol: UDP
+        - containerPort: 31013
+          protocol: UDP
+        - containerPort: 31014
+          protocol: UDP
+        - containerPort: 31015
+          protocol: UDP
+        - containerPort: 31016
+          protocol: UDP
+        - containerPort: 31017
+          protocol: UDP
+        - containerPort: 31018
+          protocol: UDP
+        - containerPort: 31019
+          protocol: UDP
+        - containerPort: 31020
+          protocol: UDP
+        - containerPort: 31021
+          protocol: UDP
+        - containerPort: 31022
+          protocol: UDP
+        - containerPort: 31023
+          protocol: UDP
+        - containerPort: 31024
+          protocol: UDP
+        - containerPort: 31025
+          protocol: UDP
+        - containerPort: 31026
+          protocol: UDP
+        - containerPort: 31027
+          protocol: UDP
+        - containerPort: 31028
+          protocol: UDP
+        - containerPort: 31029
+          protocol: UDP
+        - containerPort: 31030
+          protocol: UDP
+        - containerPort: 31031
+          protocol: UDP
+        - containerPort: 31032
+          protocol: UDP
+        - containerPort: 31033
+          protocol: UDP
+        - containerPort: 31034
+          protocol: UDP
+        - containerPort: 31035
+          protocol: UDP
+        - containerPort: 31036
+          protocol: UDP
+        - containerPort: 31037
+          protocol: UDP
+        - containerPort: 31038
+          protocol: UDP
+        - containerPort: 31039
+          protocol: UDP
+        - containerPort: 31040
+          protocol: UDP
+        - containerPort: 31041
+          protocol: UDP
+        - containerPort: 31042
+          protocol: UDP
+        - containerPort: 31043
+          protocol: UDP
+        - containerPort: 31044
+          protocol: UDP
+        - containerPort: 31045
+          protocol: UDP
+        - containerPort: 31046
+          protocol: UDP
+        - containerPort: 31047
+          protocol: UDP
+        - containerPort: 31048
+          protocol: UDP
+        - containerPort: 31049
+          protocol: UDP
+        - containerPort: 31050
+          protocol: UDP
+        - containerPort: 31051
+          protocol: UDP
+        - containerPort: 31052
+          protocol: UDP
+        - containerPort: 31053
+          protocol: UDP
+        - containerPort: 31054
+          protocol: UDP
+        - containerPort: 31055
+          protocol: UDP
+        - containerPort: 31056
+          protocol: UDP
+        - containerPort: 31057
+          protocol: UDP
+        - containerPort: 31058
+          protocol: UDP
+        - containerPort: 31059
+          protocol: UDP
+        - containerPort: 31060
+          protocol: UDP
+        - containerPort: 31061
+          protocol: UDP
+        - containerPort: 31062
+          protocol: UDP
+        - containerPort: 31063
+          protocol: UDP
+        - containerPort: 31064
+          protocol: UDP
+        - containerPort: 31065
+          protocol: UDP
+        - containerPort: 31066
+          protocol: UDP
+        - containerPort: 31067
+          protocol: UDP
+        - containerPort: 31068
+          protocol: UDP
+        - containerPort: 31069
+          protocol: UDP
+        - containerPort: 31070
+          protocol: UDP
+        - containerPort: 31071
+          protocol: UDP
+        - containerPort: 31072
+          protocol: UDP
+        - containerPort: 31073
+          protocol: UDP
+        - containerPort: 31074
+          protocol: UDP
+        - containerPort: 31075
+          protocol: UDP
+        - containerPort: 31076
+          protocol: UDP
+        - containerPort: 31077
+          protocol: UDP
+        - containerPort: 31078
+          protocol: UDP
+        - containerPort: 31079
+          protocol: UDP
+        - containerPort: 31080
+          protocol: UDP
+        - containerPort: 31081
+          protocol: UDP
+        - containerPort: 31082
+          protocol: UDP
+        - containerPort: 31083
+          protocol: UDP
+        - containerPort: 31084
+          protocol: UDP
+        - containerPort: 31085
+          protocol: UDP
+        - containerPort: 31086
+          protocol: UDP
+        - containerPort: 31087
+          protocol: UDP
+        - containerPort: 31088
+          protocol: UDP
+        - containerPort: 31089
+          protocol: UDP
+        - containerPort: 31090
+          protocol: UDP
+        - containerPort: 31091
+          protocol: UDP
+        - containerPort: 31092
+          protocol: UDP
+        - containerPort: 31093
+          protocol: UDP
+        - containerPort: 31094
+          protocol: UDP
+        - containerPort: 31095
+          protocol: UDP
+        - containerPort: 31096
+          protocol: UDP
+        - containerPort: 31097
+          protocol: UDP
+        - containerPort: 31098
+          protocol: UDP
+        - containerPort: 31099
+          protocol: UDP
+        - containerPort: 31100
+          protocol: UDP
+
+

@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frankthecloud
+  labels:
+    app: frankthecloud
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: frankthecloud
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frankthecloud
+spec:
+  selector:
+    matchLabels:
+      app: frankthecloud
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frankthecloud
+    spec:
+      imagePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      containers:
+      - name: frankthecloud
+        imagePullPolicy: Always
+        image: registry.gitlab.com/seantywork/frankthecloud
+        tty: true
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frankhub
+  labels:
+    app: frankhub
+spec:
+  type: ClusterIP
+  ports:
+  - name: frankhub-admin
+    port: 2999
+    targetPort: 2999
+    protocol: TCP
+  - name: frankhub-front
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+  - name: frankhub-hub
+    port: 3001
+    targetPort: 3001
+    protocol: TCP
+  selector:
+    app: frankhub
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: frankhub-sock
+spec:
+  type: NodePort
+  selector:
+    app: frankhub
+  ports:
+    - nodePort: 30011
+      port: 3001
+      targetPort: 3001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frankhub
+spec:
+  selector:
+    matchLabels:
+      app: frankhub
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frankhub
+    spec:
+      imagePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      containers:
+      - name: frankhub
+        imagePullPolicy: Always
+        image: registry.gitlab.com/seantywork/frankhub
+        tty: true
+        ports:
+        - containerPort: 2999
+        - containerPort: 3000
+        - containerPort: 3001

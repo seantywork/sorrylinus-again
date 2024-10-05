@@ -1,0 +1,120 @@
+#!/bin/bash
+function usage_helper(){
+
+    echo "usage:"
+    echo "  soli  : do ci cd" 
+    echo "  test  : for test "
+}
+
+function build_sorrylinus_again(){
+
+    echo "======BUILD SORRYLINUS AGAIN START======"
+
+
+    DST_OJSON="${SOLI_AGAIN_PROD_DIR}/${SOLI_AGAIN_OAUTH_JSON}"
+    DST_CYAML="${SOLI_AGAIN_PROD_DIR}/${SOLI_AGAIN_CONFIG_YAML}"
+
+    isDebugOn=$(cat "${DST_CYAML}" | grep -c "debug: true")
+
+    if [ $isDebugOn -eq 1 ]
+    then
+        echo "sorrylinus-again: check debug flag"
+        exit 1
+    fi
+
+    pushd "${SOLI_AGAIN_PROD_VENDOR_TUICSS_DIR}"
+
+    git pull
+
+    popd
+
+    pushd "${SOLI_AGAIN_PROD_DIR}"
+
+    git pull
+
+    sudo docker compose -f docker-compose.yaml.build up --build -d
+
+    sudo docker compose -f docker-compose.yaml.build down
+
+    sudo docker tag sorrylinus-again-sorrylinus-again "${SOLI_AGAIN_IMG_ADDR}"
+
+    sudo docker push "${SOLI_AGAIN_IMG_ADDR}"
+
+    popd
+
+    echo "======BUILD SORRYLINUS AGAIN END======"
+
+}
+
+
+
+
+
+function deploy_sorrylinus_again(){
+
+    echo "======DEPLOY SORRYLINUS AGAIN START======"
+
+    EXEC_DEPLOY="${SSHX} '${SSHY} ${SOLI_AGAIN_DEPLOY_CMD}'"
+
+    /bin/bash -c "${EXEC_DEPLOY}"
+
+    echo "======DEPLOY SORRYLINUS AGAIN END======"
+
+}
+
+
+
+function test_part(){
+
+    echo "add whatever you want"
+}
+
+if [ ! -f "./cicd.conf" ]
+then
+    echo "cicd.conf not found"
+    exit 1
+fi
+
+
+
+if [ -z "$1" ]
+then 
+
+    echo "argument is empty"
+
+    usage_helper
+    
+    exit 1
+fi
+
+source ./cicd.conf
+
+
+
+if [ "$1" == "soli" ]
+then 
+
+    build_sorrylinus_again
+
+    deploy_sorrylinus_again
+
+
+elif [ "$1" == "test" ]
+then 
+
+    test_part
+
+else 
+
+    echo "wrong argument: $1"
+
+    usage_helper
+
+    exit 1
+
+fi
+
+echo "finished running cicd pipeline"
+
+
+
