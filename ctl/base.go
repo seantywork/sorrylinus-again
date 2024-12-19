@@ -48,6 +48,14 @@ func GetViewSignin(c *gin.Context) {
 
 }
 
+func GetViewSigninIdiot(c *gin.Context) {
+
+	pkgauth.WhoAmI(c)
+
+	c.HTML(200, "index/signinidiot.html", gin.H{})
+
+}
+
 func GetViewMypage(c *gin.Context) {
 
 	_, my_type, _ := pkgauth.WhoAmI(c)

@@ -11,6 +11,8 @@ build:
 
 vendor:
 
+	git submodule init
+
 	cd public/vendor/TuiCss && git pull
 
 .PHONY: test

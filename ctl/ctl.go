@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/gin-gonic/contrib/sessions"
@@ -48,6 +49,26 @@ func ConfigureRuntime(e *gin.Engine) {
 	//pkgsoli.INTERNAL_URL = CONF.InternalUrl
 
 	pkgauth.DEBUG = CONF.Debug
+	pkgauth.USE_OAUTH2 = CONF.Auth.UseOauth2
+
+	adminslen := len(CONF.Auth.Admins)
+
+	admins := make(map[string]string)
+
+	for i := 0; i < adminslen; i++ {
+
+		admins[CONF.Auth.Admins[i].Id] = CONF.Auth.Admins[i].Pw
+
+	}
+
+	err := pkgauth.RegisterAdmins(admins)
+
+	if err != nil {
+
+		log.Fatalf("failed to register admins: %s", err.Error())
+
+		return
+	}
 
 	pkgcom.CHANNEL_ADDR = CONF.ServeAddr
 	pkgcom.CHANNEL_PORT = fmt.Sprintf("%d", CONF.Com.ChannelPort)
@@ -113,6 +134,8 @@ func RegisterRoutes(e *gin.Engine) {
 
 	e.GET("/signin", GetViewSignin)
 
+	e.GET("/signin/idiot", GetViewSigninIdiot)
+
 	e.GET("/mypage", GetViewMypage)
 
 	e.GET("/mypage/article", GetViewMypageArticle)
@@ -134,6 +157,8 @@ func RegisterRoutes(e *gin.Engine) {
 	e.GET("/api/oauth2/google/signin", pkgauth.OauthGoogleLogin)
 
 	e.GET("/oauth2/google/callback", pkgauth.OauthGoogleCallback)
+
+	e.POST("/api/auth/signin/idiot", pkgauth.LoginIdiot)
 
 	e.GET("/api/auth/user/list", pkgauth.UserList)
 

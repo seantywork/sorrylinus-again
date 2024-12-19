@@ -14,7 +14,14 @@ type SOLIAGAIN_CONFIG struct {
 	ServePort   int    `yaml:"servePort"`
 	MaxFileSize int64  `yaml:"maxFileSize"`
 	TimeoutSec  int    `yaml:"timeoutSec"`
-	Com         struct {
+	Auth        struct {
+		UseOauth2 bool `yaml:"useOauth2"`
+		Admins    []struct {
+			Id string `yaml:"id"`
+			Pw string `yaml:"pw"`
+		} `yaml:"admins"`
+	} `yaml:"auth"`
+	Com struct {
 		ChannelPort         int `yaml:"channelPort"`
 		ChannelPortExternal int `yaml:"channelPortExternal"`
 	} `yaml:"com"`

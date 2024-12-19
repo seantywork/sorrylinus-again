@@ -1,0 +1,70 @@
+{{ define "index/signinidiot.html" }}
+<!doctype html>
+<html class="tui-bg-blue-black">
+
+    <head>
+        <title> feebdaed.xyz </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="/public/image/favicon.ico">
+        <link rel="stylesheet" href="/public/vendor/TuiCss/dist/tuicss.min.css"/>
+        <script src="/public/vendor/TuiCss/dist/tuicss.min.js"></script>
+    </head>
+
+    <body>
+
+        <nav class="tui-nav">
+            <ul>
+                <li class="tui-dropdown">
+                    <span class="red-168-text">M</span>enu
+                    <div class="tui-dropdown-content">
+                          <ul>
+                            <li><a  href="/"> <span class="red-168-text">H</span>ome </a></li>
+                          </ul>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="container">
+            <div class="row">
+              <div class="col s12 m12 l12">idiot sign in</div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="tui-window tui-scroll-white">
+                        <fieldset class="tui-fieldset tui-border-double">
+                            <legend>idiot sign in</legend>
+                            <fieldset class="tui-fieldset tui-border-dotted">
+                                <div>
+                                    <input class="tui-input purple-255" type='text' id='user-id'/>
+                                    <label for='user-id'>Enter Idiot ID</label>
+                                </div>
+                            </fieldset>
+                            <fieldset class="tui-fieldset tui-border-dotted">
+                                <div>
+                                    <input class="tui-input purple-255" type='password' id='user-pw'/>
+                                    <label for='user-pw'>Enter Idiot Password</label>
+                                </div>
+                            </fieldset>
+            
+                            <br/>
+                            <div>
+                                <input class="tui-button" type="button" onclick="idiotSignin()" value="user login">
+                            </div>
+            
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tui-statusbar">
+            <ul>
+                <li><a href="#"><span class="red-168-text">Click </span>Admin</a></li>
+            </ul>
+        </div>
+
+    <script src="/public/js/index/signin.js"></script>
+    </body>
+
+</html>
+{{ end }}

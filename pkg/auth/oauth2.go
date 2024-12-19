@@ -39,6 +39,9 @@ var GoogleOauthConfig *oauth2.Config
 
 func InitAuth() {
 
+	if !USE_OAUTH2 {
+		return
+	}
 	OAUTH_JSON = GetOAuthJSON()
 
 	GoogleOauthConfig = GenerateGoogleOauthConfig()

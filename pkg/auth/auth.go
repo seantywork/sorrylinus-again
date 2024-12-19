@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,10 @@ import (
 )
 
 var DEBUG bool = false
+
+var USE_OAUTH2 bool = false
+
+var ADMINS = make(map[string]string)
 
 type UserCreate struct {
 	Passphrase      string `json:"passphrase"`
@@ -41,6 +46,40 @@ func GenerateStateAuthCookie(c *gin.Context) string {
 	return state
 }
 
+func RegisterAdmins(admins map[string]string) error {
+
+	err := os.RemoveAll("./data/admin")
+
+	if err != nil {
+		return fmt.Errorf("failed to remove data/admin")
+	}
+
+	err = os.MkdirAll("./data/admin", 0755)
+
+	if err != nil {
+
+		return fmt.Errorf("failed to create data/admin")
+	}
+
+	for k, v := range admins {
+
+		ADMINS[k] = v
+
+		name := "./data/admin/" + k + ".json"
+
+		err := os.WriteFile(name, []byte("{}"), 0644)
+
+		if err != nil {
+
+			return fmt.Errorf("failed to create data/admin: %s: %s", k, err.Error())
+		}
+
+	}
+
+	return nil
+
+}
+
 func OauthGoogleLogin(c *gin.Context) {
 
 	my_key, my_type, _ := WhoAmI(c)
@@ -53,6 +92,13 @@ func OauthGoogleLogin(c *gin.Context) {
 
 		return
 
+	}
+
+	if !USE_OAUTH2 {
+
+		c.Redirect(302, "/signin/idiot")
+
+		return
 	}
 
 	oauth_state := GenerateStateAuthCookie(c)
@@ -452,5 +498,103 @@ func Logout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: "logged out"})
+
+}
+
+func LoginIdiot(c *gin.Context) {
+
+	my_key, my_type, my_id := WhoAmI(c)
+
+	if my_key != "" && my_type != "" {
+
+		dbquery.RemoveSessionKeyFromSession(my_key)
+
+		fmt.Printf("user login: removed existing id: %s\n", my_id)
+
+		return
+
+	}
+
+	var req com.CLIENT_REQ
+
+	var u_login UserLogin
+
+	if err := c.BindJSON(&req); err != nil {
+
+		fmt.Printf("user login: failed to bind: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+	}
+
+	err := json.Unmarshal([]byte(req.Data), &u_login)
+
+	if err != nil {
+
+		fmt.Printf("user login: failed to unmarshal: %s\n", err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+
+	}
+
+	if !VerifyDefaultValue(u_login.Id) {
+
+		fmt.Printf("user login: not valid id: %s\n", u_login.Id)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+	}
+
+	as, err := dbquery.GetByIdFromAdmin(u_login.Id)
+
+	if as == nil {
+
+		fmt.Printf("user login: no such admin id: %s: %s\n", u_login.Id, err.Error())
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+	}
+
+	credPw, okay := ADMINS[u_login.Id]
+
+	if !okay {
+
+		fmt.Printf("user login: no such admin id in admins: %s\n", u_login.Id)
+
+		c.JSON(http.StatusBadRequest, com.SERVER_RE{Status: "error", Reply: "invalid format"})
+
+		return
+	}
+
+	if u_login.Passphrase != credPw {
+
+		fmt.Printf("user login: passphrase: %s", "not matching")
+
+		c.JSON(http.StatusForbidden, com.SERVER_RE{Status: "error", Reply: "passphrase not matching"})
+
+		return
+
+	}
+
+	session_key := GenerateStateAuthCookie(c)
+
+	err = dbquery.MakeSessionForAdmin(session_key, u_login.Id)
+
+	if err != nil {
+
+		fmt.Printf("user login: failed to get from user: %s", err.Error())
+
+		c.JSON(http.StatusInternalServerError, com.SERVER_RE{Status: "error", Reply: "failed to login"})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, com.SERVER_RE{Status: "success", Reply: "logged in"})
 
 }
