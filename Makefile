@@ -9,6 +9,9 @@ build:
 
 	go build -o soliagain.out .
 
+vendor:
+
+	cd public/vendor/TuiCss && git pull
 
 .PHONY: test
 test:

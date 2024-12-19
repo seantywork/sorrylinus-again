@@ -1,0 +1,81 @@
+# if debug is true
+# will not be deployed by cicd pipeline
+
+debug: true
+
+# set this to a domain name when deploying
+# this doesn't matter if debug is true
+externalUrl: dingdong.feebdaed.xyz
+
+# set this to a host ip
+# this doesn't matter if debug if false
+internalUrl: 10.1.3.4
+
+# no need to change unless you're extra careful of security...
+# nevermind, just leave it this way
+serveAddr : 0.0.0.0
+servePort : 8080
+
+# 1 GB
+maxFileSize: 1073741824
+
+# maybe too long?
+timeoutSec: 30
+
+# this section is used to set
+# websocket port for generic communication with server
+# unrelated to WebRTC 
+com:
+  channelPort: 9090
+# external one is needed when debug is false
+# and you need to configure port-forwarding 
+  channelPortExternal: 9091
+
+# this section is related to
+# uploading this and that media format
+# including pictures and videos
+edition:
+  extAllowList:
+    - jpg
+    - png
+    - mp4
+
+# this section is related to
+# WebRTC things
+stream:
+# if you don't know what turn is
+# check it up before running this program
+# currently I'm using `coturn` for this
+  turnServerAddr:
+    - addr: dingdong.feebdaed.xyz
+      id: hello
+      pw: example
+# don't mess with this option
+# I don't even know what it does
+  peerSignalAttemptSync: 5
+# this is to handle WebRTC event websocket messages
+  peerSignalAddr : /signal/peer
+# this is never likely to set to true
+  singleRoomMode: false
+# also don't mess with this option
+  rtcpPLIInterval: 3
+# also leave it this way
+  udpBufferByteSize: 65535
+# this is needed to do WebRTC and handle
+# multiple clients without wasting too many UDP ports
+  udpMuxPort: 8086
+
+# IMPORTANT: 
+# be sure to open ALL of the ports below
+# in your firewall setting or reverse proxy setting
+  udpEphemeralPortMin: 30100
+  udpEphemeralPortMax: 30500
+
+# this one is for handling Gstreamer camera stream handling
+  rtpReceivePort: 8082
+# by now you'd know what externam means
+  rtpReceivePortExternal: 8083
+log:
+  flushIntervalSec: 360
+utils:
+  useCompress: false
